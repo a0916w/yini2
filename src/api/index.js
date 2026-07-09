@@ -131,20 +131,24 @@ export function adaptOrder(o) {
    Fires the main content endpoints per locale; per-id detail pages are skipped. */
 export function prefetchLanguages(codes, currentLang) {
   const others = codes.filter((c) => c !== currentLang)
-  const run = () => {
+  // Trickle sequentially (one request at a time) so we never saturate the
+  // browser's per-host connection pool and block user-driven requests.
+  const run = async () => {
     for (const lang of others) {
-      apiCategories(lang)
-      apiVideos({ page: 1, per_page: 18 }, lang)
-      apiLatest(lang)
-      apiRecommended(lang)
-      apiMarquees(lang)
-      apiBanners(lang)
-      apiVipPlans && apiVipPlans(lang)
-      apiSiteSettings(lang)
+      const jobs = [
+        () => apiCategories(lang),
+        () => apiVideos({ page: 1, per_page: 18 }, lang),
+        () => apiLatest(lang),
+        () => apiRecommended(lang),
+        () => apiVipPlans(lang),
+      ]
+      for (const job of jobs) {
+        try { await job() } catch { /* ignore */ }
+      }
     }
   }
-  if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 4000 })
-  else setTimeout(run, 1500)
+  if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 6000 })
+  else setTimeout(run, 2000)
 }
 
 /* try API, fall back to local mock so the UI works without a backend */

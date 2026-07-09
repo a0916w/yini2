@@ -48,7 +48,14 @@ export async function request(path, { method = 'GET', params, data, lang, token 
   if (auth) headers.Authorization = `Bearer ${auth}`
   if (data) headers['Content-Type'] = 'application/json'
 
-  const res = await fetch(url, { method, headers, body: data ? JSON.stringify(data) : undefined })
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 15000)
+  let res
+  try {
+    res = await fetch(url, { method, headers, body: data ? JSON.stringify(data) : undefined, signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+  }
   let body = null
   try { body = await res.json() } catch { /* empty body */ }
   if (body && typeof body === 'object' && '_e' in body) {

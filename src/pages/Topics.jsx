@@ -11,17 +11,25 @@ export default function Topics() {
     (async () => {
       const { data, live } = await tryApi(apiCategories, null)
       if (live && Array.isArray(data) && data.length) {
-        // one topic card per category, with up to 3 covers
-        const cards = await Promise.all(data.map(async (c) => {
-          const { data: vids } = await tryApi(() => apiVideos({ category_id: c.id, per_page: 3 }), null)
-          return {
-            id: c.id,
-            title: cleanName(c.name),
-            sub: `${c.videos_count ?? vids?.total ?? ''}部精选`,
-            covers: (vids?.data || []).map(adaptVideo),
-          }
+        // show cards immediately (title + count); fill covers in small batches
+        // so we never fire a big concurrent burst that clogs the connection pool.
+        const base = data.map((c) => ({
+          id: c.id, title: cleanName(c.name),
+          sub: `${c.videos_count ?? ''}部精选`, covers: [],
         }))
-        setTopics(cards)
+        setTopics(base)
+        const withCovers = [...base]
+        const BATCH = 3
+        for (let i = 0; i < data.length; i += BATCH) {
+          const slice = data.slice(i, i + BATCH)
+          const res = await Promise.all(slice.map((c) =>
+            tryApi(() => apiVideos({ category_id: c.id, per_page: 3 }), null)))
+          slice.forEach((c, k) => {
+            const idx = data.indexOf(c)
+            withCovers[idx] = { ...withCovers[idx], covers: (res[k].data?.data || []).map(adaptVideo) }
+          })
+          setTopics([...withCovers])
+        }
       } else {
         setTopics(TOPICS.map((tp, i) => ({ ...tp, covers: DRAMAS.slice(i * 3, i * 3 + 3) })))
       }
