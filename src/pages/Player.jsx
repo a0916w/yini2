@@ -61,11 +61,11 @@ function VideoSlide({ item, active, danmaku, onEnded }) {
       const url = await signHls(d.playUrl)
       if (cancelled || !videoRef.current) return
       if (d.playType === 'hls' || url.includes('.m3u8')) {
-        if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = url
-        } else {
-          const { default: Hls } = await import('hls.js')
-          if (cancelled || !Hls.isSupported()) { if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = url; return }
+        // hls.js FIRST — Chrome's canPlayType('...mpegurl') lies ("maybe") but can't
+        // actually demux raw HLS. Only fall back to native HLS on Safari (Hls unsupported).
+        const { default: Hls } = await import('hls.js')
+        if (cancelled) return
+        if (Hls.isSupported()) {
           const hls = new Hls({
             maxBufferLength: 20, startFragPrefetch: true, startLevel: -1,
             xhrSetup: (xhr, u) => { if (u.includes('/hls/key/') && d.keyUrl) xhr.open('GET', d.keyUrl, true) },
@@ -79,6 +79,8 @@ function VideoSlide({ item, active, danmaku, onEnded }) {
           })
           hls.loadSource(url)
           hls.attachMedia(video)
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = url // Safari native HLS
         }
       } else {
         video.src = url
@@ -92,7 +94,12 @@ function VideoSlide({ item, active, danmaku, onEnded }) {
     const v = videoRef.current
     if (!v) return
     if (active && !hardLocked) {
-      v.play().then(() => setPlaying(true)).catch(() => setPlaying(false))
+      v.muted = false
+      v.play().then(() => setPlaying(true)).catch(() => {
+        // browser blocked sound autoplay — play muted so the feed never freezes
+        v.muted = true
+        v.play().then(() => setPlaying(true)).catch(() => setPlaying(false))
+      })
       if (d && !reported.current) {
         reported.current = true
         pushHistory(d.id, 1)
