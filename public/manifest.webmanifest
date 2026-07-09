@@ -1,0 +1,15 @@
+{
+  "name": "橙子短剧",
+  "short_name": "橙子短剧",
+  "start_url": "/?utm_source=pwa",
+  "display": "standalone",
+  "background_color": "#0a0c12",
+  "lang": "zh-CN",
+  "scope": "/",
+  "description": "橙子短剧 · 海量精品短剧随时追",
+  "orientation": "portrait",
+  "theme_color": "#ff6d00",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
