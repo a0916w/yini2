@@ -1,24 +1,29 @@
-import { useState, useEffect } from 'react'
-import { Gem, Flame, Check } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Gem, Flame, Check, X } from 'lucide-react'
 import { Header } from '../components/ui.jsx'
-import { PLANS as MOCK_PLANS, RIGHTS } from '../data/mock.js'
-import { apiVipPlans, apiPaymentOptions, apiCreateOrder, apiActiveEvent, adaptPlans, tryApi } from '../api/index.js'
+import { RIGHTS } from '../data/mock.js'
+import {
+  apiVipPlans, apiPaymentOptions, apiCreateOrder, apiMyOrders, apiActiveEvent,
+  adaptPlans, adaptChannels, tryApi,
+} from '../api/index.js'
 import { useStore } from '../store.jsx'
 
-const MOCK_GATEWAYS = [
-  { id: 1, name: '微信支付', color: '#07c160', letter: '微', payment_options: [{ id: 1, name: '微信' }] },
-  { id: 2, name: '支付宝', color: '#1677ff', letter: '支', payment_options: [{ id: 2, name: '支付宝' }] },
-]
+const PAY_STYLE = {
+  alipay: { bg: '#1677ff', t: '支' }, wechat: { bg: '#07c160', t: '微' },
+  card: { bg: '#635bff', t: '卡' }, usdt: { bg: '#26a17b', t: '₮' },
+}
 
 export default function Vip() {
-  const { user, loggedIn, showToast } = useStore()
+  const { user, loggedIn, showToast, refreshMe } = useStore()
   const [plans, setPlans] = useState([])
-  const [gateways, setGateways] = useState(MOCK_GATEWAYS)
+  const [gateways, setGateways] = useState([])
   const [live, setLive] = useState(false)
-  const [plan, setPlan] = useState(null)
-  const [gw, setGw] = useState(null)
+  const [plan, setPlan] = useState(null)      // plan key
+  const [channel, setChannel] = useState(null) // {payTypeId, gatewayId}
   const [eventLabel, setEventLabel] = useState('')
   const [busy, setBusy] = useState(false)
+  const [pay, setPay] = useState(null)         // { orderNo, url, status:'wait'|'paid' }
+  const pollRef = useRef(null)
 
   useEffect(() => {
     (async () => {
@@ -26,41 +31,77 @@ export default function Vip() {
       if (live && data) {
         const arr = adaptPlans(data)
         setPlans(arr); setLive(true)
-        setPlan(arr.find((p) => p.hot)?.id ?? arr[0]?.id ?? null)
-        const { data: gws } = await tryApi(apiPaymentOptions, null)
-        if (Array.isArray(gws) && gws.length) { setGateways(gws); setGw(gws[0].id) }
-        else setGw(MOCK_GATEWAYS[0].id)
+        setPlan(arr.find((p) => p.hot)?.key ?? arr[0]?.key ?? null)
+        const { data: gw } = await tryApi(apiPaymentOptions, [])
+        setGateways(Array.isArray(gw) ? gw : [])
         const { data: ev } = await tryApi(apiActiveEvent, null)
         if (ev?.event) setEventLabel(ev.event.description || '限时活动进行中')
       } else {
-        const arr = MOCK_PLANS.map((p) => ({ ...p, key: String(p.id) }))
-        setPlans(arr); setPlan(arr.find((p) => p.hot)?.id ?? arr[0].id)
-        setGw(MOCK_GATEWAYS[0].id)
+        // offline demo
+        const demo = [
+          { key: 'monthly', name: '月卡', symbol: '¥', price: 25, origin: 30, sub: '每月自动续费可取消', currency: 'cny' },
+          { key: 'quarterly', name: '季卡', symbol: '¥', price: 57, origin: 90, hot: true, tag: '推荐', sub: '折合每月19元', currency: 'cny' },
+          { key: 'yearly', name: '年卡', symbol: '¥', price: 228, origin: 360, sub: '超值', currency: 'cny' },
+        ]
+        setPlans(demo); setPlan('quarterly')
+        setGateways([{ id: 1, key: 'wechat', name: '微信支付', payment_options: [{ id: 11, name: '微信支付', currency: 'cny' }] },
+                     { id: 2, key: 'alipay', name: '支付宝', payment_options: [{ id: 22, name: '支付宝', currency: 'cny' }] }])
       }
     })()
+    return () => clearInterval(pollRef.current)
   }, [])
 
-  const cur = plans.find((p) => p.id === plan)
-  const curGw = gateways.find((g) => g.id === gw)
+  const cur = plans.find((p) => p.key === plan)
+  const channels = cur ? adaptChannels(gateways, cur.currency) : []
+
+  // keep a valid channel selected for the current plan's currency
+  useEffect(() => {
+    if (!channels.length) { setChannel(null); return }
+    if (!channels.find((c) => c.payTypeId === channel?.payTypeId && c.gatewayId === channel?.gatewayId)) {
+      setChannel(channels[0])
+    }
+  }, [plan, gateways]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const startPolling = (orderNo) => {
+    clearInterval(pollRef.current)
+    const started = Date.now()
+    pollRef.current = setInterval(async () => {
+      if (Date.now() - started > 180000) { clearInterval(pollRef.current); return }
+      const { data } = await tryApi(apiMyOrders, null)
+      const list = data?.data || []
+      const o = list.find((x) => x.order_no === orderNo)
+      if (o && Number(o.status) === 1) {
+        clearInterval(pollRef.current)
+        setPay((p) => p ? { ...p, status: 'paid' } : p)
+        refreshMe()
+        showToast('开通成功')
+      }
+    }, 3000)
+  }
 
   const buy = async () => {
     if (!cur) return
     if (!live) return showToast('演示模式：未连接后端')
     if (!loggedIn) return showToast('请先登录')
+    if (!channel) return showToast('请选择支付方式')
     setBusy(true)
     try {
-      const payTypeId = curGw?.payment_options?.[0]?.id
-      const r = await apiCreateOrder(cur.key, curGw.id, payTypeId)
-      if (r?.pay_url) {
-        showToast('正在跳转支付…')
-        window.open(r.pay_url, '_blank')
-      } else showToast('下单成功')
+      const r = await apiCreateOrder({ plan: cur.key, pay_type_id: channel.payTypeId, gateway_id: channel.gatewayId })
+      const url = r?.pay_url
+      const orderNo = r?.order?.order_no
+      if (url) {
+        window.open(url, '_blank', 'noopener')
+        setPay({ orderNo, url, status: 'wait' })
+        if (orderNo) startPolling(orderNo)
+      } else showToast('下单失败：未返回支付链接')
     } catch (e) {
       showToast(e.message || '下单失败')
     } finally {
       setBusy(false)
     }
   }
+
+  const closePay = () => { clearInterval(pollRef.current); setPay(null) }
 
   return (
     <>
@@ -102,35 +143,38 @@ export default function Vip() {
           <div className="sec__title">选择套餐</div>
           <div className="plans">
             {plans.map((p) => (
-              <button key={p.id} className={`plan ${plan === p.id ? 'active' : ''}`} onClick={() => setPlan(p.id)}>
-                {(p.hot || p.tag) && (
-                  <span className="plan__badge"><Flame size={10} style={{ verticalAlign: -1 }} /> {p.tag || '热销'}</span>
-                )}
+              <button key={p.key} className={`plan ${plan === p.key ? 'active' : ''}`} onClick={() => setPlan(p.key)}>
+                {(p.hot || p.tag) && <span className="plan__badge"><Flame size={10} style={{ verticalAlign: -1 }} /> {p.tag || '热销'}</span>}
                 <div className="plan__name">{p.name}</div>
-                <div className="plan__price"><b>{p.price}</b> 元</div>
-                {p.origin > p.price && <div className="plan__origin">原价{p.origin}元</div>}
-                {plan === p.id && <span className="plan__check"><Check size={13} /></span>}
+                <div className="plan__price"><b>{p.price}</b> {p.symbol === 'S$' ? 'SGD' : '元'}</div>
+                {p.origin > p.price && <div className="plan__origin">{p.symbol}{p.origin}</div>}
+                {plan === p.key && <span className="plan__check"><Check size={13} /></span>}
               </button>
             ))}
           </div>
           {cur?.sub && <div className="muted" style={{ fontSize: 12, marginTop: 10 }}>{cur.sub}</div>}
-          {cur?.eventLabel && <div className="gold" style={{ fontSize: 12, marginTop: 4 }}>{cur.eventLabel}</div>}
         </div>
 
-        {/* pay gateways */}
+        {/* pay channels */}
         <div className="sec">
           <div className="sec__title" style={{ marginBottom: 10 }}>支付方式</div>
-          <div className="menu">
-            {gateways.map((g) => (
-              <button key={g.id} className="menu__item" style={{ width: '100%' }} onClick={() => setGw(g.id)}>
-                {g.icon
-                  ? <img src={g.icon} alt="" style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'cover' }} />
-                  : <span className="pay-ic" style={{ background: g.color || 'var(--brand)' }}>{g.letter || g.name[0]}</span>}
-                <span className="menu__lbl">{g.name}</span>
-                <span className={`radio ${gw === g.id ? 'on' : ''}`}><Check size={12} /></span>
-              </button>
-            ))}
-          </div>
+          {channels.length === 0 ? (
+            <div className="panel muted" style={{ fontSize: 13 }}>当前套餐暂无可用支付方式</div>
+          ) : (
+            <div className="menu">
+              {channels.map((c) => {
+                const st = PAY_STYLE[c.key] || { bg: 'var(--brand)', t: c.name[0] }
+                const on = channel?.payTypeId === c.payTypeId && channel?.gatewayId === c.gatewayId
+                return (
+                  <button key={`${c.payTypeId}-${c.gatewayId}`} className="menu__item" style={{ width: '100%' }} onClick={() => setChannel(c)}>
+                    <span className="pay-ic" style={{ background: st.bg }}>{st.t}</span>
+                    <span className="menu__lbl">{c.name}</span>
+                    <span className={`radio ${on ? 'on' : ''}`}><Check size={12} /></span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
           <div className="muted" style={{ fontSize: 11, marginTop: 12, textAlign: 'center' }}>
             开通前请阅读《会员服务协议》· 虚拟商品暂不支持退款
           </div>
@@ -141,12 +185,46 @@ export default function Vip() {
       <div className="paybar">
         <div>
           <div className="paybar__label">合计</div>
-          <div className="paybar__price">¥{cur?.price ?? '--'}</div>
+          <div className="paybar__price">{cur?.symbol ?? '¥'}{cur?.price ?? '--'}</div>
         </div>
         <button className="btn btn--brand" disabled={busy || !cur} onClick={buy}>
           {busy ? '处理中…' : '立即开通'}
         </button>
       </div>
+
+      {/* waiting-for-payment sheet */}
+      {pay && (
+        <>
+          <div className="sheet-mask" onClick={closePay} />
+          <div className="sheet" style={{ textAlign: 'center', paddingBottom: 'calc(24px + var(--safe-bottom))' }}>
+            <div className="sheet__head">
+              <span className="sheet__title">{pay.status === 'paid' ? '开通成功' : '等待支付'}</span>
+              <button className="sheet__close" onClick={closePay}><X size={18} /></button>
+            </div>
+            <div style={{ padding: '20px 8px' }}>
+              {pay.status === 'paid' ? (
+                <>
+                  <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--brand-soft)', display: 'grid', placeItems: 'center', margin: '0 auto' }}>
+                    <Check size={32} style={{ color: 'var(--brand)' }} />
+                  </div>
+                  <div style={{ marginTop: 14, fontWeight: 700 }}>会员已开通</div>
+                  <button className="btn btn--brand btn--block" style={{ marginTop: 18 }} onClick={closePay}>完成</button>
+                </>
+              ) : (
+                <>
+                  <div className="muted" style={{ fontSize: 14, lineHeight: 1.8 }}>
+                    已在新窗口打开支付页面<br />支付完成后将自动到账，请勿关闭本页
+                  </div>
+                  <div className="flex gap" style={{ marginTop: 18 }}>
+                    <button className="btn btn--ghost" style={{ flex: 1 }} onClick={() => window.open(pay.url, '_blank', 'noopener')}>重新打开支付</button>
+                    <button className="btn btn--brand" style={{ flex: 1 }} onClick={async () => { const { data } = await tryApi(apiMyOrders, null); const o = (data?.data || []).find((x) => x.order_no === pay.orderNo); if (o && Number(o.status) === 1) { setPay((p) => ({ ...p, status: 'paid' })); refreshMe() } else showToast('尚未检测到支付') }}>我已支付</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </>
   )
 }

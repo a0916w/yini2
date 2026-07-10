@@ -28,8 +28,8 @@ export const apiVideoDetail = (id, lang) => get(`/videos/${id}`, undefined, lang
 /* ---------- vip / orders ---------- */
 export const apiVipPlans = (lang) => get('/vip/plans', undefined, lang) // keyed object {key: plan}
 export const apiPaymentOptions = () => get('/vip/payment-options')
-export const apiCreateOrder = (plan, gateway_id, pay_type_id) =>
-  post('/vip/order', { plan, gateway_id, pay_type_id })
+// pay_type_id = 顶层网关 id, gateway_id = 子渠道 option id(对齐旧站语义)
+export const apiCreateOrder = (payload) => post('/vip/order', payload)
 export const apiMyOrders = () => get('/vip/orders')
 export const apiActiveEvent = () => get('/event/active')
 
@@ -96,20 +96,39 @@ export function adaptVideo(v) {
   }
 }
 
-// keyed plans object -> UI plan array
+// keyed plans object -> UI plan array (currency-aware: sgd uses *_sgd)
+const PLAN_ORDER = ['weekly', 'monthly', 'quarterly', 'yearly']
 export function adaptPlans(plansObj) {
-  return Object.values(plansObj || {}).map((p) => ({
-    id: p.key,
-    key: p.key,
-    name: p.name,
-    price: Number(p.event_price ?? p.price),
-    origin: Number(p.original_price ?? p.price),
-    duration: p.days,
-    sub: p.description || '',
-    hot: !!p.tag,
-    tag: p.tag || '',
-    eventLabel: p.event_label || '',
-  }))
+  return Object.values(plansObj || {}).map((p) => {
+    const sgd = p.currency === 'sgd'
+    const list = sgd ? Number(p.price_sgd ?? 0) : Number(p.price ?? 0)
+    const origin = sgd ? Number(p.original_price_sgd ?? 0) : Number(p.original_price ?? 0)
+    const price = p.event_price != null ? Number(p.event_price) : list
+    return {
+      id: p.key, key: p.key, name: p.name,
+      currency: sgd ? 'sgd' : 'cny', symbol: sgd ? 'S$' : '¥',
+      price, origin, duration: p.days,
+      sub: p.description || '', hot: !!p.tag, tag: p.tag || '', eventLabel: p.event_label || '',
+    }
+  }).sort((a, b) => (PLAN_ORDER.indexOf(a.key) + 1 || 99) - (PLAN_ORDER.indexOf(b.key) + 1 || 99))
+}
+
+// payment gateways -> flat selectable channels, filtered to the plan currency.
+// Only gateways that have configured payment_options are payable (matches old site).
+export function adaptChannels(gateways, currency = 'cny') {
+  const out = []
+  for (const g of gateways || []) {
+    for (const o of g.payment_options || []) {
+      const currs = o.currencies ?? [o.currency ?? 'cny']
+      if (!currs.includes(currency)) continue
+      out.push({
+        payTypeId: g.id, gatewayId: o.id,
+        name: g.name + (o.name && o.name !== g.name ? ` · ${o.name}` : ''),
+        icon: g.icon, key: g.key,
+      })
+    }
+  }
+  return out
 }
 
 export const ORDER_STATUS = { 0: '待支付', 1: '已支付', 2: '已取消', 3: '退款中', 4: '已退款' }
