@@ -30,5 +30,14 @@ export function cleanName(s) {
   if (/[一-鿿]/.test(s)) return s.replace(/\s+[A-Za-z0-9][A-Za-z0-9\s'’&/.,-]*$/, '').trim()
   return s
 }
+
+// admin video/category titles arrive as a translations JSON string: {"zh":"…","en":"…"}
+export function parseTitle(t) {
+  if (t == null) return ''
+  if (typeof t === 'string' && t.trim().startsWith('{')) {
+    try { const o = JSON.parse(t); return cleanName(o.zh || o['zh-CN'] || o.en || Object.values(o)[0] || '') } catch { return t }
+  }
+  return cleanName(t)
+}
 export const wan = (n) => { const v = Number(n) || 0; return v >= 10000 ? (v / 10000).toFixed(1) + '万' : String(v) }
 export const yuan = (n) => '¥' + (Number(n) || 0).toLocaleString('en-US')

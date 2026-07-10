@@ -1,4 +1,4 @@
-import { cleanName, wan, yuan } from '../api/admin.js'
+import { cleanName, parseTitle, wan, yuan } from '../api/admin.js'
 
 /* ---- line icons (stroke=currentColor) ---- */
 const I = (d, extra) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">{d}{extra}</svg>)
@@ -37,7 +37,7 @@ export const MODULES = [
     key: 'videos', label: '资源库', group: '内容',
     filters: [{ key: 'q', kind: 'search', ph: '搜索标题' }, { key: 'is_vip', kind: 'select', opts: [['', '全部类型'], [1, 'VIP'], [0, '免费']] }, { key: 'enabled', kind: 'select', opts: [['', '全部状态'], [1, '上架'], [0, '下架']] }],
     columns: [
-      { label: '剧集', render: (r) => <div className="cell-title">{stripe(transcode(r.transcode_status)[0] === 's-ok' ? 'var(--ok)' : transcode(r.transcode_status)[0] === 's-run' ? 'var(--signal)' : transcode(r.transcode_status)[0] === 's-crit' ? 'var(--crit)' : 'var(--warn)')}{r.cover_url ? <img className="thumb" src={r.cover_url} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /> : null}<span className="t">{cleanName(r.title)}</span></div> },
+      { label: '剧集', render: (r) => <div className="cell-title">{stripe(transcode(r.transcode_status)[0] === 's-ok' ? 'var(--ok)' : transcode(r.transcode_status)[0] === 's-run' ? 'var(--signal)' : transcode(r.transcode_status)[0] === 's-crit' ? 'var(--crit)' : 'var(--warn)')}{r.cover_url ? <img className="thumb" src={r.cover_url} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} /> : null}<span className="t">{parseTitle(r.title)}</span></div> },
       { label: '源ID', render: (r) => <span className="num">{r.source_id || '—'}</span> },
       { label: '分类', render: (r) => <span className="tag">{cleanName(r.category?.name) || '—'}</span> },
       { label: '规格', render: (r) => <span className="num">时长 {Math.round((r.duration || 0) / 60)}′</span> },
