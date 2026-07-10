@@ -406,7 +406,7 @@ input, textarea { font-family: inherit; }
 .pl-feed { position: absolute; inset: 0; overflow: hidden; }
 .pl-feed__track { position: absolute; inset: 0; transition: transform .32s cubic-bezier(.22,.61,.36,1); will-change: transform; }
 .pl-feed__track.dragging { transition: none; }
-.pl-slide { position: absolute; left: 0; right: 0; height: 100%; }
+.pl-slide { position: absolute; left: 0; right: 0; height: 100%; overflow: hidden; background: #000; }
 
 /* big translucent play triangle when paused */
 .player-play { width: 74px; height: 74px; color: rgba(255,255,255,.9); display: grid; place-items: center;

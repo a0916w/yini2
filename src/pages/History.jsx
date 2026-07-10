@@ -11,17 +11,19 @@ export default function History() {
   const [list, setList] = useState(null)
   const [live, setLive] = useState(false)
 
-  const loadLocal = () => history.map((h) => ({ ...dramaById(h.id), ep: h.ep }))
-
   useEffect(() => {
     (async () => {
       if (loggedIn) {
         const { data, live } = await tryApi(() => apiWatchHistory({ per_page: 50 }), null)
         if (live && data?.data) { setLive(true); return setList(data.data.map(adaptVideo)) }
       }
-      setList(loadLocal())
+      const resolved = await Promise.all(history.map(async (h) => {
+        const { data, live } = await tryApi(() => apiVideoDetail(h.id), null)
+        return { ...(live && data?.id ? adaptVideo(data) : dramaById(h.id)), ep: h.ep }
+      }))
+      setList(resolved)
     })()
-  }, [loggedIn]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loggedIn, history]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearAll = async () => {
     if (live) { await tryApi(apiClearHistory, null) }

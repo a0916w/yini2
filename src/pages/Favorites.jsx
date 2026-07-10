@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { HeartOff } from 'lucide-react'
 import { Header, DramaRow, Empty } from '../components/ui.jsx'
-import { DRAMAS } from '../data/mock.js'
-import { apiFavorites, adaptVideo, tryApi } from '../api/index.js'
+import { dramaById } from '../data/mock.js'
+import { apiFavorites, apiVideoDetail, adaptVideo, tryApi } from '../api/index.js'
 import { useStore } from '../store.jsx'
 
 export default function Favorites() {
@@ -15,7 +15,12 @@ export default function Favorites() {
         const { data, live } = await tryApi(() => apiFavorites({ per_page: 50 }), null)
         if (live && data?.data) return setList(data.data.map(adaptVideo))
       }
-      setList(DRAMAS.filter((d) => favorites.includes(d.id)))
+      // not logged in: resolve locally-saved favorite ids (real video ids) via detail
+      const resolved = await Promise.all(favorites.map(async (id) => {
+        const { data, live } = await tryApi(() => apiVideoDetail(id), null)
+        return live && data?.id ? adaptVideo(data) : dramaById(id)
+      }))
+      setList(resolved.filter(Boolean))
     })()
   }, [loggedIn, favorites])
 

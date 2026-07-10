@@ -192,8 +192,8 @@ function VideoSlide({ item, active, danmaku, onEnded }) {
           <video ref={videoRef} playsInline preload="auto" onTimeUpdate={onTime} onEnded={onEnded}
             onLoadedData={() => setReady(true)} onPlaying={() => setReady(true)}
             style={{
-              position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain',
-              background: 'transparent', opacity: ready ? 1 : 0, transition: 'opacity .18s ease', zIndex: 1,
+              position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+              background: '#000', opacity: ready ? 1 : 0, transition: 'opacity .18s ease', zIndex: 1,
             }} />
         )}
       </div>
