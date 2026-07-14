@@ -36,7 +36,7 @@ class _HistoryPageState extends State<HistoryPage> {
           : list.isEmpty
               ? Center(child: Text(t('noHistory'), style: TextStyle(color: C.ink3)))
               : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: list.length,
                   separatorBuilder: (_, __) => Divider(height: 1, color: C.line),
                   itemBuilder: (c, i) => DramaRow(list[i]),

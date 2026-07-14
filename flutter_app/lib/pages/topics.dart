@@ -112,7 +112,7 @@ class _TopicsPageState extends State<TopicsPage> {
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g),
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [BoxShadow(color: g[0].withValues(alpha: .35), blurRadius: 16, offset: const Offset(0, 7))],
         ),
         clipBehavior: Clip.antiAlias,
@@ -127,7 +127,7 @@ class _TopicsPageState extends State<TopicsPage> {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w800, letterSpacing: .5,
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: .5,
                           shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1))])),
                   const SizedBox(height: 7),
                   Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis,
@@ -159,7 +159,7 @@ class _TopicsPageState extends State<TopicsPage> {
                           child: Container(
                             width: 62, height: 84,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: Colors.white.withValues(alpha: .9), width: 1.6),
                               boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .3), blurRadius: 10, offset: const Offset(0, 4))],
                             ),

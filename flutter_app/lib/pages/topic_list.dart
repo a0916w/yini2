@@ -49,7 +49,7 @@ class _TopicListPageState extends State<TopicListPage> {
       body: _list.isEmpty && _loading
           ? const Center(child: CircularProgressIndicator(color: C.brand))
           : GridView.builder(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: .57),
               itemCount: _list.length + 1,

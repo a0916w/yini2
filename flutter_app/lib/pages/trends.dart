@@ -109,7 +109,7 @@ class _TrendsPageState extends State<TrendsPage> {
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(22, 18, 22, 22),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(t('rankTitle'), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                Text(t('rankTitle'), style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: 1)),
                 const SizedBox(height: 7),
                 Text(t('rankSub'), style: TextStyle(color: Colors.white.withValues(alpha: .78), fontSize: 12.5)),
                 const SizedBox(height: 18),
@@ -146,7 +146,7 @@ class _TrendsPageState extends State<TrendsPage> {
                 child: _loading
                     ? const Center(child: CircularProgressIndicator(color: C.brand))
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(14, 18, 14, 24),
+                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
                         itemCount: _list.length,
                         itemBuilder: (c, i) => _row(_list[i], i + 1, maxV),
                       ),
@@ -177,7 +177,7 @@ class _TrendsPageState extends State<TrendsPage> {
           ),
           const SizedBox(width: 6),
           // 封面
-          ClipRRect(borderRadius: BorderRadius.circular(13), child: SizedBox(width: 82, height: 110, child: Cover(d))),
+          ClipRRect(borderRadius: BorderRadius.circular(12), child: SizedBox(width: 82, height: 110, child: Cover(d))),
           const SizedBox(width: 14),
           // 标题 / 标签 / 热度条
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -187,7 +187,7 @@ class _TrendsPageState extends State<TrendsPage> {
             if (d.genre.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(8)),
                 child: Text(d.genre, style: TextStyle(color: C.ink2, fontSize: 11)),
               ),
             const SizedBox(height: 12),
@@ -216,9 +216,9 @@ class _TrendsPageState extends State<TrendsPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 9),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5222D),
+                gradient: C.brandGrad,
                 borderRadius: BorderRadius.circular(999),
-                boxShadow: [BoxShadow(color: const Color(0xFFF5222D).withValues(alpha: .3), blurRadius: 10, offset: const Offset(0, 4))],
+                boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .35), blurRadius: 10, offset: const Offset(0, 4))],
               ),
               child: Text(t('watchBtn'), style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
             ),

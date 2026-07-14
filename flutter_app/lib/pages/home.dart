@@ -58,8 +58,7 @@ class _HomePageState extends State<HomePage> {
   static double _aspect(int id) => const [.72, .62, .78, .66, .7][id % 5];
 
   // 设计色
-  static const _accent = Color(0xFF9E1B2E); // 深红强调
-  static const _badge = Color(0xFF7A1420);  // 「新」徽标
+  static const _badge = C.brandDeep; // 「新」徽标(品牌橙)
 
   // hero 渐变(按 id 循环,深邃浓郁)
   static const _heroGrads = [
@@ -96,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                                colors: [const Color(0xFF33070F), const Color(0xFF33070F).withValues(alpha: .0)],
+                                colors: [const Color(0xFF241005), const Color(0xFF241005).withValues(alpha: .0)],
                               ),
                             ),
                           ),
@@ -110,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                         child: Row(children: [
                           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             const SizedBox(height: 2),
-                            Text(t('cinema'), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800)),
+                            Text(t('cinema'), style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
                             const SizedBox(height: 8),
                             Text(tp('cinemaSub2', {'n': _latest.isEmpty ? '…' : '${_latest.length}'}),
                                 style: TextStyle(color: Colors.white.withValues(alpha: .55), fontSize: 13)),
@@ -192,7 +191,7 @@ class _HomePageState extends State<HomePage> {
           height: 190,
           decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: g),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [BoxShadow(color: g[1].withValues(alpha: .45), blurRadius: 18, offset: const Offset(0, 8))],
           ),
           clipBehavior: Clip.antiAlias,
@@ -237,9 +236,9 @@ class _HomePageState extends State<HomePage> {
   Widget _sectionTitle(String title, {String? suffix}) => Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
         child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Container(width: 4, height: 17, decoration: BoxDecoration(color: _accent, borderRadius: BorderRadius.circular(3))),
+          Container(width: 4, height: 15, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(3))),
           const SizedBox(width: 8),
-          Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
           if (suffix != null) ...[
             const SizedBox(width: 8),
             Padding(padding: const EdgeInsets.only(bottom: 1), child: Text(suffix, style: TextStyle(color: C.ink3, fontSize: 12))),
@@ -254,10 +253,10 @@ class _HomePageState extends State<HomePage> {
           AspectRatio(
             aspectRatio: 3 / 4,
             child: Stack(fit: StackFit.expand, children: [
-              ClipRRect(borderRadius: BorderRadius.circular(13), child: Cover(d)),
+              ClipRRect(borderRadius: BorderRadius.circular(12), child: Cover(d)),
               Positioned(top: 0, left: 0, child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: const BoxDecoration(color: _badge, borderRadius: BorderRadius.only(topLeft: Radius.circular(13), bottomRight: Radius.circular(11))),
+                decoration: const BoxDecoration(color: _badge, borderRadius: BorderRadius.only(topLeft: Radius.circular(12), bottomRight: Radius.circular(10))),
                 child: Text(t('newBadge'), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
               )),
               Positioned(left: 9, bottom: 8, child: Text('▶ ${d.plays}',
