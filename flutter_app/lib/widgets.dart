@@ -1,7 +1,95 @@
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'api/media.dart';
 import 'api/models.dart';
 import 'theme.dart';
+
+// 首页 Banner 轮播(图片走鉴权 CDN 的 .txt base64 解析)
+class BannerCarousel extends StatefulWidget {
+  final List<Map> banners;
+  const BannerCarousel(this.banners, {super.key});
+  @override
+  State<BannerCarousel> createState() => _BannerCarouselState();
+}
+
+class _BannerCarouselState extends State<BannerCarousel> {
+  final _pc = PageController();
+  int _i = 0;
+  Timer? _t;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.banners.length > 1) {
+      _t = Timer.periodic(const Duration(seconds: 4), (_) {
+        if (!_pc.hasClients) return;
+        _i = (_i + 1) % widget.banners.length;
+        _pc.animateToPage(_i, duration: const Duration(milliseconds: 400), curve: Curves.easeOutCubic);
+      });
+    }
+  }
+
+  @override
+  void dispose() { _t?.cancel(); _pc.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    final bs = widget.banners;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Stack(children: [
+            PageView.builder(
+              controller: _pc,
+              itemCount: bs.length,
+              onPageChanged: (i) => setState(() => _i = i),
+              itemBuilder: (c, i) => _BannerImage('${bs[i]['mobile'] ?? bs[i]['desktop'] ?? ''}', i),
+            ),
+            if (bs.length > 1)
+              Positioned(bottom: 8, right: 10, child: Row(children: [
+                for (var k = 0; k < bs.length; k++)
+                  Container(width: k == _i ? 16 : 6, height: 6, margin: const EdgeInsets.only(left: 4),
+                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: k == _i ? .95 : .5), borderRadius: BorderRadius.circular(3))),
+              ])),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _BannerImage extends StatefulWidget {
+  final String url;
+  final int idx;
+  const _BannerImage(this.url, this.idx);
+  @override
+  State<_BannerImage> createState() => _BannerImageState();
+}
+
+class _BannerImageState extends State<_BannerImage> {
+  Uint8List? _bytes;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.url.isNotEmpty) {
+      Media.resolveCover(widget.url).then((b) { if (mounted) setState(() => _bytes = b); });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_bytes != null) {
+      return Image.memory(_bytes!, fit: BoxFit.cover, width: double.infinity, height: double.infinity, gaplessPlayback: true);
+    }
+    final g = _grads[widget.idx % _grads.length];
+    return DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g)));
+  }
+}
 
 const _grads = [
   [Color(0xFFFF8A2B), Color(0xFFE8480A)], [Color(0xFF5B8BFF), Color(0xFF2A3F8F)],

@@ -10,6 +10,7 @@ class Api {
 
   // content
   static Future<List> categories() async => (await Http.get('/categories') as List);
+  static Future<List> banners() async => (await Http.get('/banners') as List);
   static Future<List> marquees() async => (await Http.get('/marquees') as List);
   static Future<Map> siteSettings() async => await Http.get('/site-settings') as Map;
 
@@ -77,6 +78,7 @@ class Api {
     fire(recommended());
     fire(latest());
     fire(marquees());
+    fire(banners());
     fire(Http.get('/site-settings'));
     fire(plans());
   }

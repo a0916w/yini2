@@ -20,12 +20,16 @@ class _HomePageState extends State<HomePage> {
   int _page = 1, _lastPage = 1;
   bool _loading = false;
   String _marquee = '';
+  List<Map> _banners = [];
 
   @override
   void initState() {
     super.initState();
     Api.categories().then((c) {
       if (mounted) setState(() => _cats = c.cast<Map>());
+    }).catchError((_) {});
+    Api.banners().then((b) {
+      if (mounted) setState(() => _banners = b.cast<Map>());
     }).catchError((_) {});
     Api.marquees().then((m) {
       final txt = m.map((e) => '${(e as Map)['content']}').where((s) => s.isNotEmpty).join('　　');
@@ -77,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                 Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: C.ink2, fontSize: 12))),
               ]),
             ),
+          if (_banners.isNotEmpty) BannerCarousel(_banners),
           SizedBox(
             height: 44,
             child: ListView.separated(
