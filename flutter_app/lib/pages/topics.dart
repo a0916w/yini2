@@ -74,9 +74,9 @@ class _TopicsPageState extends State<TopicsPage> {
                       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text('${tp['name']}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                         const SizedBox(height: 2),
-                        Text('${tp['count']}部精选', style: const TextStyle(color: C.ink3, fontSize: 12)),
+                        Text('${tp['count']}部精选', style: TextStyle(color: C.ink3, fontSize: 12)),
                       ])),
-                      const Icon(Icons.chevron_right, color: C.ink3),
+                      Icon(Icons.chevron_right, color: C.ink3),
                     ]),
                     const SizedBox(height: 10),
                     Row(children: [

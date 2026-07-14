@@ -92,7 +92,7 @@ class _TrendsPageState extends State<TrendsPage> {
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   itemCount: _list.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: C.line),
+                  separatorBuilder: (_, __) => Divider(height: 1, color: C.line),
                   itemBuilder: (c, i) => DramaRow(_list[i], rank: i + 1),
                 ),
         ),

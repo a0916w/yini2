@@ -111,7 +111,7 @@ class _VipPageState extends State<VipPage> {
           padding: const EdgeInsets.all(14),
           child: Row(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              const Text('合计', style: TextStyle(color: C.ink3, fontSize: 12)),
+              Text('合计', style: TextStyle(color: C.ink3, fontSize: 12)),
               Text('${cur?.symbol ?? '¥'}${cur?.price ?? '--'}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
             ]),
             const Spacer(),
@@ -169,18 +169,18 @@ class _VipPageState extends State<VipPage> {
                     TextSpan(text: '${p.price}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
                     TextSpan(text: p.currency == 'sgd' ? ' SGD' : ' 元', style: const TextStyle(color: C.brand, fontSize: 12, fontWeight: FontWeight.w500)),
                   ])),
-                  if (p.origin > p.price) Text('${p.symbol}${p.origin}', style: const TextStyle(color: C.ink3, fontSize: 11, decoration: TextDecoration.lineThrough)),
+                  if (p.origin > p.price) Text('${p.symbol}${p.origin}', style: TextStyle(color: C.ink3, fontSize: 11, decoration: TextDecoration.lineThrough)),
                 ]),
               ),
             ),
           ));
         }).toList()),
-        if (cur?.sub.isNotEmpty ?? false) Padding(padding: const EdgeInsets.only(top: 10), child: Text(cur!.sub, style: const TextStyle(color: C.ink3, fontSize: 12))),
+        if (cur?.sub.isNotEmpty ?? false) Padding(padding: const EdgeInsets.only(top: 10), child: Text(cur!.sub, style: TextStyle(color: C.ink3, fontSize: 12))),
         const SizedBox(height: 22),
         const Text('支付方式', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 10),
         if (_channels.isEmpty)
-          const Text('当前套餐暂无可用支付方式', style: TextStyle(color: C.ink3, fontSize: 13))
+          Text('当前套餐暂无可用支付方式', style: TextStyle(color: C.ink3, fontSize: 13))
         else
           ..._channels.map((c) {
             final on = _ch?.payTypeId == c.payTypeId && _ch?.gatewayId == c.gatewayId;
@@ -193,7 +193,7 @@ class _VipPageState extends State<VipPage> {
             );
           }),
         const SizedBox(height: 12),
-        const Center(child: Text('开通前请阅读《会员服务协议》· 虚拟商品暂不支持退款', style: TextStyle(color: C.ink3, fontSize: 11))),
+        Center(child: Text('开通前请阅读《会员服务协议》· 虚拟商品暂不支持退款', style: TextStyle(color: C.ink3, fontSize: 11))),
       ]),
     );
   }

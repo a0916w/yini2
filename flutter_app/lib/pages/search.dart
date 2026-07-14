@@ -58,14 +58,14 @@ class _SearchPageState extends State<SearchPage> {
               ? _hotList()
               : _results.isEmpty
                   ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.search_off, size: 44, color: C.ink3),
+                      Icon(Icons.search_off, size: 44, color: C.ink3),
                       const SizedBox(height: 12),
-                      Text('没有找到「${_ctrl.text.trim()}」相关的剧集', style: const TextStyle(color: C.ink3)),
+                      Text('没有找到「${_ctrl.text.trim()}」相关的剧集', style: TextStyle(color: C.ink3)),
                     ]))
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       itemCount: _results.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1, color: C.line),
+                      separatorBuilder: (_, __) => Divider(height: 1, color: C.line),
                       itemBuilder: (c, i) => DramaRow(_results[i]),
                     ),
     );

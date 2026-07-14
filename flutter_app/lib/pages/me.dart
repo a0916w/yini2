@@ -83,7 +83,7 @@ class MePage extends StatelessWidget {
             child: Column(children: [
               Icon(q.$1, size: 22, color: C.ink2),
               const SizedBox(height: 6),
-              Text('${q.$2}${q.$3.isNotEmpty ? ' ${q.$3}' : ''}', style: const TextStyle(fontSize: 11, color: C.ink3)),
+              Text('${q.$2}${q.$3.isNotEmpty ? ' ${q.$3}' : ''}', style: TextStyle(fontSize: 11, color: C.ink3)),
             ]),
           ))).toList()),
         ),
@@ -122,21 +122,32 @@ class MePage extends StatelessWidget {
                     Container(width: 34, height: 34, decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(11)), child: Icon(services[i].$1, size: 17, color: C.ink2)),
                     const SizedBox(width: 12),
                     Expanded(child: Text(services[i].$2, style: const TextStyle(fontSize: 15))),
-                    if (services[i].$3.isNotEmpty) Text(services[i].$3, style: const TextStyle(color: C.ink3, fontSize: 13)),
+                    if (services[i].$3.isNotEmpty) Text(services[i].$3, style: TextStyle(color: C.ink3, fontSize: 13)),
                     const SizedBox(width: 4),
-                    const Icon(Icons.chevron_right, color: C.ink3, size: 20),
+                    Icon(Icons.chevron_right, color: C.ink3, size: 20),
                   ]),
                 ),
               ),
-              if (i < services.length - 1) const Divider(height: 1, color: C.line, indent: 60),
+              if (i < services.length - 1) Divider(height: 1, color: C.line, indent: 60),
             ],
           ]),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
+          child: SwitchListTile(
+            value: context.watch<ThemeController>().dark,
+            activeThumbColor: C.brand,
+            onChanged: (v) => context.read<ThemeController>().toggle(v),
+            secondary: Container(width: 34, height: 34, decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(11)), child: Icon(Icons.dark_mode_outlined, size: 17, color: C.ink2)),
+            title: const Text('深色模式', style: TextStyle(fontSize: 15)),
+          ),
         ),
         const SizedBox(height: 20),
         if (app.authed)
           OutlinedButton(
             onPressed: () => app.logout(),
-            style: OutlinedButton.styleFrom(foregroundColor: C.like, minimumSize: const Size.fromHeight(48), side: const BorderSide(color: C.line), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+            style: OutlinedButton.styleFrom(foregroundColor: C.like, minimumSize: const Size.fromHeight(48), side: BorderSide(color: C.line), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
             child: Text(t('logout')),
           )
         else

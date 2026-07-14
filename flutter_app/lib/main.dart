@@ -21,12 +21,17 @@ import 'pages/favorites.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Http.init();
+  final theme = ThemeController();
+  await theme.load(); // 默认深色
   final state = AppState();
   await state.boot();
   // 启动即预热:核心数据 + 站点配置(封面/HLS 签名要用),后台进行不阻塞首帧
   Api.prewarm();
   Media.settings();
-  runApp(ChangeNotifierProvider.value(value: state, child: const YiniApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider.value(value: state),
+    ChangeNotifierProvider.value(value: theme),
+  ], child: const YiniApp()));
 }
 
 final _rootKey = GlobalKey<NavigatorState>();
@@ -57,10 +62,11 @@ class YiniApp extends StatelessWidget {
   const YiniApp({super.key});
   @override
   Widget build(BuildContext context) {
+    final dark = context.watch<ThemeController>().dark;
     return MaterialApp.router(
       title: '橙子短剧',
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
+      theme: buildTheme(dark),
       routerConfig: _router,
     );
   }
@@ -98,7 +104,7 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(color: C.surface, border: Border(top: BorderSide(color: C.line))),
+      decoration: BoxDecoration(color: C.surface, border: Border(top: BorderSide(color: C.line))),
       child: SafeArea(
         top: false,
         child: SizedBox(
@@ -115,7 +121,7 @@ class _BottomBar extends StatelessWidget {
     if (i == 2) {
       return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Transform.translate(offset: const Offset(0, -2), child: const Icon(Icons.favorite, color: C.like, size: 30)),
-        Text(t.$1, style: const TextStyle(fontSize: 11, color: C.ink3, fontWeight: FontWeight.w500)),
+        Text(t.$1, style: TextStyle(fontSize: 11, color: C.ink3, fontWeight: FontWeight.w500)),
       ]));
     }
     return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [

@@ -181,7 +181,7 @@ class DramaCard extends StatelessWidget {
           ]),
         ),
         const SizedBox(height: 6),
-        Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: C.ink)),
+        Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: C.ink)),
         if (d.genre.isNotEmpty) ...[
           const SizedBox(height: 5),
           Align(
@@ -216,7 +216,7 @@ class DramaRow extends StatelessWidget {
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
             const SizedBox(height: 4),
-            Text('▶ ${d.plays} · ${d.genre}', style: const TextStyle(color: C.ink3, fontSize: 12)),
+            Text('▶ ${d.plays} · ${d.genre}', style: TextStyle(color: C.ink3, fontSize: 12)),
           ])),
         ]),
       ),

@@ -198,8 +198,8 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
         child: SizedBox(height: MediaQuery.of(c).size.height * .6, child: Column(children: [
           Padding(padding: const EdgeInsets.all(16), child: Row(children: [Text('讨论 ${_comments.length}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))])),
           Expanded(child: _comments.isEmpty
-              ? const Center(child: Text('还没有评论，快来抢沙发吧', style: TextStyle(color: C.ink3)))
-              : ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: _comments.map((m) => ListTile(contentPadding: EdgeInsets.zero, leading: const CircleAvatar(backgroundColor: C.surface2, child: Text('我')), title: const Text('我'), subtitle: Text(m['t']!))).toList())),
+              ? Center(child: Text('还没有评论，快来抢沙发吧', style: TextStyle(color: C.ink3)))
+              : ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: _comments.map((m) => ListTile(contentPadding: EdgeInsets.zero, leading: CircleAvatar(backgroundColor: C.surface2, child: const Text('我')), title: const Text('我'), subtitle: Text(m['t']!))).toList())),
           Padding(padding: const EdgeInsets.all(12), child: Row(children: [
             Expanded(child: TextField(controller: ctrl, decoration: InputDecoration(hintText: '说点什么…', filled: true, fillColor: C.surface2, isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none)))),
             const SizedBox(width: 8),

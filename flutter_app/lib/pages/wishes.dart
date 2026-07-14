@@ -33,16 +33,16 @@ class _WishesPageState extends State<WishesPage> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), borderRadius: BorderRadius.circular(14), border: Border.all(color: C.brand.withValues(alpha: .35))),
-          child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [Icon(Icons.auto_awesome, color: C.brand, size: 17), SizedBox(width: 6), Text('你想看的改编，由你决定', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15))]),
-            SizedBox(height: 6),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Row(children: [Icon(Icons.auto_awesome, color: C.brand, size: 17), SizedBox(width: 6), Text('你想看的改编，由你决定', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15))]),
+            const SizedBox(height: 6),
             Text('为心仪的改编方向投票，人气最高的将进入制作评估。', style: TextStyle(color: C.ink3, fontSize: 12)),
           ]),
         ),
         const SizedBox(height: 16),
-        const Row(children: [
-          Text('心愿榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          Spacer(),
+        Row(children: [
+          const Text('心愿榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          const Spacer(),
           Text('累计票数排序', style: TextStyle(color: C.ink3, fontSize: 12)),
         ]),
         ...List.generate(_wishes.length, (i) {
@@ -54,9 +54,9 @@ class _WishesPageState extends State<WishesPage> {
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(w['title'] as String, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
                 const SizedBox(height: 3),
-                Text(w['dir'] as String, style: const TextStyle(color: C.ink3, fontSize: 12)),
+                Text(w['dir'] as String, style: TextStyle(color: C.ink3, fontSize: 12)),
                 const SizedBox(height: 3),
-                Text('🔥 ${w['votes']} 票', style: const TextStyle(color: C.ink3, fontSize: 12)),
+                Text('🔥 ${w['votes']} 票', style: TextStyle(color: C.ink3, fontSize: 12)),
               ])),
               OutlinedButton(
                 onPressed: (w['mine'] as bool) ? null : () => _vote(i),

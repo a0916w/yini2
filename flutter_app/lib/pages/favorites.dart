@@ -47,11 +47,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
       body: list == null
           ? const Center(child: CircularProgressIndicator(color: C.brand))
           : list.isEmpty
-              ? const Center(child: Text('还没有收藏，去首页发现好剧吧', style: TextStyle(color: C.ink3)))
+              ? Center(child: Text('还没有收藏，去首页发现好剧吧', style: TextStyle(color: C.ink3)))
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   itemCount: list.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: C.line),
+                  separatorBuilder: (_, __) => Divider(height: 1, color: C.line),
                   itemBuilder: (c, i) => DramaRow(list[i]),
                 ),
     );

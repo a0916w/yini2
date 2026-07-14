@@ -50,17 +50,17 @@ class _DetailPageState extends State<DetailPage> {
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(d.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600), maxLines: 3, overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 12),
-                      Row(children: [const Icon(Icons.play_arrow, size: 15, color: C.ink2), const SizedBox(width: 2), Text(d.plays, style: const TextStyle(color: C.ink2, fontSize: 14))]),
+                      Row(children: [Icon(Icons.play_arrow, size: 15, color: C.ink2), const SizedBox(width: 2), Text(d.plays, style: TextStyle(color: C.ink2, fontSize: 14))]),
                       const SizedBox(height: 8),
                       Row(children: [
-                        Text('全 ${d.eps} 集 · 已完结', style: const TextStyle(color: C.ink2, fontSize: 13)),
+                        Text('全 ${d.eps} 集 · 已完结', style: TextStyle(color: C.ink2, fontSize: 13)),
                         if (d.genre.isNotEmpty) ...[const SizedBox(width: 8), Text(d.genre, style: const TextStyle(color: Color(0xFF3B76D6), fontSize: 13))],
                       ]),
                       const SizedBox(height: 8),
                       d.free
                           ? Row(children: [
                               Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1), decoration: BoxDecoration(color: const Color(0xFF3B76D6), borderRadius: BorderRadius.circular(4)), child: const Text('FREE', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w600))),
-                              const SizedBox(width: 6), const Text('全集免费', style: TextStyle(color: C.ink2, fontSize: 13)),
+                              const SizedBox(width: 6), Text('全集免费', style: TextStyle(color: C.ink2, fontSize: 13)),
                             ])
                           : const Row(children: [Icon(Icons.lock_outline, size: 13, color: C.brand), SizedBox(width: 5), Text('VIP 专享', style: TextStyle(color: C.brand, fontSize: 13, fontWeight: FontWeight.w400))]),
                     ])),
@@ -68,7 +68,7 @@ class _DetailPageState extends State<DetailPage> {
                   // 简介(按钮之上)
                   if (d.desc.isNotEmpty) ...[
                     const SizedBox(height: 14),
-                    Text(d.desc, style: const TextStyle(color: C.ink2, height: 1.7, fontSize: 13)),
+                    Text(d.desc, style: TextStyle(color: C.ink2, height: 1.7, fontSize: 13)),
                   ],
                   // 三按钮:立即观看 / 收藏 / 评论
                   const SizedBox(height: 16),
@@ -103,7 +103,7 @@ class _DetailPageState extends State<DetailPage> {
                   // 评论
                   const SizedBox(height: 24),
                   _sectionTitle('评论'),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 30), child: Center(child: Text('还没有评论，去播放页抢沙发吧', style: TextStyle(color: C.ink3)))),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 30), child: Center(child: Text('还没有评论，去播放页抢沙发吧', style: TextStyle(color: C.ink3)))),
                   // 猜你喜欢
                   if (_related.isNotEmpty) ...[
                     _sectionTitle('猜你喜欢'),
@@ -129,7 +129,7 @@ class _DetailPageState extends State<DetailPage> {
             child: Container(
               height: 36, padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(999)),
-              child: const Row(children: [Icon(Icons.search, size: 15, color: C.ink3), SizedBox(width: 7), Text('搜索', style: TextStyle(color: C.ink3, fontSize: 13))]),
+              child: Row(children: [Icon(Icons.search, size: 15, color: C.ink3), const SizedBox(width: 7), Text('搜索', style: TextStyle(color: C.ink3, fontSize: 13))]),
             ),
           )),
           const SizedBox(width: 10),

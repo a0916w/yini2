@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(children: [
                 const Icon(Icons.campaign_outlined, size: 15, color: C.brand),
                 const SizedBox(width: 8),
-                Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: C.ink2, fontSize: 12))),
+                Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink2, fontSize: 12))),
               ]),
             ),
           if (_banners.isNotEmpty) BannerCarousel(_banners),
@@ -187,9 +187,9 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(999)),
                 child: Row(children: [
-                  const Icon(Icons.search, size: 15, color: C.ink3),
+                  Icon(Icons.search, size: 15, color: C.ink3),
                   const SizedBox(width: 6),
-                  Expanded(child: Text(t('searchPh'), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: C.ink3, fontSize: 12))),
+                  Expanded(child: Text(t('searchPh'), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink3, fontSize: 12))),
                 ]),
               ),
             ),
@@ -212,9 +212,9 @@ class _HomePageState extends State<HomePage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.language, size: 18, color: C.ink2),
+                Icon(Icons.language, size: 18, color: C.ink2),
                 const SizedBox(width: 2),
-                Text(_langShort(), style: const TextStyle(fontSize: 11, color: C.ink2, fontWeight: FontWeight.w500)),
+                Text(_langShort(), style: TextStyle(fontSize: 11, color: C.ink2, fontWeight: FontWeight.w500)),
               ]),
             ),
           ),
