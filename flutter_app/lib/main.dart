@@ -135,7 +135,7 @@ class _BottomBar extends StatelessWidget {
     final active = i == current;
     if (i == 2) {
       return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Transform.translate(offset: const Offset(0, -2), child: const Icon(Icons.emoji_events, color: C.brand, size: 30)),
+        Transform.translate(offset: const Offset(0, -2), child: Icon(Icons.emoji_events, color: active ? C.brand : _idle, size: 30)),
         Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : _idle, fontWeight: FontWeight.w500)),
       ]));
     }
