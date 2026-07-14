@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../api/api.dart';
+import '../api/http.dart';
 import '../api/models.dart';
+import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
@@ -12,11 +15,23 @@ class TopicsPage extends StatefulWidget {
 
 class _TopicsPageState extends State<TopicsPage> {
   List<Map>? _topics; // {name, count, covers:[Drama]}
+  AppState? _app;
+  String _lang = Http.lang;
+
+  void _onApp() { if (_app!.lang != _lang) { _lang = _app!.lang; setState(() => _topics = null); _load(); } }
 
   @override
   void initState() {
     super.initState();
+    _app = context.read<AppState>();
+    _app!.addListener(_onApp);
     _load();
+  }
+
+  @override
+  void dispose() {
+    _app?.removeListener(_onApp);
+    super.dispose();
   }
 
   Future<void> _load() async {

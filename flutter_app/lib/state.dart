@@ -53,6 +53,15 @@ class AppState extends ChangeNotifier {
 
   String get displayName => (user?['nickname'] as String?) ?? '未登录';
 
+  // 语言切换:按语言分桶缓存(不清空,切回即命中),预热新语言,通知各 tab 重载
+  String get lang => Http.lang;
+  void setLanguage(String code) {
+    if (Http.lang == code) return;
+    Http.lang = code;
+    Api.prewarm(); // 预热新语言的各 tab 数据
+    notifyListeners();
+  }
+
   Future<bool> toggleFavorite(int id) async {
     if (authed) {
       try {

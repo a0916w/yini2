@@ -166,7 +166,7 @@ class MePage extends StatelessWidget {
           ListTile(
             title: Text(l.$2),
             trailing: Http.lang == l.$1 ? const Icon(Icons.check, color: C.brand) : null,
-            onTap: () { Http.lang = l.$1; Http.clearCache(); Navigator.pop(c); },
+            onTap: () { context.read<AppState>().setLanguage(l.$1); Navigator.pop(c); },
           ),
       ]),
     ));

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../api/api.dart';
 import '../api/http.dart';
 import '../api/models.dart';
+import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
 import '../i18n.dart';
@@ -21,10 +23,29 @@ class _HomePageState extends State<HomePage> {
   bool _loading = false;
   String _marquee = '';
   List<Map> _banners = [];
+  AppState? _app;
+  String _lang = Http.lang;
+
+  void _onApp() {
+    if (_app!.lang != _lang) { _lang = _app!.lang; _reloadAll(); }
+  }
+
+  void _reloadAll() {
+    Api.categories().then((c) { if (mounted) setState(() => _cats = c.cast<Map>()); }).catchError((_) {});
+    Api.banners().then((b) { if (mounted) setState(() => _banners = b.cast<Map>()); }).catchError((_) {});
+    Api.marquees().then((m) {
+      final txt = m.map((e) => '${(e as Map)['content']}').where((s) => s.isNotEmpty).join('　　');
+      if (mounted) setState(() => _marquee = txt);
+    }).catchError((_) {});
+    setState(() => _catId = null);
+    _load(reset: true);
+  }
 
   @override
   void initState() {
     super.initState();
+    _app = context.read<AppState>();
+    _app!.addListener(_onApp);
     Api.categories().then((c) {
       if (mounted) setState(() => _cats = c.cast<Map>());
     }).catchError((_) {});
@@ -56,6 +77,12 @@ class _HomePageState extends State<HomePage> {
     } catch (_) {} finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _app?.removeListener(_onApp);
+    super.dispose();
   }
 
   void _pickCat(int? id) {
@@ -220,7 +247,7 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             title: Text(l.$2),
             trailing: Http.lang == l.$1 ? const Icon(Icons.check, color: C.brand) : null,
-            onTap: () { Http.lang = l.$1; Http.clearCache(); Navigator.pop(c); setState(() {}); _load(reset: true); },
+            onTap: () { context.read<AppState>().setLanguage(l.$1); Navigator.pop(c); },
           ),
       ]),
     ));
