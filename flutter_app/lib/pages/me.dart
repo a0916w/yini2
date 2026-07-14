@@ -20,7 +20,6 @@ class MePage extends StatelessWidget {
     ];
     final services = [
       (Icons.diamond_outlined, t('vipCenter'), vip ? t('activated') : t('notActivated'), () => context.push('/vip')),
-      (Icons.auto_awesome, t('wishBoard'), '', () => context.push('/wishes')),
       (Icons.language, t('language'), _langName(), () => _pickLang(context)),
     ];
 

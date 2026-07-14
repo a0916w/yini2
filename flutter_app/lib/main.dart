@@ -11,7 +11,6 @@ import 'pages/search.dart';
 import 'pages/trends.dart';
 import 'pages/theater.dart';
 import 'pages/topics.dart';
-import 'pages/wishes.dart';
 import 'pages/detail.dart';
 import 'pages/player.dart';
 import 'pages/vip.dart';
@@ -54,7 +53,6 @@ final _router = GoRouter(
         StatefulShellBranch(routes: [GoRoute(path: '/me', builder: (c, s) => const MePage())]),
       ],
     ),
-    GoRoute(path: '/wishes', builder: (c, s) => const WishesPage()),
     GoRoute(path: '/search', builder: (c, s) => const SearchPage()),
     GoRoute(path: '/drama/:id', builder: (c, s) => DetailPage(int.parse(s.pathParameters['id']!))),
     GoRoute(path: '/watch/:id', builder: (c, s) => PlayerPage(int.parse(s.pathParameters['id']!))),
