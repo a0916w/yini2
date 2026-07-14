@@ -90,9 +90,15 @@ class Http {
     final f = _fetch(path, params, cache, key);
     if (cache) {
       _inflight[key] = f;
-      f.whenComplete(() => _inflight.remove(key));
+      _settle(f, key); // 吞掉清理链上的错误;调用方仍从 f 收到原错误
     }
     return f;
+  }
+
+  // 等 f 结束后移除 inflight;try/catch 确保不产生"未处理异常"
+  static Future<void> _settle(Future f, String key) async {
+    try { await f; } catch (_) {}
+    _inflight.remove(key);
   }
 
   static bool _stale(String key) =>
@@ -103,7 +109,7 @@ class Http {
     if (_inflight.containsKey(key)) return;
     final f = _fetch(path, params, true, key);
     _inflight[key] = f;
-    f.then((_) {}, onError: (_) {}).whenComplete(() => _inflight.remove(key));
+    _settle(f, key);
   }
 
   static dynamic _diskRead(String key) {

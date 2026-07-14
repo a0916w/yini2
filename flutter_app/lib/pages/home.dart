@@ -201,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                     child: GridView.builder(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 20),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 16, childAspectRatio: .52),
+                        crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: .57),
                       itemCount: _list.length + 1,
                       itemBuilder: (c, i) {
                         if (i == _list.length) {
@@ -247,7 +247,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          _iconBtn(Icons.history, () => _toast(context, '暂无观看记录')),
+          _iconBtn(Icons.history, () => context.push('/history')),
           _iconBtn(Icons.notifications_none, () => _toast(context, '暂无消息'), dot: true),
           // 会员
           GestureDetector(
@@ -259,19 +259,6 @@ class _HomePageState extends State<HomePage> {
               child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.diamond_outlined, size: 13, color: C.brand), SizedBox(width: 3), Text('会员', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 12))]),
             ),
           ),
-          // 语言
-          GestureDetector(
-            onTap: () => _pickLang(context),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.language, size: 18, color: C.ink2),
-                const SizedBox(width: 2),
-                Text(_langShort(), style: TextStyle(fontSize: 11, color: C.ink2, fontWeight: FontWeight.w500)),
-              ]),
-            ),
-          ),
-          _iconBtn(Icons.qr_code_scanner, () => _toast(context, '扫码')),
         ]),
       );
 
@@ -286,23 +273,5 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  String _langShort() {
-    const m = {'zh': '中', 'en': 'EN', 'vi': 'VI', 'th': 'TH', 'id': 'ID'};
-    return m[Http.lang] ?? Http.lang.toUpperCase();
-  }
-
   void _toast(BuildContext c, String s) => ScaffoldMessenger.of(c).showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 1)));
-
-  void _pickLang(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (c) => SafeArea(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        for (final l in languages)
-          ListTile(
-            title: Text(l.$2),
-            trailing: Http.lang == l.$1 ? const Icon(Icons.check, color: C.brand) : null,
-            onTap: () { context.read<AppState>().setLanguage(l.$1); Navigator.pop(c); },
-          ),
-      ]),
-    ));
-  }
 }

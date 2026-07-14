@@ -17,6 +17,7 @@ import 'pages/vip.dart';
 import 'pages/login.dart';
 import 'pages/me.dart';
 import 'pages/favorites.dart';
+import 'pages/history.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +56,7 @@ final _router = GoRouter(
     GoRoute(path: '/vip', builder: (c, s) => const VipPage()),
     GoRoute(path: '/login', builder: (c, s) => const LoginPage()),
     GoRoute(path: '/favorites', builder: (c, s) => const FavoritesPage()),
+    GoRoute(path: '/history', builder: (c, s) => const HistoryPage()),
   ],
 );
 

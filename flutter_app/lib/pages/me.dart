@@ -76,6 +76,8 @@ class MePage extends StatelessWidget {
             onTap: () {
               if (q.$2 == '我的收藏') {
                 context.push('/favorites');
+              } else if (q.$2 == '观看记录') {
+                context.push('/history');
               } else {
                 _todo(context);
               }

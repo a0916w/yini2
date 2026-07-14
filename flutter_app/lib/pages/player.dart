@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 import '../api/api.dart';
 import '../api/models.dart';
 import '../api/media.dart';
+import '../history.dart';
 import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
@@ -20,6 +21,7 @@ class _PlayerPageState extends State<PlayerPage> {
   final List<Drama> _feed = [];
   final Map<int, VideoPlayerController> _ctrls = {};
   final Map<int, Drama> _detail = {};
+  final Map<int, String> _errs = {}; // 加载/初始化失败原因(可重试)
   final PageController _pc = PageController();
   int _index = 0;
   bool _danmaku = true;
@@ -44,13 +46,17 @@ class _PlayerPageState extends State<PlayerPage> {
     _sync();
   }
 
+  bool _dead = false; // 页面已退出:任何 await 之后都不得再注册/播放控制器
+
   Future<void> _sync() async {
+    if (_dead) return;
     for (final i in _ctrls.keys.toList()) {
       if ((i - _index).abs() > 1) _ctrls.remove(i)?.dispose();
     }
     for (var i = _index - 1; i <= _index + 1; i++) {
       if (i < 0 || i >= _feed.length) continue;
       await _ensure(i);
+      if (_dead) return;
     }
     _ctrls.forEach((i, c) {
       if (!c.value.isInitialized) return;
@@ -60,37 +66,59 @@ class _PlayerPageState extends State<PlayerPage> {
   }
 
   Future<void> _ensure(int i) async {
-    if (_ctrls.containsKey(i)) return;
+    if (_dead || _ctrls.containsKey(i)) return;
+    _errs.remove(i);
     var d = _detail[i];
     if (d == null || d.playUrl == null) {
       try {
         d = await Api.videoDetail(_feed[i].id);
         _detail[i] = d;
-      } catch (_) {
+      } catch (e) {
+        debugPrint('player detail #${_feed[i].id} failed: $e');
+        _errs[i] = '加载失败,请检查网络';
+        if (mounted) setState(() {});
         return;
       }
     }
+    if (_dead) return;
     final locked = !d.free && !d.canPlayFull && d.trialSeconds <= 0;
     if (locked || d.playUrl == null || d.playUrl!.isEmpty) return;
     final url = await Media.signHls(d.playUrl!);
+    if (_dead) return;
+    debugPrint('player #${d.id} url: $url');
     final c = VideoPlayerController.networkUrl(Uri.parse(url));
     _ctrls[i] = c;
     try {
-      await c.initialize();
+      await c.initialize().timeout(const Duration(seconds: 20));
+      if (_dead) { c.dispose(); return; } // 初始化期间退出:立即销毁,禁止出声
       c.setLooping(true);
       if (i == _index) c.play();
       if (mounted) setState(() {});
-    } catch (_) {
+    } catch (e) {
+      debugPrint('player #${d.id} init failed: $e | ${c.value.errorDescription ?? ''}');
+      _errs[i] = '视频加载失败';
       _ctrls.remove(i)?.dispose();
+      if (mounted && !_dead) setState(() {});
     }
-    if (i == _index) Api.recordWatch(d.id).catchError((_) {});
+    if (i == _index && !_dead) {
+      Api.recordWatch(d.id).catchError((_) {});
+      WatchHistory.record(d); // 本地观看历史
+    }
+  }
+
+  void _retry(int i) {
+    _errs.remove(i);
+    setState(() {});
+    _ensure(i).then((_) => _sync());
   }
 
   @override
   void dispose() {
+    _dead = true;
     for (final c in _ctrls.values) {
       c.dispose();
     }
+    _ctrls.clear();
     _pc.dispose();
     super.dispose();
   }
@@ -112,6 +140,8 @@ class _PlayerPageState extends State<PlayerPage> {
                   controller: _ctrls[i],
                   active: i == _index,
                   danmaku: _danmaku,
+                  error: _errs[i],
+                  onRetry: () => _retry(i),
                 ),
               ),
         // 顶栏(返回 + 推荐 + 弹幕开关)
@@ -138,7 +168,9 @@ class _Slide extends StatefulWidget {
   final VideoPlayerController? controller;
   final bool active;
   final bool danmaku;
-  const _Slide({required this.drama, required this.controller, required this.active, required this.danmaku});
+  final String? error;
+  final VoidCallback? onRetry;
+  const _Slide({required this.drama, required this.controller, required this.active, required this.danmaku, this.error, this.onRetry});
   @override
   State<_Slide> createState() => _SlideState();
 }
@@ -235,10 +267,27 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
       onDoubleTap: _locked ? null : () => setState(() { _liked = true; _burst++; }),
       child: Stack(fit: StackFit.expand, children: [
         if (ready)
-          FittedBox(fit: BoxFit.cover, child: SizedBox(width: c.value.size.width, height: c.value.size.height, child: VideoPlayer(c)))
+          // HLS 初始化完成瞬间 size 可能为 0(首帧前),此时先铺满避免"有声无画"
+          (c.value.size.width > 0 && c.value.size.height > 0)
+              ? FittedBox(fit: BoxFit.cover, clipBehavior: Clip.hardEdge, child: SizedBox(width: c.value.size.width, height: c.value.size.height, child: VideoPlayer(c)))
+              : SizedBox.expand(child: VideoPlayer(c))
         else
           Cover(d, fit: BoxFit.cover),
-        if (!ready && !_locked) const SizedBox.shrink(),
+        // 加载中 / 失败重试
+        if (!ready && !_locked)
+          widget.error != null
+              ? Container(color: Colors.black45, alignment: Alignment.center, child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.wifi_off, color: Colors.white70, size: 32),
+                  const SizedBox(height: 10),
+                  Text(widget.error!, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                  const SizedBox(height: 14),
+                  OutlinedButton(
+                    onPressed: widget.onRetry,
+                    style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: const BorderSide(color: Colors.white54)),
+                    child: const Text('重试'),
+                  ),
+                ]))
+              : const Center(child: CircularProgressIndicator(color: Colors.white54)),
 
         // 双击爆心
         if (_burst > 0)
