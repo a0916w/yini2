@@ -66,7 +66,7 @@ class _TopicsPageState extends State<TopicsPage> {
                     const SizedBox(height: 10),
                     Row(children: [
                       for (var k = 0; k < covers.length; k++) ...[
-                        Expanded(child: AspectRatio(aspectRatio: 4 / 3, child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Cover(covers[k])))),
+                        Expanded(child: AspectRatio(aspectRatio: 3 / 4, child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Cover(covers[k])))),
                         if (k < covers.length - 1) const SizedBox(width: 8),
                       ],
                     ]),

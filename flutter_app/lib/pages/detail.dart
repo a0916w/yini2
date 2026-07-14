@@ -40,7 +40,7 @@ class _DetailPageState extends State<DetailPage> {
           ? const Center(child: CircularProgressIndicator(color: C.brand))
           : ListView(padding: const EdgeInsets.all(14), children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                ClipRRect(borderRadius: BorderRadius.circular(14), child: SizedBox(width: 150, height: 112, child: Cover(d))),
+                ClipRRect(borderRadius: BorderRadius.circular(14), child: SizedBox(width: 132, height: 176, child: Cover(d))),
                 const SizedBox(width: 16),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(d.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800), maxLines: 3, overflow: TextOverflow.ellipsis),
@@ -71,7 +71,7 @@ class _DetailPageState extends State<DetailPage> {
                 const SizedBox(height: 12),
                 GridView.count(
                   crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 10, mainAxisSpacing: 18, childAspectRatio: .82,
+                  crossAxisSpacing: 10, mainAxisSpacing: 18, childAspectRatio: .58,
                   children: _related.map((e) => DramaCard(e)).toList(),
                 ),
               ],
