@@ -109,7 +109,7 @@ class _TrendsPageState extends State<TrendsPage> {
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(22, 18, 22, 22),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(t('rankTitle'), style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                PageTitle(t('rankTitle'), color: Colors.white, whiteHighlight: true),
                 const SizedBox(height: 7),
                 Text(t('rankSub'), style: TextStyle(color: Colors.white.withValues(alpha: .78), fontSize: 12.5)),
                 const SizedBox(height: 18),

@@ -5,6 +5,7 @@ import '../api/http.dart';
 import '../state.dart';
 import '../theme.dart';
 import '../i18n.dart';
+import '../widgets.dart';
 
 class MePage extends StatelessWidget {
   const MePage({super.key});
@@ -28,7 +29,7 @@ class MePage extends StatelessWidget {
         // 统一设计语言头部:大标题(与剧场/榜单/专题一致)
         Padding(
           padding: const EdgeInsets.fromLTRB(4, 14, 4, 14),
-          child: Text(t('profile'), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+          child: PageTitle(t('profile')),
         ),
         // 资料卡(橙渐变)
         GestureDetector(

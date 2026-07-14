@@ -7,6 +7,33 @@ import 'api/models.dart';
 import 'i18n.dart';
 import 'theme.dart';
 
+// 页面大标题:粗字 + 底部品牌渐变荧光带(马克笔效果)
+class PageTitle extends StatelessWidget {
+  final String text;
+  final Color? color; // 文字色,默认随主题
+  final bool whiteHighlight; // 彩色头部上用白色荧光带
+  const PageTitle(this.text, {super.key, this.color, this.whiteHighlight = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final hl = whiteHighlight
+        ? [Colors.white.withValues(alpha: .34), Colors.white.withValues(alpha: .08)]
+        : [C.brand.withValues(alpha: .5), C.brand2.withValues(alpha: .12)];
+    return Stack(clipBehavior: Clip.none, children: [
+      Positioned(
+        left: -3, right: -9, bottom: 1, height: 9,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: hl),
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+      ),
+      Text(text, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: .5, height: 1.15, color: color ?? C.ink)),
+    ]);
+  }
+}
+
 // 首页 Banner 轮播(图片走鉴权 CDN 的 .txt base64 解析)
 class BannerCarousel extends StatefulWidget {
   final List<Map> banners;

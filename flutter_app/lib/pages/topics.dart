@@ -76,7 +76,7 @@ class _TopicsPageState extends State<TopicsPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(t('topicColl'), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+              PageTitle(t('topicColl')),
               const SizedBox(height: 6),
               Text(t('topicSub'), style: TextStyle(color: C.ink3, fontSize: 12.5)),
             ]),

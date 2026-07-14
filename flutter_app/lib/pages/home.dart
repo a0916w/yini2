@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                         child: Row(children: [
                           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             const SizedBox(height: 2),
-                            Text(t('cinema'), style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+                            PageTitle(t('cinema'), color: Colors.white),
                             const SizedBox(height: 8),
                             Text(tp('cinemaSub2', {'n': _latest.isEmpty ? '…' : '${_latest.length}'}),
                                 style: TextStyle(color: Colors.white.withValues(alpha: .55), fontSize: 13)),
