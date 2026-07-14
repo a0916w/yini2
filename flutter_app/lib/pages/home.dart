@@ -22,7 +22,6 @@ class _HomePageState extends State<HomePage> {
   int _page = 1, _lastPage = 1;
   bool _loading = false;
   String _marquee = '';
-  List<Map> _banners = [];
   AppState? _app;
   String _lang = Http.lang;
 
@@ -37,7 +36,6 @@ class _HomePageState extends State<HomePage> {
   void _reloadAll() {
     _catCache.clear(); _catPage.clear(); _catLast.clear();
     Api.categories().then((c) { if (mounted) { setState(() => _cats = c.cast<Map>()); _prefetchCats(); } }).catchError((_) {});
-    Api.banners().then((b) { if (mounted) setState(() => _banners = b.cast<Map>()); }).catchError((_) {});
     Api.marquees().then((m) {
       final txt = m.map((e) => '${(e as Map)['content']}').where((s) => s.isNotEmpty).join('　　');
       if (mounted) setState(() => _marquee = txt);
@@ -53,9 +51,6 @@ class _HomePageState extends State<HomePage> {
     _app!.addListener(_onApp);
     Api.categories().then((c) {
       if (mounted) { setState(() => _cats = c.cast<Map>()); _prefetchCats(); }
-    }).catchError((_) {});
-    Api.banners().then((b) {
-      if (mounted) setState(() => _banners = b.cast<Map>());
     }).catchError((_) {});
     Api.marquees().then((m) {
       final txt = m.map((e) => '${(e as Map)['content']}').where((s) => s.isNotEmpty).join('　　');
@@ -144,23 +139,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 8),
             Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink2, fontSize: 12))),
           ]),
-        ),
-      // banner:接口有数据用接口;暂有问题时回落到本地写死图
-      if (_banners.isNotEmpty)
-        BannerCarousel(_banners)
-      else
-        Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 220),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Image.asset('assets/banner.png', fit: BoxFit.cover),
-              ),
-            ),
-          ),
         ),
       // 分类胶囊(与全站胶囊语言一致:选中橙渐变填充)
       SizedBox(
