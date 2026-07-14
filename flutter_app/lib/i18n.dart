@@ -6,7 +6,11 @@ const _langs = [
 List<(String, String)> get languages => _langs;
 
 const _dict = <String, Map<String, String>>{
+  // 通用 / 导航
+  'appName': {'zh': '橙子短剧', 'en': 'Orange Drama', 'vi': 'Orange Drama', 'th': 'Orange Drama', 'id': 'Orange Drama'},
   'home': {'zh': '首页', 'en': 'Home', 'vi': 'Trang chủ', 'th': 'หน้าแรก', 'id': 'Beranda'},
+  'mod': {'zh': '魔改', 'en': 'Remix', 'vi': 'Biến tấu', 'th': 'รีมิกซ์', 'id': 'Remix'},
+  'wish': {'zh': '心愿榜', 'en': 'Wishlist', 'vi': 'Điều ước', 'th': 'คำขอ', 'id': 'Harapan'},
   'topics': {'zh': '专题', 'en': 'Topics', 'vi': 'Chủ đề', 'th': 'หัวข้อ', 'id': 'Topik'},
   'rank': {'zh': '榜单', 'en': 'Rankings', 'vi': 'Xếp hạng', 'th': 'อันดับ', 'id': 'Peringkat'},
   'me': {'zh': '我的', 'en': 'Me', 'vi': 'Tôi', 'th': 'ฉัน', 'id': 'Saya'},
@@ -21,10 +25,128 @@ const _dict = <String, Map<String, String>>{
   'loading': {'zh': '加载中…', 'en': 'Loading…', 'vi': 'Đang tải…', 'th': 'กำลังโหลด…', 'id': 'Memuat…'},
   'empty': {'zh': '暂无内容', 'en': 'No content', 'vi': 'Chưa có nội dung', 'th': 'ไม่มีเนื้อหา', 'id': 'Tidak ada'},
   'loadMore': {'zh': '加载更多', 'en': 'Load more', 'vi': 'Tải thêm', 'th': 'โหลดเพิ่ม', 'id': 'Muat lagi'},
+  'retry': {'zh': '重试', 'en': 'Retry', 'vi': 'Thử lại', 'th': 'ลองใหม่', 'id': 'Coba lagi'},
+  'send': {'zh': '发送', 'en': 'Send', 'vi': 'Gửi', 'th': 'ส่ง', 'id': 'Kirim'},
+  'share': {'zh': '分享', 'en': 'Share', 'vi': 'Chia sẻ', 'th': 'แชร์', 'id': 'Bagikan'},
+  'todo': {'zh': '功能开发中', 'en': 'Coming soon', 'vi': 'Sắp ra mắt', 'th': 'เร็ว ๆ นี้', 'id': 'Segera hadir'},
+  'noMsg': {'zh': '暂无消息', 'en': 'No messages', 'vi': 'Không có tin', 'th': 'ไม่มีข้อความ', 'id': 'Tidak ada pesan'},
+  // 卡片 / 详情
+  'done': {'zh': '已完结', 'en': 'Complete', 'vi': 'Hoàn tất', 'th': 'จบแล้ว', 'id': 'Tamat'},
+  'epsAll': {'zh': '全{n}集', 'en': '{n} EP', 'vi': '{n} tập', 'th': '{n} ตอน', 'id': '{n} EP'},
+  'epsDone': {'zh': '全 {n} 集 · 已完结', 'en': '{n} episodes · Complete', 'vi': '{n} tập · Hoàn tất', 'th': '{n} ตอน · จบแล้ว', 'id': '{n} episode · Tamat'},
+  'freeAll': {'zh': '全集免费', 'en': 'Free', 'vi': 'Miễn phí', 'th': 'ฟรี', 'id': 'Gratis'},
+  'vipOnly': {'zh': 'VIP 专享', 'en': 'VIP Only', 'vi': 'Chỉ VIP', 'th': 'เฉพาะ VIP', 'id': 'Khusus VIP'},
+  'feature': {'zh': '正片', 'en': 'Feature', 'vi': 'Phim chính', 'th': 'ตอนเต็ม', 'id': 'Film utama'},
+  'featureMins': {'zh': '正片 · {n} 分钟', 'en': 'Feature · {n} min', 'vi': 'Phim chính · {n} phút', 'th': 'ตอนเต็ม · {n} นาที', 'id': 'Utama · {n} mnt'},
+  'play': {'zh': '播放 ›', 'en': 'Play ›', 'vi': 'Phát ›', 'th': 'เล่น ›', 'id': 'Putar ›'},
+  'guessLike': {'zh': '猜你喜欢', 'en': 'You May Like', 'vi': 'Có thể bạn thích', 'th': 'คุณอาจชอบ', 'id': 'Mungkin Anda suka'},
+  'comments': {'zh': '评论', 'en': 'Comments', 'vi': 'Bình luận', 'th': 'ความคิดเห็น', 'id': 'Komentar'},
+  'noComment': {'zh': '还没有评论，快来抢沙发吧', 'en': 'No comments yet — be the first!', 'vi': 'Chưa có bình luận — hãy là người đầu tiên!', 'th': 'ยังไม่มีความคิดเห็น มาเป็นคนแรกสิ!', 'id': 'Belum ada komentar — jadilah yang pertama!'},
+  'noCommentGo': {'zh': '还没有评论，去播放页抢沙发吧', 'en': 'No comments yet — start watching!', 'vi': 'Chưa có bình luận — xem ngay!', 'th': 'ยังไม่มีความคิดเห็น ไปดูเลย!', 'id': 'Belum ada komentar — tonton dulu!'},
+  'search': {'zh': '搜索', 'en': 'Search', 'vi': 'Tìm', 'th': 'ค้นหา', 'id': 'Cari'},
+  'hotSearch': {'zh': '热搜榜', 'en': 'Trending', 'vi': 'Thịnh hành', 'th': 'มาแรง', 'id': 'Tren'},
+  'typeKeyword': {'zh': '输入关键词', 'en': 'Type a keyword', 'vi': 'Nhập từ khóa', 'th': 'พิมพ์คำค้น', 'id': 'Ketik kata kunci'},
+  'noResult': {'zh': '没有找到「{q}」相关的剧集', 'en': 'No results for "{q}"', 'vi': 'Không tìm thấy "{q}"', 'th': 'ไม่พบ "{q}"', 'id': 'Tidak ada hasil untuk "{q}"'},
+  // 播放器
+  'recommend': {'zh': '推荐', 'en': 'For You', 'vi': 'Đề xuất', 'th': 'แนะนำ', 'id': 'Untukmu'},
+  'danmakuOn': {'zh': '弹幕开', 'en': 'Danmaku ON', 'vi': 'Bình luận BẬT', 'th': 'คอมเมนต์ เปิด', 'id': 'Danmaku ON'},
+  'danmakuOff': {'zh': '弹幕关', 'en': 'Danmaku OFF', 'vi': 'Bình luận TẮT', 'th': 'คอมเมนต์ ปิด', 'id': 'Danmaku OFF'},
+  'episodes': {'zh': '选集', 'en': 'Episodes', 'vi': 'Chọn tập', 'th': 'เลือกตอน', 'id': 'Episode'},
+  'discuss': {'zh': '讨论', 'en': 'Chat', 'vi': 'Thảo luận', 'th': 'พูดคุย', 'id': 'Diskusi'},
+  'sayHint': {'zh': '说点什么…', 'en': 'Say something…', 'vi': 'Nói gì đó…', 'th': 'พูดอะไรหน่อย…', 'id': 'Katakan sesuatu…'},
+  'meLabel': {'zh': '我', 'en': 'Me', 'vi': 'Tôi', 'th': 'ฉัน', 'id': 'Saya'},
+  'origSound': {'zh': '原声', 'en': 'Original sound', 'vi': 'Âm thanh gốc', 'th': 'เสียงต้นฉบับ', 'id': 'Suara asli'},
+  'theater': {'zh': '剧场', 'en': ' Theater', 'vi': ' Rạp', 'th': ' เธียเตอร์', 'id': ' Teater'},
+  'danmakuDemo': {'zh': '这段太上头了', 'en': 'This part is so good!', 'vi': 'Đoạn này hay quá!', 'th': 'ช่วงนี้สนุกมาก!', 'id': 'Bagian ini seru banget!'},
+  'loadFailNet': {'zh': '加载失败，请检查网络', 'en': 'Load failed. Check your network', 'vi': 'Tải thất bại, kiểm tra mạng', 'th': 'โหลดไม่สำเร็จ ตรวจสอบเครือข่าย', 'id': 'Gagal memuat. Periksa jaringan'},
+  'videoFail': {'zh': '视频加载失败', 'en': 'Video failed to load', 'vi': 'Không tải được video', 'th': 'โหลดวิดีโอไม่สำเร็จ', 'id': 'Video gagal dimuat'},
+  'vipOnlyMsg': {'zh': '本片为会员专享', 'en': 'This title is VIP only', 'vi': 'Phim dành cho VIP', 'th': 'เรื่องนี้เฉพาะ VIP', 'id': 'Judul ini khusus VIP'},
+  'vipWatch': {'zh': '开通会员观看', 'en': 'Join VIP to watch', 'vi': 'Mở VIP để xem', 'th': 'สมัคร VIP เพื่อดู', 'id': 'Gabung VIP untuk menonton'},
+  // 我的
+  'profile': {'zh': '个人中心', 'en': 'Profile', 'vi': 'Cá nhân', 'th': 'โปรไฟล์', 'id': 'Profil'},
+  'history': {'zh': '观看记录', 'en': 'History', 'vi': 'Lịch sử', 'th': 'ประวัติ', 'id': 'Riwayat'},
+  'myFav': {'zh': '我的收藏', 'en': 'Favorites', 'vi': 'Yêu thích', 'th': 'รายการโปรด', 'id': 'Favorit'},
+  'download': {'zh': '下载', 'en': 'Downloads', 'vi': 'Tải về', 'th': 'ดาวน์โหลด', 'id': 'Unduhan'},
+  'myOrders': {'zh': '我的订单', 'en': 'Orders', 'vi': 'Đơn hàng', 'th': 'คำสั่งซื้อ', 'id': 'Pesanan'},
+  'myServices': {'zh': '我的服务', 'en': 'Services', 'vi': 'Dịch vụ', 'th': 'บริการ', 'id': 'Layanan'},
+  'vipCenter': {'zh': '会员中心', 'en': 'VIP Center', 'vi': 'Trung tâm VIP', 'th': 'ศูนย์ VIP', 'id': 'Pusat VIP'},
+  'activated': {'zh': '已开通', 'en': 'Active', 'vi': 'Đã kích hoạt', 'th': 'ใช้งานอยู่', 'id': 'Aktif'},
+  'notActivated': {'zh': '未开通', 'en': 'Inactive', 'vi': 'Chưa kích hoạt', 'th': 'ยังไม่เปิด', 'id': 'Nonaktif'},
+  'redeem': {'zh': '兑换码', 'en': 'Redeem Code', 'vi': 'Mã đổi', 'th': 'โค้ดแลก', 'id': 'Kode tukar'},
+  'pointsMall': {'zh': '积分商城', 'en': 'Points Mall', 'vi': 'Cửa hàng điểm', 'th': 'ร้านค้าแต้ม', 'id': 'Toko poin'},
+  'taskCenter': {'zh': '任务中心', 'en': 'Tasks', 'vi': 'Nhiệm vụ', 'th': 'ภารกิจ', 'id': 'Tugas'},
+  'wishBoard': {'zh': '魔改愿望榜', 'en': 'Remix Wishlist', 'vi': 'Điều ước biến tấu', 'th': 'คำขอรีมิกซ์', 'id': 'Harapan Remix'},
+  'inbox': {'zh': '站内消息', 'en': 'Messages', 'vi': 'Tin nhắn', 'th': 'ข้อความ', 'id': 'Pesan'},
+  'announce': {'zh': '官方公告', 'en': 'Announcements', 'vi': 'Thông báo', 'th': 'ประกาศ', 'id': 'Pengumuman'},
+  'survey': {'zh': '问卷调查', 'en': 'Survey', 'vi': 'Khảo sát', 'th': 'แบบสอบถาม', 'id': 'Survei'},
+  'feedback': {'zh': '意见反馈', 'en': 'Feedback', 'vi': 'Góp ý', 'th': 'ข้อเสนอแนะ', 'id': 'Masukan'},
+  'support': {'zh': '联系客服', 'en': 'Support', 'vi': 'Hỗ trợ', 'th': 'ฝ่ายบริการ', 'id': 'Dukungan'},
+  'language': {'zh': '语言', 'en': 'Language', 'vi': 'Ngôn ngữ', 'th': 'ภาษา', 'id': 'Bahasa'},
+  'darkMode': {'zh': '深色模式', 'en': 'Dark Mode', 'vi': 'Chế độ tối', 'th': 'โหมดมืด', 'id': 'Mode gelap'},
+  'notLoggedIn': {'zh': '未登录', 'en': 'Not logged in', 'vi': 'Chưa đăng nhập', 'th': 'ยังไม่เข้าสู่ระบบ', 'id': 'Belum masuk'},
+  'tapLogin': {'zh': '点击登录 / 注册', 'en': 'Tap to log in / sign up', 'vi': 'Nhấn để đăng nhập / đăng ký', 'th': 'แตะเพื่อเข้าสู่ระบบ / สมัคร', 'id': 'Ketuk untuk masuk / daftar'},
+  'joinVip': {'zh': '开通会员', 'en': 'Join VIP', 'vi': 'Mở VIP', 'th': 'สมัคร VIP', 'id': 'Gabung VIP'},
+  'vipUntil': {'zh': '有效期至 {d}', 'en': 'Valid until {d}', 'vi': 'Hiệu lực đến {d}', 'th': 'ใช้ได้ถึง {d}', 'id': 'Berlaku hingga {d}'},
+  'vipPitch': {'zh': '海量剧集免费看 · 免广告', 'en': 'Unlimited dramas · Ad-free', 'vi': 'Xem thả ga · Không quảng cáo', 'th': 'ดูไม่อั้น · ไร้โฆษณา', 'id': 'Nonton bebas · Tanpa iklan'},
+  'renewNow': {'zh': '立即续费', 'en': 'Renew', 'vi': 'Gia hạn', 'th': 'ต่ออายุ', 'id': 'Perpanjang'},
+  'joinNow': {'zh': '立即开通', 'en': 'Join Now', 'vi': 'Mở ngay', 'th': 'สมัครเลย', 'id': 'Gabung sekarang'},
+  // 历史 / 收藏
+  'clear': {'zh': '清空', 'en': 'Clear', 'vi': 'Xóa hết', 'th': 'ล้าง', 'id': 'Bersihkan'},
+  'noHistory': {'zh': '还没有观看记录', 'en': 'No watch history yet', 'vi': 'Chưa có lịch sử xem', 'th': 'ยังไม่มีประวัติการดู', 'id': 'Belum ada riwayat'},
+  'noFav': {'zh': '还没有收藏，去首页发现好剧吧', 'en': 'No favorites yet — discover dramas on Home', 'vi': 'Chưa có mục yêu thích — khám phá ngay', 'th': 'ยังไม่มีรายการโปรด ไปหน้าแรกเลย', 'id': 'Belum ada favorit — jelajahi Beranda'},
+  // 登录
+  'account': {'zh': '账号 / 邮箱', 'en': 'Account / Email', 'vi': 'Tài khoản / Email', 'th': 'บัญชี / อีเมล', 'id': 'Akun / Email'},
+  'password': {'zh': '密码', 'en': 'Password', 'vi': 'Mật khẩu', 'th': 'รหัสผ่าน', 'id': 'Kata sandi'},
+  'enterAccount': {'zh': '请输入账号', 'en': 'Enter your account', 'vi': 'Nhập tài khoản', 'th': 'กรอกบัญชี', 'id': 'Masukkan akun'},
+  'loggingIn': {'zh': '登录中…', 'en': 'Logging in…', 'vi': 'Đang đăng nhập…', 'th': 'กำลังเข้าสู่ระบบ…', 'id': 'Sedang masuk…'},
+  // 榜单
+  'hottest': {'zh': '最热', 'en': 'Hottest', 'vi': 'Hot nhất', 'th': 'ฮิตสุด', 'id': 'Terpanas'},
+  'newest': {'zh': '最新', 'en': 'Newest', 'vi': 'Mới nhất', 'th': 'ใหม่สุด', 'id': 'Terbaru'},
+  'forYou': {'zh': '推荐', 'en': 'For You', 'vi': 'Đề xuất', 'th': 'แนะนำ', 'id': 'Untukmu'},
+  // 专题
+  'topicColl': {'zh': '专题合集', 'en': 'Topic Collections', 'vi': 'Bộ sưu tập', 'th': 'คอลเลกชัน', 'id': 'Koleksi'},
+  'nPicked': {'zh': '{n}部精选', 'en': '{n} picks', 'vi': '{n} phim chọn lọc', 'th': 'คัดสรร {n} เรื่อง', 'id': '{n} pilihan'},
+  // 心愿榜
+  'wishSlogan': {'zh': '你想看的改编，由你决定', 'en': 'You decide the next remix', 'vi': 'Bạn quyết định bản biến tấu', 'th': 'คุณเลือกรีมิกซ์ถัดไป', 'id': 'Kamu yang menentukan remix'},
+  'wishDesc': {'zh': '为心仪的改编方向投票，人气最高的将进入制作评估。', 'en': 'Vote for your favorite remix direction — top picks go into production review.', 'vi': 'Bình chọn hướng biến tấu yêu thích — cao phiếu nhất sẽ được xét sản xuất.', 'th': 'โหวตแนวรีมิกซ์ที่ชอบ อันดับสูงสุดจะเข้าสู่การพิจารณาผลิต', 'id': 'Pilih arah remix favoritmu — teratas masuk tinjauan produksi.'},
+  'byVotes': {'zh': '累计票数排序', 'en': 'Sorted by votes', 'vi': 'Xếp theo phiếu', 'th': 'เรียงตามคะแนน', 'id': 'Urut suara'},
+  'nVotes': {'zh': '🔥 {n} 票', 'en': '🔥 {n} votes', 'vi': '🔥 {n} phiếu', 'th': '🔥 {n} โหวต', 'id': '🔥 {n} suara'},
+  'voted': {'zh': '已投', 'en': 'Voted', 'vi': 'Đã bầu', 'th': 'โหวตแล้ว', 'id': 'Terpilih'},
+  'vote': {'zh': '投票', 'en': 'Vote', 'vi': 'Bầu chọn', 'th': 'โหวต', 'id': 'Pilih'},
+  'nominate': {'zh': '我要提名', 'en': 'Nominate', 'vi': 'Đề cử', 'th': 'เสนอชื่อ', 'id': 'Nominasikan'},
+  'nominateTodo': {'zh': '提名功能开发中', 'en': 'Nomination coming soon', 'vi': 'Đề cử sắp ra mắt', 'th': 'ฟีเจอร์เสนอชื่อเร็ว ๆ นี้', 'id': 'Nominasi segera hadir'},
+  // VIP 页
+  'vipRights': {'zh': '会员权益', 'en': 'VIP Benefits', 'vi': 'Quyền lợi VIP', 'th': 'สิทธิ์ VIP', 'id': 'Manfaat VIP'},
+  'freeWatch': {'zh': '全站免费看', 'en': 'Watch everything', 'vi': 'Xem toàn bộ', 'th': 'ดูได้ทั้งหมด', 'id': 'Tonton semua'},
+  'adFree': {'zh': '免广告', 'en': 'Ad-free', 'vi': 'Không quảng cáo', 'th': 'ไร้โฆษณา', 'id': 'Tanpa iklan'},
+  'earlyAccess': {'zh': '抢先更新', 'en': 'Early access', 'vi': 'Xem sớm', 'th': 'ดูก่อนใคร', 'id': 'Akses awal'},
+  'offline': {'zh': '离线下载', 'en': 'Offline', 'vi': 'Tải ngoại tuyến', 'th': 'ออฟไลน์', 'id': 'Offline'},
+  'badge': {'zh': '专属标识', 'en': 'VIP badge', 'vi': 'Huy hiệu VIP', 'th': 'ตรา VIP', 'id': 'Lencana VIP'},
+  'choosePlan': {'zh': '选择套餐', 'en': 'Choose a plan', 'vi': 'Chọn gói', 'th': 'เลือกแพ็กเกจ', 'id': 'Pilih paket'},
+  'hot': {'zh': '热销', 'en': 'HOT', 'vi': 'HOT', 'th': 'ฮิต', 'id': 'HOT'},
+  'payMethod': {'zh': '支付方式', 'en': 'Payment method', 'vi': 'Thanh toán', 'th': 'วิธีชำระเงิน', 'id': 'Metode bayar'},
+  'noPay': {'zh': '当前套餐暂无可用支付方式', 'en': 'No payment method available for this plan', 'vi': 'Gói này chưa có phương thức thanh toán', 'th': 'แพ็กเกจนี้ยังไม่มีวิธีชำระเงิน', 'id': 'Belum ada metode bayar untuk paket ini'},
+  'total': {'zh': '合计', 'en': 'Total', 'vi': 'Tổng', 'th': 'รวม', 'id': 'Total'},
+  'yuan': {'zh': ' 元', 'en': '', 'vi': '', 'th': '', 'id': ''},
+  'processing': {'zh': '处理中…', 'en': 'Processing…', 'vi': 'Đang xử lý…', 'th': 'กำลังดำเนินการ…', 'id': 'Memproses…'},
+  'payNote': {'zh': '支付完成后将自动到账', 'en': 'Activates automatically after payment', 'vi': 'Tự kích hoạt sau khi thanh toán', 'th': 'เปิดใช้อัตโนมัติหลังชำระเงิน', 'id': 'Aktif otomatis setelah pembayaran'},
+  'vipAgree': {'zh': '开通前请阅读《会员服务协议》· 虚拟商品暂不支持退款', 'en': 'Read the VIP Terms before purchase · Virtual goods are non-refundable', 'vi': 'Đọc Điều khoản VIP trước khi mua · Hàng ảo không hoàn tiền', 'th': 'อ่านข้อตกลง VIP ก่อนซื้อ · สินค้าเสมือนไม่คืนเงิน', 'id': 'Baca Ketentuan VIP sebelum beli · Barang virtual tak dapat dikembalikan'},
+  'vipUntil2': {'zh': '会员有效期至 {d}', 'en': 'VIP valid until {d}', 'vi': 'VIP hiệu lực đến {d}', 'th': 'VIP ใช้ได้ถึง {d}', 'id': 'VIP berlaku hingga {d}'},
+  'noVipYet': {'zh': '尚未开通会员', 'en': 'Not a VIP yet', 'vi': 'Chưa là VIP', 'th': 'ยังไม่เป็น VIP', 'id': 'Belum VIP'},
+  'paySuccess': {'zh': '开通成功', 'en': 'Success!', 'vi': 'Thành công!', 'th': 'สำเร็จ!', 'id': 'Berhasil!'},
+  'orderFail': {'zh': '下单失败', 'en': 'Order failed', 'vi': 'Đặt hàng thất bại', 'th': 'สั่งซื้อไม่สำเร็จ', 'id': 'Pesanan gagal'},
+  'loginFirst': {'zh': '请先登录', 'en': 'Please log in first', 'vi': 'Vui lòng đăng nhập', 'th': 'กรุณาเข้าสู่ระบบ', 'id': 'Silakan masuk dulu'},
 };
 
 String t(String key) {
   final e = _dict[key];
   if (e == null) return key;
   return e[Http.lang] ?? e['zh'] ?? key;
+}
+
+// 带占位符的翻译:tp('epsAll', {'n': 12}) → 全12集 / 12 EP
+String tp(String key, Map<String, Object> vars) {
+  var s = t(key);
+  vars.forEach((k, v) => s = s.replaceAll('{$k}', '$v'));
+  return s;
 }

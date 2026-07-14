@@ -18,6 +18,7 @@ import 'pages/login.dart';
 import 'pages/me.dart';
 import 'pages/favorites.dart';
 import 'pages/history.dart';
+import 'i18n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,17 +79,18 @@ class MainShell extends StatelessWidget {
   final StatefulNavigationShell shell;
   const MainShell({super.key, required this.shell});
 
-  static const _tabs = [
-    ('首页', Icons.home_filled),
-    ('魔改', Icons.local_movies_outlined),
-    ('心愿榜', Icons.favorite),
-    ('专题', Icons.grid_view_rounded),
-    ('我的', Icons.person),
+  static List<(String, IconData)> get _tabs => [
+    (t('home'), Icons.home_filled),
+    (t('mod'), Icons.local_movies_outlined),
+    (t('wish'), Icons.favorite),
+    (t('topics'), Icons.grid_view_rounded),
+    (t('me'), Icons.person),
   ];
 
   @override
   Widget build(BuildContext context) {
     context.watch<ThemeController>(); // 主题切换时重建外壳/底栏,刷新 C.* 颜色
+    context.watch<AppState>(); // 语言切换时重建底栏文案
     return Scaffold(
       body: shell,
       bottomNavigationBar: _BottomBar(

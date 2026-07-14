@@ -4,6 +4,7 @@ import '../api/api.dart';
 import '../api/http.dart';
 import '../api/models.dart';
 import '../state.dart';
+import '../i18n.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
@@ -14,8 +15,8 @@ class TrendsPage extends StatefulWidget {
 }
 
 class _TrendsPageState extends State<TrendsPage> {
-  final _tabs = ['最热', '最新', '推荐'];
-  String _tab = '最热';
+  final _tabs = ['hottest', 'newest', 'forYou']; // i18n key
+  String _tab = 'hottest';
   List<Drama> _list = [];
   bool _loading = true;
   AppState? _app;
@@ -48,8 +49,8 @@ class _TrendsPageState extends State<TrendsPage> {
   }
 
   Future<List<Drama>> _fetch(String tab) async {
-    if (tab == '最新') return Api.latest();
-    if (tab == '推荐') return Api.recommended();
+    if (tab == 'newest') return Api.latest();
+    if (tab == 'forYou') return Api.recommended();
     final (r, _, _) = await Api.videos(perPage: 50);
     r.sort((a, b) => b.viewCount - a.viewCount);
     return r;
@@ -81,8 +82,9 @@ class _TrendsPageState extends State<TrendsPage> {
   @override
   Widget build(BuildContext context) {
     context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
+    context.watch<AppState>(); // 语言切换即重建文案
     return Scaffold(
-      appBar: AppBar(title: const Text('榜单'), centerTitle: false),
+      appBar: AppBar(title: Text(t('rank')), centerTitle: false),
       body: Column(children: [
         SizedBox(
           height: 46,
@@ -103,7 +105,7 @@ class _TrendsPageState extends State<TrendsPage> {
                     border: active ? Border.all(color: C.brand.withValues(alpha: .4)) : null,
                   ),
                   alignment: Alignment.center,
-                  child: Text(_tabs[i], style: TextStyle(color: active ? C.brand : C.ink2, fontWeight: active ? FontWeight.w500 : FontWeight.w400, fontSize: 13)),
+                  child: Text(t(_tabs[i]), style: TextStyle(color: active ? C.brand : C.ink2, fontWeight: active ? FontWeight.w500 : FontWeight.w400, fontSize: 13)),
                 ),
               );
             },

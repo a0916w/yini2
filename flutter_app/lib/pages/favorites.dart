@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../api/api.dart';
 import '../api/models.dart';
 import '../state.dart';
+import '../i18n.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
@@ -43,11 +44,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     final list = _list;
     return Scaffold(
-      appBar: AppBar(title: const Text('我的收藏')),
+      appBar: AppBar(title: Text(t('myFav'))),
       body: list == null
           ? const Center(child: CircularProgressIndicator(color: C.brand))
           : list.isEmpty
-              ? Center(child: Text('还没有收藏，去首页发现好剧吧', style: TextStyle(color: C.ink3)))
+              ? Center(child: Text(t('noFav'), style: TextStyle(color: C.ink3)))
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   itemCount: list.length,

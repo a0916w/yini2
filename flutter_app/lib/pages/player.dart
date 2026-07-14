@@ -6,6 +6,7 @@ import '../api/api.dart';
 import '../api/models.dart';
 import '../api/media.dart';
 import '../history.dart';
+import '../i18n.dart';
 import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
@@ -75,7 +76,7 @@ class _PlayerPageState extends State<PlayerPage> {
         _detail[i] = d;
       } catch (e) {
         debugPrint('player detail #${_feed[i].id} failed: $e');
-        _errs[i] = '加载失败,请检查网络';
+        _errs[i] = t('loadFailNet');
         if (mounted) setState(() {});
         return;
       }
@@ -96,7 +97,7 @@ class _PlayerPageState extends State<PlayerPage> {
       if (mounted) setState(() {});
     } catch (e) {
       debugPrint('player #${d.id} init failed: $e | ${c.value.errorDescription ?? ''}');
-      _errs[i] = '视频加载失败';
+      _errs[i] = t('videoFail');
       _ctrls.remove(i)?.dispose();
       if (mounted && !_dead) setState(() {});
     }
@@ -150,11 +151,11 @@ class _PlayerPageState extends State<PlayerPage> {
           child: Row(children: [
             IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20)),
             const Spacer(),
-            const Text('推荐', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+            Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
             const Spacer(),
             GestureDetector(
               onTap: () => setState(() => _danmaku = !_danmaku),
-              child: Text('弹幕${_danmaku ? '开' : '关'}', style: TextStyle(color: _danmaku ? Colors.white : Colors.white54, fontSize: 13, fontWeight: FontWeight.w400, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)])),
+              child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'), style: TextStyle(color: _danmaku ? Colors.white : Colors.white54, fontSize: 13, fontWeight: FontWeight.w400, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)])),
             ),
           ]),
         ),
@@ -228,14 +229,14 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
       builder: (c) => StatefulBuilder(builder: (c, setSheet) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
         child: SizedBox(height: MediaQuery.of(c).size.height * .6, child: Column(children: [
-          Padding(padding: const EdgeInsets.all(16), child: Row(children: [Text('讨论 ${_comments.length}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))])),
+          Padding(padding: const EdgeInsets.all(16), child: Row(children: [Text('${t('discuss')} ${_comments.length}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))])),
           Expanded(child: _comments.isEmpty
-              ? Center(child: Text('还没有评论，快来抢沙发吧', style: TextStyle(color: C.ink3)))
-              : ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: _comments.map((m) => ListTile(contentPadding: EdgeInsets.zero, leading: CircleAvatar(backgroundColor: C.surface2, child: const Text('我')), title: const Text('我'), subtitle: Text(m['t']!))).toList())),
+              ? Center(child: Text(t('noComment'), style: TextStyle(color: C.ink3)))
+              : ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: _comments.map((m) => ListTile(contentPadding: EdgeInsets.zero, leading: CircleAvatar(backgroundColor: C.surface2, child: Text(t('meLabel'))), title: Text(t('meLabel')), subtitle: Text(m['t']!))).toList())),
           Padding(padding: const EdgeInsets.all(12), child: Row(children: [
-            Expanded(child: TextField(controller: ctrl, decoration: InputDecoration(hintText: '说点什么…', filled: true, fillColor: C.surface2, isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none)))),
+            Expanded(child: TextField(controller: ctrl, decoration: InputDecoration(hintText: t('sayHint'), filled: true, fillColor: C.surface2, isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none)))),
             const SizedBox(width: 8),
-            FilledButton(style: FilledButton.styleFrom(backgroundColor: C.brand), onPressed: () { if (ctrl.text.trim().isNotEmpty) { setSheet(() => _comments.insert(0, {'t': ctrl.text.trim()})); ctrl.clear(); } }, child: const Text('发送')),
+            FilledButton(style: FilledButton.styleFrom(backgroundColor: C.brand), onPressed: () { if (ctrl.text.trim().isNotEmpty) { setSheet(() => _comments.insert(0, {'t': ctrl.text.trim()})); ctrl.clear(); } }, child: Text(t('send'))),
           ])),
         ])),
       )),
@@ -246,7 +247,7 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
     showModalBottomSheet(context: context, backgroundColor: C.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(18))),
       builder: (c) => SafeArea(child: Padding(padding: const EdgeInsets.all(16), child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [const Text('选集', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))]),
+        Row(children: [Text(t('episodes'), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))]),
         const SizedBox(height: 8),
         Wrap(spacing: 10, runSpacing: 10, children: [
           for (var e = 1; e <= widget.drama.eps; e++)
@@ -284,7 +285,7 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
                   OutlinedButton(
                     onPressed: widget.onRetry,
                     style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: const BorderSide(color: Colors.white54)),
-                    child: const Text('重试'),
+                    child: Text(t('retry')),
                   ),
                 ]))
               : const Center(child: CircularProgressIndicator(color: Colors.white54)),
@@ -301,16 +302,16 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
           Container(color: Colors.black54, alignment: Alignment.center, child: Column(mainAxisSize: MainAxisSize.min, children: [
             const Icon(Icons.lock_outline, color: Colors.white, size: 34),
             const SizedBox(height: 10),
-            Text(d.vipMessage ?? '本片为会员专享', style: const TextStyle(color: Colors.white, fontSize: 14)),
+            Text(d.vipMessage ?? t('vipOnlyMsg'), style: const TextStyle(color: Colors.white, fontSize: 14)),
             const SizedBox(height: 14),
-            FilledButton(style: FilledButton.styleFrom(backgroundColor: C.brand), onPressed: () => context.push('/vip'), child: const Text('开通会员观看')),
+            FilledButton(style: FilledButton.styleFrom(backgroundColor: C.brand), onPressed: () => context.push('/vip'), child: Text(t('vipWatch'))),
           ]))
         else if (ready && !c.value.isPlaying)
           const Center(child: Icon(Icons.play_arrow, color: Colors.white70, size: 70)),
 
         // 弹幕
         if (widget.danmaku && !_locked && ready && c.value.isPlaying)
-          const Positioned(top: 90, left: 16, child: Text('这段太上头了', style: TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black87)]))),
+          Positioned(top: 90, left: 16, child: Text(t('danmakuDemo'), style: const TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black87)]))),
 
         // 右栏
         Positioned(right: 10, bottom: 120, child: Column(children: [
@@ -318,21 +319,21 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
           const SizedBox(height: 20),
           _rail(Icons.favorite, '${(d.id % 90) + 1 + (_liked ? 1 : 0)}', color: _liked ? C.like : Colors.white, onTap: () => setState(() => _liked = !_liked)),
           _rail(Icons.mode_comment, '${_comments.length}', onTap: _openComments),
-          _rail(Icons.star, '收藏', color: _faved ? const Color(0xFFFFD233) : Colors.white, onTap: () async { final v = await context.read<AppState>().toggleFavorite(d.id); setState(() => _faved = v); }),
-          _rail(Icons.share, '分享'),
+          _rail(Icons.star, t('favorite'), color: _faved ? const Color(0xFFFFD233) : Colors.white, onTap: () async { final v = await context.read<AppState>().toggleFavorite(d.id); setState(() => _faved = v); }),
+          _rail(Icons.share, t('share')),
           // 音乐碟
           RotationTransition(turns: _disc, child: Container(width: 44, height: 44, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xFF333333), Colors.black], stops: [.35, 1])), alignment: Alignment.center, child: const Icon(Icons.music_note, color: Colors.white, size: 16))),
         ])),
 
         // 左下:作者 + 标题 + 选集 + 音乐
         Positioned(left: 14, right: 84, bottom: 44, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('@${d.genre.isEmpty ? "橙子" : d.genre}剧场', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+          Text('@${d.genre.isEmpty ? t('appName') : d.genre}${t('theater')}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
           const SizedBox(height: 8),
           Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 14, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
           const SizedBox(height: 8),
-          GestureDetector(onTap: _openEpisodes, child: Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3), decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(7)), child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.list, size: 13, color: Colors.white), SizedBox(width: 4), Text('选集', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400))]))),
+          GestureDetector(onTap: _openEpisodes, child: Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3), decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(7)), child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.list, size: 13, color: Colors.white), const SizedBox(width: 4), Text(t('episodes'), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400))]))),
           const SizedBox(height: 10),
-          Row(children: [const Icon(Icons.music_note, size: 14, color: Colors.white), const SizedBox(width: 6), Expanded(child: Text('原声 · ${d.title}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black54)])))]),
+          Row(children: [const Icon(Icons.music_note, size: 14, color: Colors.white), const SizedBox(width: 6), Expanded(child: Text('${t('origSound')} · ${d.title}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black54)])))]),
         ])),
 
         // 进度 + 时间

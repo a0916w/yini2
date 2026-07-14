@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../api/api.dart';
 import '../api/models.dart';
 import '../state.dart';
+import '../i18n.dart';
 import '../theme.dart';
 
 class VipPage extends StatefulWidget {
@@ -14,12 +15,12 @@ class VipPage extends StatefulWidget {
 }
 
 class _VipPageState extends State<VipPage> {
-  static const _rights = [
-    (Icons.movie_outlined, '全站免费看'),
-    (Icons.block, '免广告'),
-    (Icons.download_outlined, '离线下载'),
-    (Icons.bolt, '抢先更新'),
-    (Icons.diamond_outlined, '专属标识'),
+  static List<(IconData, String)> get _rights => [
+    (Icons.movie_outlined, t('freeWatch')),
+    (Icons.block, t('adFree')),
+    (Icons.download_outlined, t('offline')),
+    (Icons.bolt, t('earlyAccess')),
+    (Icons.diamond_outlined, t('badge')),
   ];
   List<Plan> _plans = [];
   List<PayChannel> _channels = [];
@@ -61,7 +62,7 @@ class _VipPageState extends State<VipPage> {
     final app = context.read<AppState>();
     final cur = _plans.where((p) => p.key == _plan).firstOrNull;
     if (cur == null || _ch == null) return;
-    if (!app.authed) { _toast('请先登录'); return; }
+    if (!app.authed) { _toast(t('loginFirst')); return; }
     setState(() => _busy = true);
     try {
       final r = await Api.createOrder(plan: cur.key, payTypeId: _ch!.payTypeId, gatewayId: _ch!.gatewayId);
@@ -70,9 +71,9 @@ class _VipPageState extends State<VipPage> {
       if (url != null && url.isNotEmpty) {
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
         if (orderNo != null) _startPoll(orderNo, app);
-        _toast('支付完成后将自动到账');
+        _toast(t('payNote'));
       } else {
-        _toast('下单失败');
+        _toast(t('orderFail'));
       }
     } catch (e) {
       _toast('$e');
@@ -84,15 +85,15 @@ class _VipPageState extends State<VipPage> {
   void _startPoll(String orderNo, AppState app) {
     _poll?.cancel();
     final started = DateTime.now();
-    _poll = Timer.periodic(const Duration(seconds: 3), (t) async {
-      if (DateTime.now().difference(started).inSeconds > 180) { t.cancel(); return; }
+    _poll = Timer.periodic(const Duration(seconds: 3), (tm) async {
+      if (DateTime.now().difference(started).inSeconds > 180) { tm.cancel(); return; }
       try {
         final orders = await Api.myOrders();
         final o = orders.cast<Map>().where((x) => x['order_no'] == orderNo).firstOrNull;
         if (o != null && '${o['status']}' == '1') {
-          t.cancel();
+          tm.cancel();
           await app.refreshMe();
-          if (mounted) _toast('开通成功');
+          if (mounted) _toast(t('paySuccess'));
         }
       } catch (_) {}
     });
@@ -105,20 +106,20 @@ class _VipPageState extends State<VipPage> {
     final app = context.watch<AppState>();
     final cur = _plans.where((p) => p.key == _plan).firstOrNull;
     return Scaffold(
-      appBar: AppBar(title: const Text('会员中心')),
+      appBar: AppBar(title: Text(t('vipCenter'))),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              Text('合计', style: TextStyle(color: C.ink3, fontSize: 12)),
+              Text(t('total'), style: TextStyle(color: C.ink3, fontSize: 12)),
               Text('${cur?.symbol ?? '¥'}${cur?.price ?? '--'}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
             ]),
             const Spacer(),
             ElevatedButton(
               onPressed: _busy || cur == null ? null : _buy,
               style: ElevatedButton.styleFrom(backgroundColor: C.brand, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
-              child: Text(_busy ? '处理中…' : '立即开通', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+              child: Text(_busy ? t('processing') : t('joinNow'), style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
             ),
           ]),
         ),
@@ -129,16 +130,16 @@ class _VipPageState extends State<VipPage> {
           decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF2B2118), Color(0xFF1F1812)]), borderRadius: BorderRadius.circular(16)),
           child: Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(app.authed ? app.displayName : '未登录', style: const TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600, fontSize: 17)),
+              Text(app.authed ? app.displayName : t('notLoggedIn'), style: const TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600, fontSize: 17)),
               const SizedBox(height: 4),
-              Text(app.isVip ? '会员有效期至 ${app.vipExpire}' : '尚未开通会员', style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
+              Text(app.isVip ? tp('vipUntil2', {'d': app.vipExpire ?? ''}) : t('noVipYet'), style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
             ])),
             const Icon(Icons.diamond_outlined, color: Color(0xFFF7D9B8), size: 28),
           ]),
         ),
         const SizedBox(height: 20),
         // 会员权益
-        const Text('会员权益', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(t('vipRights'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 14),
         Row(children: _rights.map((r) => Expanded(child: Column(children: [
           Container(width: 46, height: 46, decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), shape: BoxShape.circle), alignment: Alignment.center, child: Icon(r.$1, color: C.brand, size: 21)),
@@ -146,7 +147,7 @@ class _VipPageState extends State<VipPage> {
           Text(r.$2, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
         ]))).toList()),
         const SizedBox(height: 22),
-        const Text('选择套餐', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(t('choosePlan'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         Row(children: _plans.map((p) {
           final active = _plan == p.key;
@@ -162,12 +163,12 @@ class _VipPageState extends State<VipPage> {
                   border: Border.all(color: active ? C.brand : C.line, width: 1.5),
                 ),
                 child: Column(children: [
-                  if (p.hot) Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)), child: Text(p.tag.isEmpty ? '热销' : p.tag, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500))),
+                  if (p.hot) Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)), child: Text(p.tag.isEmpty ? t('hot') : p.tag, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500))),
                   Text(p.name, style: const TextStyle(fontWeight: FontWeight.w500)),
                   const SizedBox(height: 8),
                   Text.rich(TextSpan(children: [
                     TextSpan(text: '${p.price}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
-                    TextSpan(text: p.currency == 'sgd' ? ' SGD' : ' 元', style: const TextStyle(color: C.brand, fontSize: 12, fontWeight: FontWeight.w500)),
+                    TextSpan(text: p.currency == 'sgd' ? ' SGD' : t('yuan'), style: const TextStyle(color: C.brand, fontSize: 12, fontWeight: FontWeight.w500)),
                   ])),
                   if (p.origin > p.price) Text('${p.symbol}${p.origin}', style: TextStyle(color: C.ink3, fontSize: 11, decoration: TextDecoration.lineThrough)),
                 ]),
@@ -177,10 +178,10 @@ class _VipPageState extends State<VipPage> {
         }).toList()),
         if (cur?.sub.isNotEmpty ?? false) Padding(padding: const EdgeInsets.only(top: 10), child: Text(cur!.sub, style: TextStyle(color: C.ink3, fontSize: 12))),
         const SizedBox(height: 22),
-        const Text('支付方式', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(t('payMethod'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 10),
         if (_channels.isEmpty)
-          Text('当前套餐暂无可用支付方式', style: TextStyle(color: C.ink3, fontSize: 13))
+          Text(t('noPay'), style: TextStyle(color: C.ink3, fontSize: 13))
         else
           ..._channels.map((c) {
             final on = _ch?.payTypeId == c.payTypeId && _ch?.gatewayId == c.gatewayId;
@@ -193,7 +194,7 @@ class _VipPageState extends State<VipPage> {
             );
           }),
         const SizedBox(height: 12),
-        Center(child: Text('开通前请阅读《会员服务协议》· 虚拟商品暂不支持退款', style: TextStyle(color: C.ink3, fontSize: 11))),
+        Center(child: Text(t('vipAgree'), style: TextStyle(color: C.ink3, fontSize: 11))),
       ]),
     );
   }

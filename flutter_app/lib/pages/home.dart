@@ -129,6 +129,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
+    context.watch<AppState>(); // 语言切换即重建文案
     final tabs = [{'id': null, 'name': t('all')}, ..._cats.map((c) => {'id': c['id'], 'name': cleanName(c['name'] as String?)})];
     return Scaffold(
       body: SafeArea(
@@ -248,7 +249,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           _iconBtn(Icons.history, () => context.push('/history')),
-          _iconBtn(Icons.notifications_none, () => _toast(context, '暂无消息'), dot: true),
+          _iconBtn(Icons.notifications_none, () => _toast(context, t('noMsg')), dot: true),
           // 会员
           GestureDetector(
             onTap: () => context.push('/vip'),
@@ -256,7 +257,7 @@ class _HomePageState extends State<HomePage> {
               height: 30, padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: C.brand.withValues(alpha: .4))),
               alignment: Alignment.center,
-              child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.diamond_outlined, size: 13, color: C.brand), SizedBox(width: 3), Text('会员', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 12))]),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.diamond_outlined, size: 13, color: C.brand), const SizedBox(width: 3), Text(t('vip'), style: const TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 12))]),
             ),
           ),
         ]),

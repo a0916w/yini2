@@ -15,27 +15,27 @@ class MePage extends StatelessWidget {
     final vip = app.authed && app.isVip;
 
     final quick = [
-      (Icons.history, '观看记录', ''),
-      (Icons.favorite_border, '我的收藏', '${app.favorites.length}'),
-      (Icons.download_outlined, '下载', ''),
-      (Icons.receipt_long_outlined, '我的订单', ''),
+      (Icons.history, t('history'), '', '/history'),
+      (Icons.favorite_border, t('myFav'), '${app.favorites.length}', '/favorites'),
+      (Icons.download_outlined, t('download'), '', ''),
+      (Icons.receipt_long_outlined, t('myOrders'), '', ''),
     ];
     final services = [
-      (Icons.diamond_outlined, '会员中心', vip ? '已开通' : '未开通', () => context.push('/vip')),
-      (Icons.confirmation_num_outlined, '兑换码', '', () => _todo(context)),
-      (Icons.card_giftcard, '积分商城', '', () => _todo(context)),
-      (Icons.event_available_outlined, '任务中心', '', () => _todo(context)),
-      (Icons.auto_awesome, '魔改愿望榜', '', () => context.go('/wishes')),
-      (Icons.mail_outline, '站内消息', '', () => _todo(context)),
-      (Icons.campaign_outlined, '官方公告', '', () => _todo(context)),
-      (Icons.fact_check_outlined, '问卷调查', '', () => _todo(context)),
-      (Icons.chat_bubble_outline, '意见反馈', '', () => _todo(context)),
-      (Icons.headset_mic_outlined, '联系客服', '', () => _todo(context)),
-      (Icons.language, '语言', _langName(), () => _pickLang(context)),
+      (Icons.diamond_outlined, t('vipCenter'), vip ? t('activated') : t('notActivated'), () => context.push('/vip')),
+      (Icons.confirmation_num_outlined, t('redeem'), '', () => _todo(context)),
+      (Icons.card_giftcard, t('pointsMall'), '', () => _todo(context)),
+      (Icons.event_available_outlined, t('taskCenter'), '', () => _todo(context)),
+      (Icons.auto_awesome, t('wishBoard'), '', () => context.go('/wishes')),
+      (Icons.mail_outline, t('inbox'), '', () => _todo(context)),
+      (Icons.campaign_outlined, t('announce'), '', () => _todo(context)),
+      (Icons.fact_check_outlined, t('survey'), '', () => _todo(context)),
+      (Icons.chat_bubble_outline, t('feedback'), '', () => _todo(context)),
+      (Icons.headset_mic_outlined, t('support'), '', () => _todo(context)),
+      (Icons.language, t('language'), _langName(), () => _pickLang(context)),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('个人中心'), centerTitle: false),
+      appBar: AppBar(title: Text(t('profile')), centerTitle: false),
       body: ListView(padding: const EdgeInsets.all(14), children: [
         // 资料卡(橙渐变)
         GestureDetector(
@@ -52,9 +52,9 @@ class MePage extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(app.authed ? app.displayName : '未登录', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+                Text(app.authed ? app.displayName : t('notLoggedIn'), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 3),
-                Text(app.authed ? 'UID ${app.user?['id'] ?? ''}' : '点击登录 / 注册', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                Text(app.authed ? 'UID ${app.user?['id'] ?? ''}' : t('tapLogin'), style: const TextStyle(color: Colors.white70, fontSize: 12)),
               ])),
               if (vip)
                 Container(
@@ -74,10 +74,8 @@ class MePage extends StatelessWidget {
           decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
           child: Row(children: quick.map((q) => Expanded(child: GestureDetector(
             onTap: () {
-              if (q.$2 == '我的收藏') {
-                context.push('/favorites');
-              } else if (q.$2 == '观看记录') {
-                context.push('/history');
+              if (q.$4.isNotEmpty) {
+                context.push(q.$4);
               } else {
                 _todo(context);
               }
@@ -98,20 +96,20 @@ class MePage extends StatelessWidget {
             decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF2B2118), Color(0xFF1F1812)]), borderRadius: BorderRadius.circular(16)),
             child: Row(children: [
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Row(children: [Icon(Icons.diamond_outlined, size: 15, color: Color(0xFFF7D9B8)), SizedBox(width: 6), Text('开通会员', style: TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600))]),
+                Row(children: [const Icon(Icons.diamond_outlined, size: 15, color: Color(0xFFF7D9B8)), const SizedBox(width: 6), Text(t('joinVip'), style: const TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600))]),
                 const SizedBox(height: 3),
-                Text(vip ? '有效期至 ${app.vipExpire}' : '海量剧集免费看 · 免广告', style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
+                Text(vip ? tp('vipUntil', {'d': app.vipExpire ?? ''}) : t('vipPitch'), style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
               ])),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)),
-                child: Text(vip ? '立即续费' : '立即开通', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13)),
+                child: Text(vip ? t('renewNow') : t('joinNow'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13)),
               ),
             ]),
           ),
         ),
         const SizedBox(height: 18),
-        const Padding(padding: EdgeInsets.only(left: 2, bottom: 10), child: Text('我的服务', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+        Padding(padding: const EdgeInsets.only(left: 2, bottom: 10), child: Text(t('myServices'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
         Container(
           decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
           child: Column(children: [
@@ -145,7 +143,7 @@ class MePage extends StatelessWidget {
               activeThumbColor: C.brand,
               onChanged: (v) => context.read<ThemeController>().toggle(v),
               secondary: Container(width: 34, height: 34, decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(11)), child: Icon(Icons.dark_mode_outlined, size: 17, color: C.ink2)),
-              title: const Text('深色模式', style: TextStyle(fontSize: 15)),
+              title: Text(t('darkMode'), style: const TextStyle(fontSize: 15)),
             ),
           ),
         ),
@@ -174,7 +172,7 @@ class MePage extends StatelessWidget {
     return '中文';
   }
 
-  static void _todo(BuildContext c) => ScaffoldMessenger.of(c).showSnackBar(const SnackBar(content: Text('功能开发中'), duration: Duration(seconds: 1)));
+  static void _todo(BuildContext c) => ScaffoldMessenger.of(c).showSnackBar(SnackBar(content: Text(t('todo')), duration: const Duration(seconds: 1)));
 
   void _pickLang(BuildContext context) {
     showModalBottomSheet(context: context, builder: (c) => SafeArea(

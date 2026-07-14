@@ -4,6 +4,7 @@ import '../api/api.dart';
 import '../api/http.dart';
 import '../api/models.dart';
 import '../state.dart';
+import '../i18n.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
@@ -55,17 +56,18 @@ class _TopicsPageState extends State<TopicsPage> {
   @override
   Widget build(BuildContext context) {
     context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
+    context.watch<AppState>(); // 语言切换即重建文案
     final topics = _topics;
     return Scaffold(
-      appBar: AppBar(title: const Text('专题合集'), centerTitle: false),
+      appBar: AppBar(title: Text(t('topicColl')), centerTitle: false),
       body: topics == null
           ? const Center(child: CircularProgressIndicator(color: C.brand))
           : ListView.builder(
               padding: const EdgeInsets.all(14),
               itemCount: topics.length,
               itemBuilder: (c, i) {
-                final tp = topics[i];
-                final covers = (tp['covers'] as List).cast<Drama>();
+                final item = topics[i];
+                final covers = (item['covers'] as List).cast<Drama>();
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(14),
@@ -73,9 +75,9 @@ class _TopicsPageState extends State<TopicsPage> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
                       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text('${tp['name']}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                        Text('${item['name']}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                         const SizedBox(height: 2),
-                        Text('${tp['count']}部精选', style: TextStyle(color: C.ink3, fontSize: 12)),
+                        Text(tp('nPicked', {'n': '${item['count']}'}), style: TextStyle(color: C.ink3, fontSize: 12)),
                       ])),
                       Icon(Icons.chevron_right, color: C.ink3),
                     ]),

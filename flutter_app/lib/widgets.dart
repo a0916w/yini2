@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'api/media.dart';
 import 'api/models.dart';
+import 'i18n.dart';
 import 'theme.dart';
 
 // 首页 Banner 轮播(图片走鉴权 CDN 的 .txt base64 解析)
@@ -225,8 +226,8 @@ class DramaCard extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: .5),
                       borderRadius: BorderRadius.circular(7)),
-                  child: const Text('已完结',
-                      style: TextStyle(color: Colors.white, fontSize: 10)),
+                  child: Text(t('done'),
+                      style: const TextStyle(color: Colors.white, fontSize: 10)),
                 )),
             // 左下:▶ 全N集
             Positioned(
@@ -235,7 +236,7 @@ class DramaCard extends StatelessWidget {
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.play_arrow, size: 12, color: Colors.white),
                   const SizedBox(width: 2),
-                  Text('全${d.eps}集',
+                  Text(tp('epsAll', {'n': d.eps}),
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,

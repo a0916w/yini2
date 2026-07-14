@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../api/api.dart';
 import '../api/models.dart';
+import '../i18n.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
@@ -41,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
             textInputAction: TextInputAction.search,
             onSubmitted: (_) => _run(),
             decoration: InputDecoration(
-              hintText: '输入关键词',
+              hintText: t('typeKeyword'),
               filled: true,
               fillColor: C.surface2,
               contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
@@ -50,7 +51,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-        actions: [TextButton(onPressed: _run, child: const Text('搜索', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500)))],
+        actions: [TextButton(onPressed: _run, child: Text(t('search'), style: const TextStyle(color: C.brand, fontWeight: FontWeight.w500)))],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: C.brand))
@@ -60,7 +61,7 @@ class _SearchPageState extends State<SearchPage> {
                   ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Icon(Icons.search_off, size: 44, color: C.ink3),
                       const SizedBox(height: 12),
-                      Text('没有找到「${_ctrl.text.trim()}」相关的剧集', style: TextStyle(color: C.ink3)),
+                      Text(tp('noResult', {'q': _ctrl.text.trim()}), style: TextStyle(color: C.ink3)),
                     ]))
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -76,7 +77,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _hotList() => ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         children: [
-          const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Text('热搜榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+          Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Text(t('hotSearch'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
           for (var i = 0; i < _hot.length; i++)
             InkWell(
               onTap: () { _ctrl.text = _hot[i]; _run(); },

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../i18n.dart';
+import '../state.dart';
 import '../theme.dart';
 
 class WishesPage extends StatefulWidget {
@@ -29,23 +31,24 @@ class _WishesPageState extends State<WishesPage> {
   @override
   Widget build(BuildContext context) {
     context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
+    context.watch<AppState>(); // 语言切换即重建文案
     return Scaffold(
-      appBar: AppBar(title: const Text('魔改愿望榜'), centerTitle: false),
+      appBar: AppBar(title: Text(t('wishBoard')), centerTitle: false),
       body: ListView(padding: const EdgeInsets.all(14), children: [
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), borderRadius: BorderRadius.circular(14), border: Border.all(color: C.brand.withValues(alpha: .35))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Row(children: [Icon(Icons.auto_awesome, color: C.brand, size: 17), SizedBox(width: 6), Text('你想看的改编，由你决定', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15))]),
+            Row(children: [const Icon(Icons.auto_awesome, color: C.brand, size: 17), const SizedBox(width: 6), Text(t('wishSlogan'), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15))]),
             const SizedBox(height: 6),
-            Text('为心仪的改编方向投票，人气最高的将进入制作评估。', style: TextStyle(color: C.ink3, fontSize: 12)),
+            Text(t('wishDesc'), style: TextStyle(color: C.ink3, fontSize: 12)),
           ]),
         ),
         const SizedBox(height: 16),
         Row(children: [
-          const Text('心愿榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          Text(t('wish'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
           const Spacer(),
-          Text('累计票数排序', style: TextStyle(color: C.ink3, fontSize: 12)),
+          Text(t('byVotes'), style: TextStyle(color: C.ink3, fontSize: 12)),
         ]),
         ...List.generate(_wishes.length, (i) {
           final w = _wishes[i];
@@ -58,12 +61,12 @@ class _WishesPageState extends State<WishesPage> {
                 const SizedBox(height: 3),
                 Text(w['dir'] as String, style: TextStyle(color: C.ink3, fontSize: 12)),
                 const SizedBox(height: 3),
-                Text('🔥 ${w['votes']} 票', style: TextStyle(color: C.ink3, fontSize: 12)),
+                Text(tp('nVotes', {'n': '${w['votes']}'}), style: TextStyle(color: C.ink3, fontSize: 12)),
               ])),
               OutlinedButton(
                 onPressed: (w['mine'] as bool) ? null : () => _vote(i),
                 style: OutlinedButton.styleFrom(foregroundColor: C.brand, side: BorderSide(color: C.brand.withValues(alpha: .5)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
-                child: Text((w['mine'] as bool) ? '已投' : '投票'),
+                child: Text((w['mine'] as bool) ? t('voted') : t('vote')),
               ),
             ]),
           );
@@ -72,9 +75,9 @@ class _WishesPageState extends State<WishesPage> {
         SizedBox(
           height: 48,
           child: ElevatedButton.icon(
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('提名功能开发中'), duration: Duration(seconds: 1))),
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('nominateTodo')), duration: const Duration(seconds: 1))),
             icon: const Icon(Icons.add),
-            label: const Text('我要提名'),
+            label: Text(t('nominate')),
             style: ElevatedButton.styleFrom(backgroundColor: C.brand, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
           ),
         ),

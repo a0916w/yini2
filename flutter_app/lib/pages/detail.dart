@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../api/api.dart';
 import '../api/models.dart';
 import '../state.dart';
+import '../i18n.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
@@ -53,16 +54,16 @@ class _DetailPageState extends State<DetailPage> {
                       Row(children: [Icon(Icons.play_arrow, size: 15, color: C.ink2), const SizedBox(width: 2), Text(d.plays, style: TextStyle(color: C.ink2, fontSize: 14))]),
                       const SizedBox(height: 8),
                       Row(children: [
-                        Text('全 ${d.eps} 集 · 已完结', style: TextStyle(color: C.ink2, fontSize: 13)),
+                        Text(tp('epsDone', {'n': d.eps}), style: TextStyle(color: C.ink2, fontSize: 13)),
                         if (d.genre.isNotEmpty) ...[const SizedBox(width: 8), Text(d.genre, style: const TextStyle(color: Color(0xFF3B76D6), fontSize: 13))],
                       ]),
                       const SizedBox(height: 8),
                       d.free
                           ? Row(children: [
                               Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1), decoration: BoxDecoration(color: const Color(0xFF3B76D6), borderRadius: BorderRadius.circular(4)), child: const Text('FREE', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w600))),
-                              const SizedBox(width: 6), Text('全集免费', style: TextStyle(color: C.ink2, fontSize: 13)),
+                              const SizedBox(width: 6), Text(t('freeAll'), style: TextStyle(color: C.ink2, fontSize: 13)),
                             ])
-                          : const Row(children: [Icon(Icons.lock_outline, size: 13, color: C.brand), SizedBox(width: 5), Text('VIP 专享', style: TextStyle(color: C.brand, fontSize: 13, fontWeight: FontWeight.w400))]),
+                          : Row(children: [const Icon(Icons.lock_outline, size: 13, color: C.brand), const SizedBox(width: 5), Text(t('vipOnly'), style: const TextStyle(color: C.brand, fontSize: 13, fontWeight: FontWeight.w400))]),
                     ])),
                   ]),
                   // 简介(按钮之上)
@@ -73,18 +74,18 @@ class _DetailPageState extends State<DetailPage> {
                   // 三按钮:立即观看 / 收藏 / 评论
                   const SizedBox(height: 16),
                   Row(children: [
-                    Expanded(flex: 3, child: _btn(Icons.play_arrow, '立即观看', filled: true, onTap: () => context.push('/watch/${d.id}'))),
+                    Expanded(flex: 3, child: _btn(Icons.play_arrow, t('watchNow'), filled: true, onTap: () => context.push('/watch/${d.id}'))),
                     const SizedBox(width: 12),
-                    Expanded(flex: 2, child: _btn(_faved ? Icons.check : Icons.favorite_border, _faved ? '已收藏' : '收藏', active: _faved, onTap: () async {
+                    Expanded(flex: 2, child: _btn(_faved ? Icons.check : Icons.favorite_border, _faved ? t('faved') : t('favorite'), active: _faved, onTap: () async {
                       final v = await context.read<AppState>().toggleFavorite(d.id);
                       setState(() => _faved = v);
                     })),
                     const SizedBox(width: 12),
-                    Expanded(flex: 2, child: _btn(Icons.mode_comment_outlined, '评论', onTap: () => context.push('/watch/${d.id}'))),
+                    Expanded(flex: 2, child: _btn(Icons.mode_comment_outlined, t('comments'), onTap: () => context.push('/watch/${d.id}'))),
                   ]),
                   // 正片
                   const SizedBox(height: 24),
-                  _sectionTitle('正片'),
+                  _sectionTitle(t('feature')),
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () => context.push('/watch/${d.id}'),
@@ -94,19 +95,19 @@ class _DetailPageState extends State<DetailPage> {
                       child: Row(children: [
                         const Icon(Icons.play_circle_fill, color: C.brand, size: 20),
                         const SizedBox(width: 8),
-                        Text('正片 · $_mins 分钟', style: const TextStyle(fontWeight: FontWeight.w400)),
+                        Text(tp('featureMins', {'n': _mins}), style: const TextStyle(fontWeight: FontWeight.w400)),
                         const Spacer(),
-                        const Text('播放 ›', style: TextStyle(color: C.brand, fontWeight: FontWeight.w400)),
+                        Text(t('play'), style: const TextStyle(color: C.brand, fontWeight: FontWeight.w400)),
                       ]),
                     ),
                   ),
                   // 评论
                   const SizedBox(height: 24),
-                  _sectionTitle('评论'),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 30), child: Center(child: Text('还没有评论，去播放页抢沙发吧', style: TextStyle(color: C.ink3)))),
+                  _sectionTitle(t('comments')),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 30), child: Center(child: Text(t('noCommentGo'), style: TextStyle(color: C.ink3)))),
                   // 猜你喜欢
                   if (_related.isNotEmpty) ...[
-                    _sectionTitle('猜你喜欢'),
+                    _sectionTitle(t('guessLike')),
                     const SizedBox(height: 12),
                     GridView.count(
                       crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
@@ -129,7 +130,7 @@ class _DetailPageState extends State<DetailPage> {
             child: Container(
               height: 36, padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(999)),
-              child: Row(children: [Icon(Icons.search, size: 15, color: C.ink3), const SizedBox(width: 7), Text('搜索', style: TextStyle(color: C.ink3, fontSize: 13))]),
+              child: Row(children: [Icon(Icons.search, size: 15, color: C.ink3), const SizedBox(width: 7), Text(t('search'), style: TextStyle(color: C.ink3, fontSize: 13))]),
             ),
           )),
           const SizedBox(width: 10),
@@ -139,7 +140,7 @@ class _DetailPageState extends State<DetailPage> {
               height: 30, padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: C.brand.withValues(alpha: .4))),
               alignment: Alignment.center,
-              child: const Text('我的', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 13)),
+              child: Text(t('me'), style: const TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 13)),
             ),
           ),
         ]),
