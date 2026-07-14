@@ -19,12 +19,17 @@ class _HomePageState extends State<HomePage> {
   final List<Drama> _list = [];
   int _page = 1, _lastPage = 1;
   bool _loading = false;
+  String _marquee = '';
 
   @override
   void initState() {
     super.initState();
     Api.categories().then((c) {
       if (mounted) setState(() => _cats = c.cast<Map>());
+    }).catchError((_) {});
+    Api.marquees().then((m) {
+      final txt = m.map((e) => '${(e as Map)['content']}').where((s) => s.isNotEmpty).join('　　');
+      if (mounted && txt.isNotEmpty) setState(() => _marquee = txt);
     }).catchError((_) {});
     _load(reset: true);
   }
@@ -57,6 +62,17 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Column(children: [
           _header(context),
+          if (_marquee.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), borderRadius: BorderRadius.circular(999)),
+              child: Row(children: [
+                const Icon(Icons.campaign_outlined, size: 15, color: C.brand),
+                const SizedBox(width: 8),
+                Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: C.ink2, fontSize: 12))),
+              ]),
+            ),
           SizedBox(
             height: 44,
             child: ListView.separated(
@@ -68,13 +84,24 @@ class _HomePageState extends State<HomePage> {
                 final active = _catId == tabs[i]['id'];
                 return GestureDetector(
                   onTap: () => _pickCat(tabs[i]['id'] as int?),
-                  child: Center(
-                    child: Text('${tabs[i]['name']}',
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text('${tabs[i]['name']}',
                         style: TextStyle(fontSize: active ? 17 : 15, fontWeight: active ? FontWeight.w800 : FontWeight.w500, color: active ? C.ink : C.ink3)),
-                  ),
+                    const SizedBox(height: 4),
+                    Container(width: 18, height: 3, decoration: BoxDecoration(gradient: active ? C.brandGrad : null, borderRadius: BorderRadius.circular(3))),
+                  ]),
                 );
               },
             ),
+          ),
+          // 区块标题(当前分类)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
+            child: Row(children: [
+              Container(width: 4, height: 15, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(3))),
+              const SizedBox(width: 7),
+              Text('${tabs.firstWhere((e) => e['id'] == _catId, orElse: () => tabs[0])['name']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+            ]),
           ),
           Expanded(
             child: _list.isEmpty && _loading

@@ -14,6 +14,13 @@ class VipPage extends StatefulWidget {
 }
 
 class _VipPageState extends State<VipPage> {
+  static const _rights = [
+    (Icons.movie_outlined, '全站免费看'),
+    (Icons.block, '免广告'),
+    (Icons.download_outlined, '离线下载'),
+    (Icons.bolt, '抢先更新'),
+    (Icons.diamond_outlined, '专属标识'),
+  ];
   List<Plan> _plans = [];
   List<PayChannel> _channels = [];
   String? _plan;
@@ -130,6 +137,15 @@ class _VipPageState extends State<VipPage> {
           ]),
         ),
         const SizedBox(height: 20),
+        // 会员权益
+        const Text('会员权益', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 14),
+        Row(children: _rights.map((r) => Expanded(child: Column(children: [
+          Container(width: 46, height: 46, decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), shape: BoxShape.circle), alignment: Alignment.center, child: Icon(r.$1, color: C.brand, size: 21)),
+          const SizedBox(height: 7),
+          Text(r.$2, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+        ]))).toList()),
+        const SizedBox(height: 22),
         const Text('选择套餐', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
         const SizedBox(height: 12),
         Row(children: _plans.map((p) {
@@ -159,6 +175,7 @@ class _VipPageState extends State<VipPage> {
             ),
           ));
         }).toList()),
+        if (cur?.sub.isNotEmpty ?? false) Padding(padding: const EdgeInsets.only(top: 10), child: Text(cur!.sub, style: const TextStyle(color: C.ink3, fontSize: 12))),
         const SizedBox(height: 22),
         const Text('支付方式', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),

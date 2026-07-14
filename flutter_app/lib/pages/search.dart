@@ -55,9 +55,13 @@ class _SearchPageState extends State<SearchPage> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: C.brand))
           : !_done
-              ? const SizedBox()
+              ? _hotList()
               : _results.isEmpty
-                  ? const Center(child: Text('没有找到相关的剧集', style: TextStyle(color: C.ink3)))
+                  ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.search_off, size: 44, color: C.ink3),
+                      const SizedBox(height: 12),
+                      Text('没有找到「${_ctrl.text.trim()}」相关的剧集', style: const TextStyle(color: C.ink3)),
+                    ]))
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       itemCount: _results.length,
@@ -66,4 +70,25 @@ class _SearchPageState extends State<SearchPage> {
                     ),
     );
   }
+
+  static const _hot = ['重返都市当女王', '闪婚老公竟是首富', '规则怪谈', '一胎三宝', '龙帝归来', '穿书恶毒女配', '神医赘婿', '末世囤货', '大小姐贴身高手', '万渣朝凰'];
+
+  Widget _hotList() => ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        children: [
+          const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Text('热搜榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+          for (var i = 0; i < _hot.length; i++)
+            InkWell(
+              onTap: () { _ctrl.text = _hot[i]; _run(); },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                child: Row(children: [
+                  SizedBox(width: 28, child: Text('${i + 1}', textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w900, color: i < 3 ? C.brand : C.ink3))),
+                  const SizedBox(width: 8),
+                  Text(_hot[i], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                ]),
+              ),
+            ),
+        ],
+      );
 }

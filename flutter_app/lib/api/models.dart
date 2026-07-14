@@ -43,6 +43,7 @@ class Drama {
   final bool canPlayFull;
   final int trialSeconds;
   final bool isFavorited;
+  final String? vipMessage;
 
   Drama({
     required this.id,
@@ -59,6 +60,7 @@ class Drama {
     this.canPlayFull = false,
     this.trialSeconds = 0,
     this.isFavorited = false,
+    this.vipMessage,
   });
 
   String get plays => fmtPlays(viewCount);

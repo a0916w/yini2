@@ -33,12 +33,18 @@ class _WishesPageState extends State<WishesPage> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), borderRadius: BorderRadius.circular(14), border: Border.all(color: C.brand.withValues(alpha: .35))),
-          child: const Row(children: [
-            Icon(Icons.auto_awesome, color: C.brand, size: 18), SizedBox(width: 8),
-            Expanded(child: Text('你想看的改编，由你决定 · 为心仪方向投票', style: TextStyle(fontWeight: FontWeight.w700))),
+          child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [Icon(Icons.auto_awesome, color: C.brand, size: 17), SizedBox(width: 6), Text('你想看的改编，由你决定', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15))]),
+            SizedBox(height: 6),
+            Text('为心仪的改编方向投票，人气最高的将进入制作评估。', style: TextStyle(color: C.ink3, fontSize: 12)),
           ]),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
+        const Row(children: [
+          Text('心愿榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          Spacer(),
+          Text('累计票数排序', style: TextStyle(color: C.ink3, fontSize: 12)),
+        ]),
         ...List.generate(_wishes.length, (i) {
           final w = _wishes[i];
           return Padding(
@@ -60,6 +66,16 @@ class _WishesPageState extends State<WishesPage> {
             ]),
           );
         }),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 48,
+          child: ElevatedButton.icon(
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('提名功能开发中'), duration: Duration(seconds: 1))),
+            icon: const Icon(Icons.add),
+            label: const Text('我要提名'),
+            style: ElevatedButton.styleFrom(backgroundColor: C.brand, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+          ),
+        ),
       ]),
     );
   }
