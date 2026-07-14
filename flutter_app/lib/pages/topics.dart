@@ -7,6 +7,7 @@ import '../api/models.dart';
 import '../state.dart';
 import '../i18n.dart';
 import '../theme.dart';
+import '../widgets.dart';
 
 class TopicsPage extends StatefulWidget {
   const TopicsPage({super.key});
@@ -62,7 +63,6 @@ class _TopicsPageState extends State<TopicsPage> {
     [Color(0xFF063A42), Color(0xFF00ACC1)],
     [Color(0xFF702800), Color(0xFFFF6D00)],
   ];
-  static const _chips = ['chip1', 'chip2', 'chip3', 'chip4'];
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class _TopicsPageState extends State<TopicsPage> {
     );
   }
 
-  // 深色渐变大横幅:角标 chip + 大标题 + 部数/热度 + 去看看
+  // 深色渐变大横幅:左侧标题/热度/去看看,右侧斜叠三张封面
   Widget _card(Map item, int i) {
     final covers = (item['covers'] as List).cast<Drama>();
     final g = _grads[i % _grads.length];
@@ -108,7 +108,7 @@ class _TopicsPageState extends State<TopicsPage> {
     return GestureDetector(
       onTap: () => context.push('/topic/${item['id']}?name=${Uri.encodeComponent('${item['name']}')}'),
       child: Container(
-        height: 148,
+        height: 136,
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g),
@@ -117,29 +117,59 @@ class _TopicsPageState extends State<TopicsPage> {
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(children: [
-          // 右侧大圆装饰(两枚,半透明白)
+          // 大圆装饰(半透明白)
           Positioned(right: -50, top: -70, child: Container(width: 200, height: 200, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .07)))),
           Positioned(right: 30, bottom: -90, child: Container(width: 170, height: 170, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .06)))),
           Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // 角标 chip
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: Colors.black.withValues(alpha: .28), borderRadius: BorderRadius.circular(8)),
-                child: Text(t(_chips[i % _chips.length]), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500)),
+            padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
+            child: Row(children: [
+              // 左:标题 / 热度 / 去看看
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w800, letterSpacing: .5,
+                          shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1))])),
+                  const SizedBox(height: 7),
+                  Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Colors.white.withValues(alpha: .85), fontSize: 12.5)),
+                  const SizedBox(height: 13),
+                  // 去看看:玻璃感胶囊
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .2),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: Colors.white.withValues(alpha: .35)),
+                    ),
+                    child: Text(t('goSee'), style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w600)),
+                  ),
+                ]),
               ),
-              const SizedBox(height: 10),
-              // 大标题
-              Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w800, letterSpacing: .5)),
-              const Spacer(),
-              // 底行:部数·热度 + 去看看
-              Row(children: [
-                Expanded(child: Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white.withValues(alpha: .85), fontSize: 13))),
-                Text(t('goSee'), style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600)),
-              ]),
+              // 右:斜叠三张封面(海报堆)
+              if (covers.isNotEmpty)
+                SizedBox(
+                  width: 128,
+                  height: double.infinity,
+                  child: Stack(alignment: Alignment.centerRight, clipBehavior: Clip.none, children: [
+                    for (var k = 0; k < covers.length; k++)
+                      Positioned(
+                        right: (covers.length - 1 - k) * 34.0,
+                        child: Transform.rotate(
+                          angle: (k - (covers.length - 1)) * .09, // 向下张开
+                          child: Container(
+                            width: 62, height: 84,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.white.withValues(alpha: .9), width: 1.6),
+                              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .3), blurRadius: 10, offset: const Offset(0, 4))],
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Cover(covers[k]),
+                          ),
+                        ),
+                      ),
+                  ]),
+                ),
             ]),
           ),
         ]),

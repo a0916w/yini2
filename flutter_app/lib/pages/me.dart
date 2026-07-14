@@ -17,20 +17,10 @@ class MePage extends StatelessWidget {
     final quick = [
       (Icons.history, t('history'), '', '/history'),
       (Icons.favorite_border, t('myFav'), '${app.favorites.length}', '/favorites'),
-      (Icons.download_outlined, t('download'), '', ''),
-      (Icons.receipt_long_outlined, t('myOrders'), '', ''),
     ];
     final services = [
       (Icons.diamond_outlined, t('vipCenter'), vip ? t('activated') : t('notActivated'), () => context.push('/vip')),
-      (Icons.confirmation_num_outlined, t('redeem'), '', () => _todo(context)),
-      (Icons.card_giftcard, t('pointsMall'), '', () => _todo(context)),
-      (Icons.event_available_outlined, t('taskCenter'), '', () => _todo(context)),
       (Icons.auto_awesome, t('wishBoard'), '', () => context.push('/wishes')),
-      (Icons.mail_outline, t('inbox'), '', () => _todo(context)),
-      (Icons.campaign_outlined, t('announce'), '', () => _todo(context)),
-      (Icons.fact_check_outlined, t('survey'), '', () => _todo(context)),
-      (Icons.chat_bubble_outline, t('feedback'), '', () => _todo(context)),
-      (Icons.headset_mic_outlined, t('support'), '', () => _todo(context)),
       (Icons.language, t('language'), _langName(), () => _pickLang(context)),
     ];
 
@@ -73,13 +63,7 @@ class MePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
           child: Row(children: quick.map((q) => Expanded(child: GestureDetector(
-            onTap: () {
-              if (q.$4.isNotEmpty) {
-                context.push(q.$4);
-              } else {
-                _todo(context);
-              }
-            },
+            onTap: () => context.push(q.$4),
             child: Column(children: [
               Icon(q.$1, size: 22, color: C.ink2),
               const SizedBox(height: 6),
@@ -171,8 +155,6 @@ class MePage extends StatelessWidget {
     }
     return '中文';
   }
-
-  static void _todo(BuildContext c) => ScaffoldMessenger.of(c).showSnackBar(SnackBar(content: Text(t('todo')), duration: const Duration(seconds: 1)));
 
   void _pickLang(BuildContext context) {
     showModalBottomSheet(context: context, builder: (c) => SafeArea(
