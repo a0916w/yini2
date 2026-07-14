@@ -11,6 +11,7 @@ const _dict = <String, Map<String, String>>{
   'home': {'zh': '首页', 'en': 'Home', 'vi': 'Trang chủ', 'th': 'หน้าแรก', 'id': 'Beranda'},
   'mod': {'zh': '魔改', 'en': 'Remix', 'vi': 'Biến tấu', 'th': 'รีมิกซ์', 'id': 'Remix'},
   'cinema': {'zh': '剧场', 'en': 'Theater', 'vi': 'Rạp phim', 'th': 'โรงละคร', 'id': 'Teater'},
+  'cinemaSub': {'zh': '海量短剧 · 分类畅览', 'en': 'All dramas · browse by category', 'vi': 'Kho phim · duyệt theo thể loại', 'th': 'ละครมากมาย · เลือกดูตามหมวด', 'id': 'Semua drama · jelajah per kategori'},
   'wish': {'zh': '心愿榜', 'en': 'Wishlist', 'vi': 'Điều ước', 'th': 'คำขอ', 'id': 'Harapan'},
   'topics': {'zh': '专题', 'en': 'Topics', 'vi': 'Chủ đề', 'th': 'หัวข้อ', 'id': 'Topik'},
   'rank': {'zh': '榜单', 'en': 'Charts', 'vi': 'BXH', 'th': 'ชาร์ต', 'id': 'Tangga'},

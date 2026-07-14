@@ -162,23 +162,31 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      // 分类胶囊(与全站胶囊语言一致:选中橙渐变填充)
       SizedBox(
-        height: 44,
+        height: 46,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           itemCount: tabs.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 18),
+          separatorBuilder: (_, __) => const SizedBox(width: 9),
           itemBuilder: (c, i) {
             final active = _catId == tabs[i]['id'];
             return GestureDetector(
               onTap: () => _pickCat(tabs[i]['id'] as int?),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('${tabs[i]['name']}',
-                    style: TextStyle(fontSize: active ? 17 : 15, fontWeight: active ? FontWeight.w600 : FontWeight.w400, color: active ? C.ink : C.ink3)),
-                const SizedBox(height: 4),
-                Container(width: 18, height: 3, decoration: BoxDecoration(gradient: active ? C.brandGrad : null, borderRadius: BorderRadius.circular(3))),
-              ]),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 160),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  gradient: active ? C.brandGrad : null,
+                  color: active ? null : C.surface2,
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: active ? [BoxShadow(color: C.brand.withValues(alpha: .3), blurRadius: 10, offset: const Offset(0, 3))] : null,
+                ),
+                child: Text('${tabs[i]['name']}',
+                    style: TextStyle(fontSize: 13, fontWeight: active ? FontWeight.w600 : FontWeight.w400, color: active ? Colors.white : C.ink2)),
+              ),
             );
           },
         ),
@@ -227,53 +235,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // 统一设计语言头部:大标题 + 副题 + 右侧圆形操作钮(与榜单/专题一致)
   Widget _header(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(12, 8, 8, 10),
+        padding: const EdgeInsets.fromLTRB(20, 14, 16, 10),
         child: Row(children: [
-          Container(
-            width: 34, height: 34,
-            decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(10)),
-            alignment: Alignment.center,
-            child: const Text('橙', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 17)),
-          ),
-          const SizedBox(width: 8),
           Expanded(
-            child: GestureDetector(
-              onTap: () => context.push('/search'),
-              child: Container(
-                height: 36,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(999)),
-                child: Row(children: [
-                  Icon(Icons.search, size: 15, color: C.ink3),
-                  const SizedBox(width: 6),
-                  Expanded(child: Text(t('searchPh'), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink3, fontSize: 12))),
-                ]),
-              ),
-            ),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(t('cinema'), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              Text(t('cinemaSub'), style: TextStyle(color: C.ink3, fontSize: 12.5)),
+            ]),
           ),
-          _iconBtn(Icons.history, () => context.push('/history')),
-          // 会员
-          GestureDetector(
-            onTap: () => context.push('/vip'),
-            child: Container(
-              height: 30, padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: C.brand.withValues(alpha: .4))),
-              alignment: Alignment.center,
-              child: Row(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.diamond_outlined, size: 13, color: C.brand), const SizedBox(width: 3), Text(t('vip'), style: const TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 12))]),
-            ),
-          ),
+          _circleBtn(Icons.search, () => context.push('/search')),
+          const SizedBox(width: 10),
+          _circleBtn(Icons.history, () => context.push('/history')),
         ]),
       );
 
-  Widget _iconBtn(IconData icon, VoidCallback onTap, {bool dot = false}) => GestureDetector(
+  Widget _circleBtn(IconData icon, VoidCallback onTap) => GestureDetector(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Stack(clipBehavior: Clip.none, children: [
-            Icon(icon, size: 21, color: C.ink2),
-            if (dot) Positioned(right: -1, top: -1, child: Container(width: 7, height: 7, decoration: const BoxDecoration(color: C.brand, shape: BoxShape.circle))),
-          ]),
+        child: Container(
+          width: 38, height: 38,
+          decoration: BoxDecoration(color: C.surface2, shape: BoxShape.circle),
+          child: Icon(icon, size: 19, color: C.ink2),
         ),
       );
 }

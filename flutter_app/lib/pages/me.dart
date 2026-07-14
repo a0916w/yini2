@@ -24,8 +24,12 @@ class MePage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(t('profile')), centerTitle: false),
-      body: ListView(padding: const EdgeInsets.all(14), children: [
+      body: SafeArea(child: ListView(padding: const EdgeInsets.fromLTRB(14, 0, 14, 14), children: [
+        // 统一设计语言头部:大标题(与剧场/榜单/专题一致)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(6, 14, 6, 14),
+          child: Text(t('profile'), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+        ),
         // 资料卡(橙渐变)
         GestureDetector(
           onTap: () { if (!app.authed) context.push('/login'); },
@@ -144,7 +148,7 @@ class MePage extends StatelessWidget {
             child: Text(t('login')),
           ),
         const SizedBox(height: 20),
-      ]),
+      ])),
     );
   }
 
