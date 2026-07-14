@@ -9,6 +9,7 @@ import 'theme.dart';
 import 'pages/home.dart';
 import 'pages/search.dart';
 import 'pages/trends.dart';
+import 'pages/theater.dart';
 import 'pages/topics.dart';
 import 'pages/wishes.dart';
 import 'pages/detail.dart';
@@ -45,12 +46,13 @@ final _router = GoRouter(
       builder: (c, s, shell) => MainShell(shell: shell),
       branches: [
         StatefulShellBranch(routes: [GoRoute(path: '/', builder: (c, s) => const HomePage())]),
+        StatefulShellBranch(routes: [GoRoute(path: '/theater', builder: (c, s) => const TheaterPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/trends', builder: (c, s) => const TrendsPage())]),
-        StatefulShellBranch(routes: [GoRoute(path: '/wishes', builder: (c, s) => const WishesPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/topics', builder: (c, s) => const TopicsPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/me', builder: (c, s) => const MePage())]),
       ],
     ),
+    GoRoute(path: '/wishes', builder: (c, s) => const WishesPage()),
     GoRoute(path: '/search', builder: (c, s) => const SearchPage()),
     GoRoute(path: '/drama/:id', builder: (c, s) => DetailPage(int.parse(s.pathParameters['id']!))),
     GoRoute(path: '/watch/:id', builder: (c, s) => PlayerPage(int.parse(s.pathParameters['id']!))),
@@ -81,8 +83,8 @@ class MainShell extends StatelessWidget {
 
   static List<(String, IconData)> get _tabs => [
     (t('home'), Icons.home_filled),
-    (t('mod'), Icons.local_movies_outlined),
-    (t('wish'), Icons.favorite),
+    (t('cinema'), Icons.local_movies_outlined),
+    (t('rank'), Icons.emoji_events),
     (t('topics'), Icons.grid_view_rounded),
     (t('me'), Icons.person),
   ];
@@ -91,6 +93,7 @@ class MainShell extends StatelessWidget {
   Widget build(BuildContext context) {
     context.watch<ThemeController>(); // 主题切换时重建外壳/底栏,刷新 C.* 颜色
     context.watch<AppState>(); // 语言切换时重建底栏文案
+    activeTab.value = shell.currentIndex; // 剧场据此在切走时暂停播放
     return Scaffold(
       body: shell,
       bottomNavigationBar: _BottomBar(
@@ -125,8 +128,8 @@ class _BottomBar extends StatelessWidget {
     final active = i == current;
     if (i == 2) {
       return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Transform.translate(offset: const Offset(0, -2), child: const Icon(Icons.favorite, color: C.like, size: 30)),
-        Text(t.$1, style: TextStyle(fontSize: 11, color: C.ink3, fontWeight: FontWeight.w500)),
+        Transform.translate(offset: const Offset(0, -2), child: const Icon(Icons.emoji_events, color: C.brand, size: 30)),
+        Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : C.ink3, fontWeight: FontWeight.w500)),
       ]));
     }
     return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [

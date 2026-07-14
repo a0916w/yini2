@@ -25,7 +25,7 @@ class MePage extends StatelessWidget {
       (Icons.confirmation_num_outlined, t('redeem'), '', () => _todo(context)),
       (Icons.card_giftcard, t('pointsMall'), '', () => _todo(context)),
       (Icons.event_available_outlined, t('taskCenter'), '', () => _todo(context)),
-      (Icons.auto_awesome, t('wishBoard'), '', () => context.go('/wishes')),
+      (Icons.auto_awesome, t('wishBoard'), '', () => context.push('/wishes')),
       (Icons.mail_outline, t('inbox'), '', () => _todo(context)),
       (Icons.campaign_outlined, t('announce'), '', () => _todo(context)),
       (Icons.fact_check_outlined, t('survey'), '', () => _todo(context)),

@@ -249,7 +249,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           _iconBtn(Icons.history, () => context.push('/history')),
-          _iconBtn(Icons.notifications_none, () => _toast(context, t('noMsg')), dot: true),
           // 会员
           GestureDetector(
             onTap: () => context.push('/vip'),
@@ -273,6 +272,4 @@ class _HomePageState extends State<HomePage> {
           ]),
         ),
       );
-
-  void _toast(BuildContext c, String s) => ScaffoldMessenger.of(c).showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 1)));
 }

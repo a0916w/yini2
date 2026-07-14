@@ -136,7 +136,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 controller: _pc,
                 itemCount: _feed.length,
                 onPageChanged: (i) { setState(() => _index = i); _sync(); },
-                itemBuilder: (c, i) => _Slide(
+                itemBuilder: (c, i) => VideoSlide(
                   drama: _detail[i] ?? _feed[i],
                   controller: _ctrls[i],
                   active: i == _index,
@@ -164,19 +164,19 @@ class _PlayerPageState extends State<PlayerPage> {
   }
 }
 
-class _Slide extends StatefulWidget {
+class VideoSlide extends StatefulWidget {
   final Drama drama;
   final VideoPlayerController? controller;
   final bool active;
   final bool danmaku;
   final String? error;
   final VoidCallback? onRetry;
-  const _Slide({required this.drama, required this.controller, required this.active, required this.danmaku, this.error, this.onRetry});
+  const VideoSlide({super.key, required this.drama, required this.controller, required this.active, required this.danmaku, this.error, this.onRetry});
   @override
-  State<_Slide> createState() => _SlideState();
+  State<VideoSlide> createState() => VideoSlideState();
 }
 
-class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
+class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMixin {
   bool _liked = false;
   bool _faved = false;
   int _burst = 0;
@@ -196,10 +196,10 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(_Slide old) {
-    super.didUpdateWidget(old);
-    if (old.controller != widget.controller) {
-      old.controller?.removeListener(_tick);
+  void didUpdateWidget(VideoSlide oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_tick);
       widget.controller?.addListener(_tick);
     }
   }
