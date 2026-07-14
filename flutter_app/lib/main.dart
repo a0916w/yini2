@@ -19,6 +19,7 @@ import 'pages/login.dart';
 import 'pages/me.dart';
 import 'pages/favorites.dart';
 import 'pages/history.dart';
+import 'pages/topic_list.dart';
 import 'i18n.dart';
 
 Future<void> main() async {
@@ -61,6 +62,7 @@ final _router = GoRouter(
     GoRoute(path: '/login', builder: (c, s) => const LoginPage()),
     GoRoute(path: '/favorites', builder: (c, s) => const FavoritesPage()),
     GoRoute(path: '/history', builder: (c, s) => const HistoryPage()),
+    GoRoute(path: '/topic/:id', builder: (c, s) => TopicListPage(int.parse(s.pathParameters['id']!), s.uri.queryParameters['name'] ?? '')),
   ],
 );
 
@@ -133,12 +135,6 @@ class _BottomBar extends StatelessWidget {
   Widget _item(int i) {
     final t = MainShell._tabs[i];
     final active = i == current;
-    if (i == 2) {
-      return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Transform.translate(offset: const Offset(0, -2), child: Icon(Icons.emoji_events, color: active ? C.brand : _idle, size: 30)),
-        Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : _idle, fontWeight: FontWeight.w500)),
-      ]));
-    }
     return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Icon(t.$2, size: 23, color: active ? C.brand : _idle),
       const SizedBox(height: 3),

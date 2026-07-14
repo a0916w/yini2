@@ -46,7 +46,7 @@ class _TopicsPageState extends State<TopicsPage> {
           final (rows, _, _) = await Api.videos(categoryId: c['id'] as int, perPage: 3);
           covers = rows;
         } catch (_) {}
-        out.add({'name': cleanName(c['name'] as String?), 'count': c['videos_count'] ?? '', 'covers': covers});
+        out.add({'id': c['id'], 'name': cleanName(c['name'] as String?), 'count': c['videos_count'] ?? '', 'covers': covers});
       }
       if (mounted) setState(() => _topics = out);
     } catch (_) {
@@ -54,15 +54,16 @@ class _TopicsPageState extends State<TopicsPage> {
     }
   }
 
-  // 每个专题一组主题色(图标块 / 徽标)
-  static const _accents = [
-    (Color(0xFFFF6D00), Color(0xFFFFF1E4)), (Color(0xFF5B6BFF), Color(0xFFE9EBFF)),
-    (Color(0xFF1F9D55), Color(0xFFE2F5EA)), (Color(0xFFB04BD8), Color(0xFFF5E7FB)),
-    (Color(0xFFE8484A), Color(0xFFFDE9E9)), (Color(0xFF0E9BB5), Color(0xFFE2F6FA)),
+  // 每个专题一组鲜艳渐变 + 水印图标
+  static const _grads = [
+    [Color(0xFFFF8A2B), Color(0xFFE8480A)], [Color(0xFF6A7BFF), Color(0xFF3B2FC9)],
+    [Color(0xFF34C77B), Color(0xFF0E7A4A)], [Color(0xFFC26BFF), Color(0xFF7A2ABF)],
+    [Color(0xFFFF5D74), Color(0xFFC2183B)], [Color(0xFF3EC2DB), Color(0xFF0E6C86)],
+    [Color(0xFFFFB13D), Color(0xFFCC6A00)], [Color(0xFF8F9BB3), Color(0xFF4A5468)],
   ];
   static const _icons = [
     Icons.local_fire_department, Icons.auto_awesome, Icons.favorite,
-    Icons.bolt, Icons.diamond_outlined, Icons.stars,
+    Icons.bolt, Icons.diamond_outlined, Icons.stars, Icons.whatshot, Icons.movie_filter,
   ];
 
   @override
@@ -70,7 +71,6 @@ class _TopicsPageState extends State<TopicsPage> {
     context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
     context.watch<AppState>(); // 语言切换即重建文案
     final topics = _topics;
-    final dark = context.watch<ThemeController>().dark;
     return Scaffold(
       body: SafeArea(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -91,67 +91,92 @@ class _TopicsPageState extends State<TopicsPage> {
             child: topics == null
                 ? const Center(child: CircularProgressIndicator(color: C.brand))
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
                     itemCount: topics.length,
-                    itemBuilder: (c, i) {
-                      final item = topics[i];
-                      final covers = (item['covers'] as List).cast<Drama>();
-                      final accent = _accents[i % _accents.length];
-                      final icon = _icons[i % _icons.length];
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 14),
-                        decoration: BoxDecoration(
-                          color: C.surface,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: C.line),
-                          boxShadow: [BoxShadow(color: accent.$1.withValues(alpha: dark ? .10 : .07), blurRadius: 18, offset: const Offset(0, 6))],
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          // 头部条:渐变色带 + 图标 + 名称 + 数量徽标
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: [accent.$1.withValues(alpha: dark ? .22 : .12), Colors.transparent]),
-                            ),
-                            child: Row(children: [
-                              Container(
-                                width: 34, height: 34,
-                                decoration: BoxDecoration(color: dark ? accent.$1.withValues(alpha: .25) : accent.$2, borderRadius: BorderRadius.circular(11)),
-                                child: Icon(icon, size: 18, color: accent.$1),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(child: Text('${item['name']}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16))),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                                decoration: BoxDecoration(color: accent.$1.withValues(alpha: .14), borderRadius: BorderRadius.circular(999)),
-                                child: Text(tp('nPicked', {'n': '${item['count']}'}), style: TextStyle(color: accent.$1, fontSize: 11, fontWeight: FontWeight.w500)),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(Icons.chevron_right, color: C.ink3, size: 20),
-                            ]),
-                          ),
-                          // 封面三连
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                            child: Row(children: [
-                              for (var k = 0; k < covers.length; k++) ...[
-                                Expanded(child: GestureDetector(
-                                  onTap: () => context.push('/drama/${covers[k].id}'),
-                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                    AspectRatio(aspectRatio: 3 / 4, child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Cover(covers[k]))),
-                                    const SizedBox(height: 6),
-                                    Text(covers[k].title, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: C.ink2)),
-                                  ]),
-                                )),
-                                if (k < covers.length - 1) const SizedBox(width: 10),
-                              ],
-                            ]),
-                          ),
-                        ]),
-                      );
-                    },
+                    itemBuilder: (c, i) => _card(topics[i], i),
                   ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  // 沉浸式渐变横幅卡:扇形封面 + 大水印图标 + 名称/数量
+  Widget _card(Map item, int i) {
+    final covers = (item['covers'] as List).cast<Drama>();
+    final g = _grads[i % _grads.length];
+    final icon = _icons[i % _icons.length];
+    return GestureDetector(
+      onTap: () => context.push('/topic/${item['id']}?name=${Uri.encodeComponent('${item['name']}')}'),
+      child: Container(
+        height: 118,
+        margin: const EdgeInsets.only(bottom: 14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: g[1].withValues(alpha: .35), blurRadius: 16, offset: const Offset(0, 7))],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(children: [
+          // 右上大水印图标
+          Positioned(right: -16, top: -16, child: Icon(icon, size: 96, color: Colors.white.withValues(alpha: .14))),
+          // 高光斜带
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  colors: [Colors.white.withValues(alpha: .14), Colors.transparent],
+                  stops: const [0, .5],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(children: [
+              // 扇形三连封面
+              if (covers.isNotEmpty)
+                SizedBox(
+                  width: 118,
+                  child: Stack(alignment: Alignment.center, children: [
+                    for (var k = covers.length - 1; k >= 0; k--)
+                      Positioned(
+                        left: 14.0 + k * 26,
+                        child: Transform.rotate(
+                          angle: (k - 1) * .12,
+                          child: Container(
+                            width: 52, height: 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(9),
+                              border: Border.all(color: Colors.white.withValues(alpha: .85), width: 1.5),
+                              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .25), blurRadius: 8, offset: const Offset(0, 3))],
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Cover(covers[k]),
+                          ),
+                        ),
+                      ),
+                  ]),
+                ),
+              const SizedBox(width: 14),
+              Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: .5,
+                        shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1))])),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(999)),
+                  child: Text(tp('nPicked', {'n': '${item['count']}'}), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500)),
+                ),
+              ])),
+              Container(
+                width: 30, height: 30,
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), shape: BoxShape.circle),
+                child: const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
+              ),
+            ]),
           ),
         ]),
       ),

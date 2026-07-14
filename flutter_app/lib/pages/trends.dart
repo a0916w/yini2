@@ -90,7 +90,16 @@ class _TrendsPageState extends State<TrendsPage> {
     final top3 = _list.take(3).toList();
     final rest = _list.length > 3 ? _list.sublist(3) : <Drama>[];
     return Scaffold(
-      body: SafeArea(
+      // 顶部橙色渐变洇染到页面背景
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            colors: [C.brand.withValues(alpha: .22), C.brand.withValues(alpha: .08), C.bg],
+            stops: const [0, .18, .42],
+          ),
+        ),
+        child: SafeArea(
         child: Column(children: [
           // 头部:标题 + 分段切换
           Padding(
@@ -155,6 +164,7 @@ class _TrendsPageState extends State<TrendsPage> {
                   ]),
           ),
         ]),
+        ),
       ),
     );
   }
