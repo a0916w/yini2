@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart';
 import 'crypto.dart';
 
@@ -23,9 +24,36 @@ class Media {
 
   static String _strip(String? s) => (s ?? '').replaceAll(RegExp(r'/+$'), '');
 
+  // 图片磁盘缓存(LRU,最多 60 张),冷启动 banner/封面不再重新下载
+  static SharedPreferences? _isp;
+  static Future<SharedPreferences> get _imgSp async => _isp ??= await SharedPreferences.getInstance();
+  static const _imgMax = 60;
+
+  static Future<Uint8List?> _imgRead(String url) async {
+    final sp = await _imgSp;
+    final b64 = sp.getString('img::${md5Hex(url)}');
+    if (b64 == null) return null;
+    try { return base64.decode(b64); } catch (_) { return null; }
+  }
+
+  static Future<void> _imgWrite(String url, Uint8List bytes) async {
+    if (bytes.length > 400 * 1024) return; // 超大图不落盘
+    final sp = await _imgSp;
+    final k = md5Hex(url);
+    final keys = sp.getStringList('img_keys') ?? [];
+    keys.remove(k); keys.add(k);
+    while (keys.length > _imgMax) {
+      sp.remove('img::${keys.removeAt(0)}'); // 淘汰最旧
+    }
+    await sp.setString('img::$k', base64.encode(bytes));
+    await sp.setStringList('img_keys', keys);
+  }
+
   static Future<Uint8List?> resolveCover(String? url) async {
     if (url == null || url.isEmpty) return null;
     if (_coverCache.containsKey(url)) return _coverCache[url];
+    final disk = await _imgRead(url);
+    if (disk != null) { _coverCache[url] = disk; return disk; }
     final s = await settings();
     final coverBase = s['cover_base_url'] as String?;
     final encBase = s['encrypt_cover_base_url'] as String?;
@@ -45,6 +73,7 @@ class Media {
       bytes = null;
     }
     _coverCache[url] = bytes;
+    if (bytes != null) _imgWrite(url, bytes);
     return bytes;
   }
 

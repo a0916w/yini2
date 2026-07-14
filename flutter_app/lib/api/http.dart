@@ -14,8 +14,11 @@ class ApiException implements Exception {
 
 class Http {
   static SharedPreferences? _sp;
+  // 两层缓存:内存(秒取)+ 磁盘(冷启动秒开),SWR:命中立即返回,过期后台静默刷新
   static final Map<String, dynamic> _getCache = {};
+  static final Map<String, int> _cacheAt = {}; // key -> 写入时间(ms)
   static final Map<String, Future<dynamic>> _inflight = {};
+  static const _ttlMs = 10 * 60 * 1000; // 超过 10 分钟视为过期,返回旧数据同时后台刷新
 
   static Future<void> init() async {
     _sp = await SharedPreferences.getInstance();
@@ -66,10 +69,23 @@ class Http {
     return j;
   }
 
-  static Future<dynamic> get(String path, {Map<String, dynamic>? params, bool cache = true}) {
+  static Future<dynamic> get(String path, {Map<String, dynamic>? params, bool cache = true, bool fresh = false}) {
     final key = '$path::${params ?? {}}::$lang';
-    if (cache && _getCache.containsKey(key)) return Future.value(_getCache[key]);
-    // 同一请求进行中则复用,避免预热与点击重复打网络
+    if (cache && !fresh) {
+      // 1) 内存命中:立即返回;过期则后台静默刷新(SWR)
+      if (_getCache.containsKey(key)) {
+        if (_stale(key)) _revalidate(path, params, key);
+        return Future.value(_getCache[key]);
+      }
+      // 2) 磁盘命中(冷启动):秒开,同时后台刷新
+      final disk = _diskRead(key);
+      if (disk != null) {
+        _getCache[key] = disk;
+        if (_stale(key)) _revalidate(path, params, key);
+        return Future.value(disk);
+      }
+    }
+    // 3) 未命中/强制刷新:走网络(进行中请求去重)
     if (cache && _inflight.containsKey(key)) return _inflight[key]!;
     final f = _fetch(path, params, cache, key);
     if (cache) {
@@ -77,6 +93,35 @@ class Http {
       f.whenComplete(() => _inflight.remove(key));
     }
     return f;
+  }
+
+  static bool _stale(String key) =>
+      DateTime.now().millisecondsSinceEpoch - (_cacheAt[key] ?? 0) > _ttlMs;
+
+  // 后台静默刷新:失败忽略,成功更新两层缓存,下次读取即新数据
+  static void _revalidate(String path, Map<String, dynamic>? params, String key) {
+    if (_inflight.containsKey(key)) return;
+    final f = _fetch(path, params, true, key);
+    _inflight[key] = f;
+    f.then((_) {}, onError: (_) {}).whenComplete(() => _inflight.remove(key));
+  }
+
+  static dynamic _diskRead(String key) {
+    final raw = _sp?.getString('hc::$key');
+    if (raw == null) return null;
+    try {
+      final m = jsonDecode(raw) as Map;
+      _cacheAt[key] = (m['t'] as num?)?.toInt() ?? 0;
+      return m['b'];
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static void _diskWrite(String key, dynamic body) {
+    try {
+      _sp?.setString('hc::$key', jsonEncode({'t': _cacheAt[key], 'b': body}));
+    } catch (_) {} // 不可序列化/超限时放弃落盘,内存缓存仍有效
   }
 
   static Future<dynamic> _fetch(String path, Map<String, dynamic>? params, bool cache, String key) async {
@@ -88,7 +133,11 @@ class Http {
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw ApiException(_msg(body, res.statusCode), res.statusCode);
     }
-    if (cache) _getCache[key] = body;
+    if (cache) {
+      _getCache[key] = body;
+      _cacheAt[key] = DateTime.now().millisecondsSinceEpoch;
+      _diskWrite(key, body);
+    }
     return body;
   }
 
@@ -108,5 +157,12 @@ class Http {
     return 'HTTP $status';
   }
 
-  static void clearCache() => _getCache.clear();
+  static void clearCache() {
+    _getCache.clear();
+    _cacheAt.clear();
+    final keys = _sp?.getKeys().where((k) => k.startsWith('hc::')).toList() ?? [];
+    for (final k in keys) {
+      _sp?.remove(k);
+    }
+  }
 }

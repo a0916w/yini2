@@ -14,13 +14,13 @@ class Api {
   static Future<List> marquees() async => (await Http.get('/marquees') as List);
   static Future<Map> siteSettings() async => await Http.get('/site-settings') as Map;
 
-  static Future<(List<Drama>, int, int)> videos({int? categoryId, String? keyword, int page = 1, int perPage = 18}) async {
+  static Future<(List<Drama>, int, int)> videos({int? categoryId, String? keyword, int page = 1, int perPage = 18, bool fresh = false}) async {
     final b = await Http.get('/videos', params: {
       'category_id': categoryId,
       'keyword': keyword,
       'page': page,
       'per_page': perPage,
-    }, cache: keyword == null) as Map;
+    }, cache: keyword == null, fresh: fresh) as Map;
     final list = (b['data'] as List).map((e) => Drama.fromJson(e as Map)).toList();
     return (list, (b['current_page'] as num?)?.toInt() ?? 1, (b['last_page'] as num?)?.toInt() ?? 1);
   }

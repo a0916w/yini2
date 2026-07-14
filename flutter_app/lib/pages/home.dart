@@ -77,12 +77,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _load({bool reset = false}) async {
+  Future<void> _load({bool reset = false, bool fresh = false}) async {
     if (_loading) return;
     final reqCat = _catId;
     setState(() => _loading = true);
     try {
-      final (rows, page, last) = await Api.videos(categoryId: reqCat, page: reset ? 1 : (_catPage[reqCat] ?? 1) + 1);
+      final (rows, page, last) = await Api.videos(categoryId: reqCat, page: reset ? 1 : (_catPage[reqCat] ?? 1) + 1, fresh: fresh);
       final full = reset ? <Drama>[] : List<Drama>.of(_catCache[reqCat] ?? _list);
       full.addAll(rows);
       _catCache[reqCat] = full; _catPage[reqCat] = page; _catLast[reqCat] = last;
@@ -197,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                 ? const Center(child: CircularProgressIndicator(color: C.brand))
                 : RefreshIndicator(
                     color: C.brand,
-                    onRefresh: () => _load(reset: true),
+                    onRefresh: () => _load(reset: true, fresh: true), // 下拉强制拉最新
                     child: GridView.builder(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 20),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
