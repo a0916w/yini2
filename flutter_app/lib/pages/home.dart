@@ -131,94 +131,98 @@ class _HomePageState extends State<HomePage> {
     context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
     context.watch<AppState>(); // 语言切换即重建文案
     final tabs = [{'id': null, 'name': t('all')}, ..._cats.map((c) => {'id': c['id'], 'name': cleanName(c['name'] as String?)})];
-    return Scaffold(
-      body: SafeArea(
-        child: Column(children: [
-          _header(context),
-          if (_marquee.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), borderRadius: BorderRadius.circular(999)),
-              child: Row(children: [
-                const Icon(Icons.campaign_outlined, size: 15, color: C.brand),
-                const SizedBox(width: 8),
-                Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink2, fontSize: 12))),
-              ]),
-            ),
-          // banner:接口有数据用接口;暂有问题时回落到本地写死图
-          if (_banners.isNotEmpty)
-            BannerCarousel(_banners)
-          else
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 220),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Image.asset('assets/banner.png', fit: BoxFit.cover),
-                  ),
-                ),
+    // 顶部(头/跑马灯/banner/分类)不置顶,随内容一起滚动
+    final top = Column(children: [
+      _header(context),
+      if (_marquee.isNotEmpty)
+        Container(
+          margin: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), borderRadius: BorderRadius.circular(999)),
+          child: Row(children: [
+            const Icon(Icons.campaign_outlined, size: 15, color: C.brand),
+            const SizedBox(width: 8),
+            Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink2, fontSize: 12))),
+          ]),
+        ),
+      // banner:接口有数据用接口;暂有问题时回落到本地写死图
+      if (_banners.isNotEmpty)
+        BannerCarousel(_banners)
+      else
+        Padding(
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 220),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.asset('assets/banner.png', fit: BoxFit.cover),
               ),
             ),
-          SizedBox(
-            height: 44,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              itemCount: tabs.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 18),
-              itemBuilder: (c, i) {
-                final active = _catId == tabs[i]['id'];
-                return GestureDetector(
-                  onTap: () => _pickCat(tabs[i]['id'] as int?),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text('${tabs[i]['name']}',
-                        style: TextStyle(fontSize: active ? 17 : 15, fontWeight: active ? FontWeight.w600 : FontWeight.w400, color: active ? C.ink : C.ink3)),
-                    const SizedBox(height: 4),
-                    Container(width: 18, height: 3, decoration: BoxDecoration(gradient: active ? C.brandGrad : null, borderRadius: BorderRadius.circular(3))),
-                  ]),
-                );
-              },
-            ),
           ),
-          // 区块标题(当前分类)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
-            child: Row(children: [
-              Container(width: 4, height: 15, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(3))),
-              const SizedBox(width: 7),
-              Text('${tabs.firstWhere((e) => e['id'] == _catId, orElse: () => tabs[0])['name']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            ]),
-          ),
-          Expanded(
-            child: _list.isEmpty && _loading
-                ? const Center(child: CircularProgressIndicator(color: C.brand))
-                : RefreshIndicator(
-                    color: C.brand,
-                    onRefresh: () => _load(reset: true, fresh: true), // 下拉强制拉最新
-                    child: GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 20),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: .57),
-                      itemCount: _list.length + 1,
-                      itemBuilder: (c, i) {
-                        if (i == _list.length) {
-                          if (_page < _lastPage) {
-                            return Center(
-                              child: TextButton(onPressed: _loading ? null : () => _load(), child: Text(_loading ? t('loading') : t('loadMore'))),
-                            );
-                          }
-                          return const SizedBox();
-                        }
-                        return DramaCard(_list[i]);
-                      },
-                    ),
-                  ),
-          ),
+        ),
+      SizedBox(
+        height: 44,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          itemCount: tabs.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 18),
+          itemBuilder: (c, i) {
+            final active = _catId == tabs[i]['id'];
+            return GestureDetector(
+              onTap: () => _pickCat(tabs[i]['id'] as int?),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text('${tabs[i]['name']}',
+                    style: TextStyle(fontSize: active ? 17 : 15, fontWeight: active ? FontWeight.w600 : FontWeight.w400, color: active ? C.ink : C.ink3)),
+                const SizedBox(height: 4),
+                Container(width: 18, height: 3, decoration: BoxDecoration(gradient: active ? C.brandGrad : null, borderRadius: BorderRadius.circular(3))),
+              ]),
+            );
+          },
+        ),
+      ),
+      // 区块标题(当前分类)
+      Padding(
+        padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
+        child: Row(children: [
+          Container(width: 4, height: 15, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(3))),
+          const SizedBox(width: 7),
+          Text('${tabs.firstWhere((e) => e['id'] == _catId, orElse: () => tabs[0])['name']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         ]),
+      ),
+    ]);
+
+    return Scaffold(
+      body: SafeArea(
+        child: RefreshIndicator(
+          color: C.brand,
+          onRefresh: () => _load(reset: true, fresh: true), // 下拉强制拉最新
+          child: CustomScrollView(slivers: [
+            SliverToBoxAdapter(child: top),
+            if (_list.isEmpty && _loading)
+              const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator(color: C.brand)))
+            else ...[
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(14, 8, 14, 4),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: .57),
+                  delegate: SliverChildBuilderDelegate((c, i) => DramaCard(_list[i]), childCount: _list.length),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _page < _lastPage
+                    ? Center(child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: TextButton(onPressed: _loading ? null : () => _load(), child: Text(_loading ? t('loading') : t('loadMore'))),
+                      ))
+                    : const SizedBox(height: 16),
+              ),
+            ],
+          ]),
+        ),
       ),
     );
   }
