@@ -45,8 +45,9 @@ final _router = GoRouter(
     StatefulShellRoute.indexedStack(
       builder: (c, s, shell) => MainShell(shell: shell),
       branches: [
-        StatefulShellBranch(routes: [GoRoute(path: '/', builder: (c, s) => const HomePage())]),
-        StatefulShellBranch(routes: [GoRoute(path: '/theater', builder: (c, s) => const TheaterPage())]),
+        // 首页=竖滑视频流(抖音式开屏即刷),剧场=分类浏览页
+        StatefulShellBranch(routes: [GoRoute(path: '/', builder: (c, s) => const TheaterPage())]),
+        StatefulShellBranch(routes: [GoRoute(path: '/theater', builder: (c, s) => const HomePage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/trends', builder: (c, s) => const TrendsPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/topics', builder: (c, s) => const TopicsPage())]),
         StatefulShellBranch(routes: [GoRoute(path: '/me', builder: (c, s) => const MePage())]),

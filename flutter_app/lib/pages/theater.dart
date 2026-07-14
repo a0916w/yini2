@@ -14,7 +14,7 @@ import 'player.dart';
 
 // 当前底栏激活 tab(剧场用它在切走时自动暂停)
 final ValueNotifier<int> activeTab = ValueNotifier(0);
-const theaterTabIndex = 1;
+const theaterTabIndex = 0; // 视频流在首页 tab
 
 // 剧场:随机排列剧集,抖音式上下滑视频流(常驻 tab)
 class TheaterPage extends StatefulWidget {
@@ -175,7 +175,7 @@ class _TheaterPageState extends State<TheaterPage> {
         Positioned(
           top: MediaQuery.of(context).padding.top + 10, left: 16, right: 16,
           child: Row(children: [
-            Text(t('cinema'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+            Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
             const Spacer(),
             GestureDetector(
               onTap: () => setState(() => _danmaku = !_danmaku),
