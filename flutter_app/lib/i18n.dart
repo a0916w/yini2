@@ -115,7 +115,15 @@ const _dict = <String, Map<String, String>>{
   'newest': {'zh': '最新', 'en': 'Newest', 'vi': 'Mới nhất', 'th': 'ใหม่สุด', 'id': 'Terbaru'},
   'forYou': {'zh': '推荐', 'en': 'For You', 'vi': 'Đề xuất', 'th': 'แนะนำ', 'id': 'Untukmu'},
   // 专题
-  'topicColl': {'zh': '专题合集', 'en': 'Topic Collections', 'vi': 'Bộ sưu tập', 'th': 'คอลเลกชัน', 'id': 'Koleksi'},
+  'topicColl': {'zh': '全部专题', 'en': 'All Topics', 'vi': 'Tất cả chủ đề', 'th': 'หัวข้อทั้งหมด', 'id': 'Semua Topik'},
+  'topicSub': {'zh': '编辑精选片单 · 每周四更新', 'en': "Editor's picks · updated Thursdays", 'vi': 'Tuyển chọn của BTV · cập nhật thứ Năm', 'th': 'คัดสรรโดยบรรณาธิการ · อัปเดตทุกพฤหัส', 'id': 'Pilihan editor · diperbarui tiap Kamis'},
+  'goSee': {'zh': '去看看 ›', 'en': 'Explore ›', 'vi': 'Xem ngay ›', 'th': 'ไปดู ›', 'id': 'Lihat ›'},
+  'nDramaHeat': {'zh': '{n} 部剧 · {v} 热度', 'en': '{n} dramas · {v} heat', 'vi': '{n} phim · {v} độ hot', 'th': '{n} เรื่อง · {v} ฮีต', 'id': '{n} drama · {v} panas'},
+  'nDramas': {'zh': '{n} 部剧', 'en': '{n} dramas', 'vi': '{n} phim', 'th': '{n} เรื่อง', 'id': '{n} drama'},
+  'chip1': {'zh': '本周专题', 'en': 'This Week', 'vi': 'Tuần này', 'th': 'สัปดาห์นี้', 'id': 'Minggu Ini'},
+  'chip2': {'zh': '热门专场', 'en': 'Hot Zone', 'vi': 'Chuyên mục hot', 'th': 'โซนฮิต', 'id': 'Zona Panas'},
+  'chip3': {'zh': '高分推荐', 'en': 'Top Rated', 'vi': 'Điểm cao', 'th': 'คะแนนสูง', 'id': 'Nilai Tinggi'},
+  'chip4': {'zh': '编辑精选', 'en': "Editor's Pick", 'vi': 'BTV chọn', 'th': 'บก.เลือก', 'id': 'Pilihan Editor'},
   'nPicked': {'zh': '{n}部精选', 'en': '{n} picks', 'vi': '{n} phim chọn lọc', 'th': 'คัดสรร {n} เรื่อง', 'id': '{n} pilihan'},
   // 心愿榜
   'wishSlogan': {'zh': '你想看的改编，由你决定', 'en': 'You decide the next remix', 'vi': 'Bạn quyết định bản biến tấu', 'th': 'คุณเลือกรีมิกซ์ถัดไป', 'id': 'Kamu yang menentukan remix'},

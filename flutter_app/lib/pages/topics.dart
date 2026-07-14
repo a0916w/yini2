@@ -7,7 +7,6 @@ import '../api/models.dart';
 import '../state.dart';
 import '../i18n.dart';
 import '../theme.dart';
-import '../widgets.dart';
 
 class TopicsPage extends StatefulWidget {
   const TopicsPage({super.key});
@@ -54,17 +53,16 @@ class _TopicsPageState extends State<TopicsPage> {
     }
   }
 
-  // 每个专题一组鲜艳渐变 + 水印图标
+  // 深邃浓郁渐变(暗红/藏蓝/绛紫/深紫循环)
   static const _grads = [
-    [Color(0xFFFF8A2B), Color(0xFFE8480A)], [Color(0xFF6A7BFF), Color(0xFF3B2FC9)],
-    [Color(0xFF34C77B), Color(0xFF0E7A4A)], [Color(0xFFC26BFF), Color(0xFF7A2ABF)],
-    [Color(0xFFFF5D74), Color(0xFFC2183B)], [Color(0xFF3EC2DB), Color(0xFF0E6C86)],
-    [Color(0xFFFFB13D), Color(0xFFCC6A00)], [Color(0xFF8F9BB3), Color(0xFF4A5468)],
+    [Color(0xFF7A0410), Color(0xFFE8232E)],
+    [Color(0xFF0B1F4B), Color(0xFF1E63D0)],
+    [Color(0xFF5A0A3C), Color(0xFFD81B60)],
+    [Color(0xFF2A1070), Color(0xFF7C4DFF)],
+    [Color(0xFF063A42), Color(0xFF00ACC1)],
+    [Color(0xFF702800), Color(0xFFFF6D00)],
   ];
-  static const _icons = [
-    Icons.local_fire_department, Icons.auto_awesome, Icons.favorite,
-    Icons.bolt, Icons.diamond_outlined, Icons.stars, Icons.whatshot, Icons.movie_filter,
-  ];
+  static const _chips = ['chip1', 'chip2', 'chip3', 'chip4'];
 
   @override
   Widget build(BuildContext context) {
@@ -74,17 +72,13 @@ class _TopicsPageState extends State<TopicsPage> {
     return Scaffold(
       body: SafeArea(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // 头部
+          // 头部:标题 + 副题
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: Row(children: [
-              Container(
-                width: 34, height: 34,
-                decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(11)),
-                child: const Icon(Icons.grid_view_rounded, color: Colors.white, size: 18),
-              ),
-              const SizedBox(width: 10),
-              Text(t('topicColl'), style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600)),
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(t('topicColl'), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              Text(t('topicSub'), style: TextStyle(color: C.ink3, fontSize: 12.5)),
             ]),
           ),
           Expanded(
@@ -101,81 +95,51 @@ class _TopicsPageState extends State<TopicsPage> {
     );
   }
 
-  // 沉浸式渐变横幅卡:扇形封面 + 大水印图标 + 名称/数量
+  // 深色渐变大横幅:角标 chip + 大标题 + 部数/热度 + 去看看
   Widget _card(Map item, int i) {
     final covers = (item['covers'] as List).cast<Drama>();
     final g = _grads[i % _grads.length];
-    final icon = _icons[i % _icons.length];
+    // 热度:取样本剧集播放量之和
+    var heat = 0;
+    for (final d in covers) { heat += d.viewCount; }
+    final sub = heat > 0
+        ? tp('nDramaHeat', {'n': '${item['count']}', 'v': fmtPlays(heat)})
+        : tp('nDramas', {'n': '${item['count']}'});
     return GestureDetector(
       onTap: () => context.push('/topic/${item['id']}?name=${Uri.encodeComponent('${item['name']}')}'),
       child: Container(
-        height: 118,
-        margin: const EdgeInsets.only(bottom: 14),
+        height: 148,
+        margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: g[1].withValues(alpha: .35), blurRadius: 16, offset: const Offset(0, 7))],
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [BoxShadow(color: g[0].withValues(alpha: .35), blurRadius: 16, offset: const Offset(0, 7))],
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(children: [
-          // 右上大水印图标
-          Positioned(right: -16, top: -16, child: Icon(icon, size: 96, color: Colors.white.withValues(alpha: .14))),
-          // 高光斜带
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  colors: [Colors.white.withValues(alpha: .14), Colors.transparent],
-                  stops: const [0, .5],
-                ),
-              ),
-            ),
-          ),
+          // 右侧大圆装饰(两枚,半透明白)
+          Positioned(right: -50, top: -70, child: Container(width: 200, height: 200, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .07)))),
+          Positioned(right: 30, bottom: -90, child: Container(width: 170, height: 170, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .06)))),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Row(children: [
-              // 扇形三连封面
-              if (covers.isNotEmpty)
-                SizedBox(
-                  width: 118,
-                  child: Stack(alignment: Alignment.center, children: [
-                    for (var k = covers.length - 1; k >= 0; k--)
-                      Positioned(
-                        left: 14.0 + k * 26,
-                        child: Transform.rotate(
-                          angle: (k - 1) * .12,
-                          child: Container(
-                            width: 52, height: 70,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(9),
-                              border: Border.all(color: Colors.white.withValues(alpha: .85), width: 1.5),
-                              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .25), blurRadius: 8, offset: const Offset(0, 3))],
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Cover(covers[k]),
-                          ),
-                        ),
-                      ),
-                  ]),
-                ),
-              const SizedBox(width: 14),
-              Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: .5,
-                        shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1))])),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(999)),
-                  child: Text(tp('nPicked', {'n': '${item['count']}'}), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500)),
-                ),
-              ])),
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // 角标 chip
               Container(
-                width: 30, height: 30,
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), shape: BoxShape.circle),
-                child: const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: Colors.black.withValues(alpha: .28), borderRadius: BorderRadius.circular(8)),
+                child: Text(t(_chips[i % _chips.length]), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500)),
               ),
+              const SizedBox(height: 10),
+              // 大标题
+              Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w800, letterSpacing: .5)),
+              const Spacer(),
+              // 底行:部数·热度 + 去看看
+              Row(children: [
+                Expanded(child: Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white.withValues(alpha: .85), fontSize: 13))),
+                Text(t('goSee'), style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600)),
+              ]),
             ]),
           ),
         ]),

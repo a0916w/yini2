@@ -93,21 +93,21 @@ class _TrendsPageState extends State<TrendsPage> {
     var maxV = 1;
     for (final d in _list) { if (d.viewCount > maxV) maxV = d.viewCount; }
     return Scaffold(
+      // 整页同一条橙色渐变:头部与列表圆角外露处颜色连续,无接缝
       body: Container(
-        color: const Color(0xFFE8480A), // 顶部安全区同色
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft, end: Alignment.bottomRight,
+            colors: [Color(0xFFFF8A2B), Color(0xFFE8480A)],
+          ),
+        ),
         child: SafeArea(
           bottom: false,
           child: Column(children: [
             // 橙色渐变大头部
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(22, 18, 22, 30),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  colors: [Color(0xFFFF8A2B), Color(0xFFE8480A)],
-                ),
-              ),
+              padding: const EdgeInsets.fromLTRB(22, 18, 22, 22),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(t('rankTitle'), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, letterSpacing: 1)),
                 const SizedBox(height: 7),
@@ -135,24 +135,21 @@ class _TrendsPageState extends State<TrendsPage> {
                 ]),
               ]),
             ),
-            // 白色列表卡(上圆角,叠在橙色头部下沿)
+            // 白色列表卡(上圆角,圆角外露出父级渐变,无接缝)
             Expanded(
-              child: Transform.translate(
-                offset: const Offset(0, -16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: C.surface,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: _loading
-                      ? const Center(child: CircularProgressIndicator(color: C.brand))
-                      : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(14, 18, 14, 24),
-                          itemCount: _list.length,
-                          itemBuilder: (c, i) => _row(_list[i], i + 1, maxV),
-                        ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: C.surface,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                 ),
+                clipBehavior: Clip.antiAlias,
+                child: _loading
+                    ? const Center(child: CircularProgressIndicator(color: C.brand))
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(14, 18, 14, 24),
+                        itemCount: _list.length,
+                        itemBuilder: (c, i) => _row(_list[i], i + 1, maxV),
+                      ),
               ),
             ),
           ]),
