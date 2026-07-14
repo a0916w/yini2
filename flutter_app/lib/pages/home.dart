@@ -144,7 +144,20 @@ class _HomePageState extends State<HomePage> {
                 Expanded(child: Text(_marquee, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: C.ink2, fontSize: 12))),
               ]),
             ),
-          if (_banners.isNotEmpty) BannerCarousel(_banners),
+          // banner:接口有数据用接口;暂有问题时回落到本地写死图
+          if (_banners.isNotEmpty)
+            BannerCarousel(_banners)
+          else
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.asset('assets/banner.png', fit: BoxFit.cover),
+                ),
+              ),
+            ),
           SizedBox(
             height: 44,
             child: ListView.separated(
