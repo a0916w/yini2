@@ -37,9 +37,9 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Container(width: 68, height: 68, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(20)), alignment: Alignment.center, child: const Text('橙', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w900))),
+            Container(width: 68, height: 68, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(20)), alignment: Alignment.center, child: const Text('橙', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w600))),
             const SizedBox(height: 12),
-            const Text('橙子短剧', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+            const Text('橙子短剧', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
             const SizedBox(height: 26),
             TextField(controller: _acc, decoration: const InputDecoration(labelText: '账号 / 邮箱', border: OutlineInputBorder())),
             const SizedBox(height: 14),
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
               child: ElevatedButton(
                 onPressed: _busy ? null : _submit,
                 style: ElevatedButton.styleFrom(backgroundColor: C.brand, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
-                child: Text(_busy ? '登录中…' : '登录', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                child: Text(_busy ? '登录中…' : '登录', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               ),
             ),
           ]),

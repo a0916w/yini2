@@ -48,11 +48,11 @@ class MePage extends StatelessWidget {
                 width: 56, height: 56,
                 decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                 alignment: Alignment.center,
-                child: Text(app.authed ? app.displayName.characters.first : '橙', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w900, fontSize: 26)),
+                child: Text(app.authed ? app.displayName.characters.first : '橙', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 26)),
               ),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(app.authed ? app.displayName : '未登录', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+                Text(app.authed ? app.displayName : '未登录', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 3),
                 Text(app.authed ? 'UID ${app.user?['id'] ?? ''}' : '点击登录 / 注册', style: const TextStyle(color: Colors.white70, fontSize: 12)),
               ])),
@@ -60,7 +60,7 @@ class MePage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(999), border: Border.all(color: Colors.white.withValues(alpha: .4))),
-                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.diamond_outlined, size: 12, color: Colors.white), SizedBox(width: 4), Text('VIP', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700))]),
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.diamond_outlined, size: 12, color: Colors.white), SizedBox(width: 4), Text('VIP', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500))]),
                 )
               else
                 const Icon(Icons.chevron_right, color: Colors.white70),
@@ -96,20 +96,20 @@ class MePage extends StatelessWidget {
             decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF2B2118), Color(0xFF1F1812)]), borderRadius: BorderRadius.circular(16)),
             child: Row(children: [
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Row(children: [Icon(Icons.diamond_outlined, size: 15, color: Color(0xFFF7D9B8)), SizedBox(width: 6), Text('开通会员', style: TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w800))]),
+                const Row(children: [Icon(Icons.diamond_outlined, size: 15, color: Color(0xFFF7D9B8)), SizedBox(width: 6), Text('开通会员', style: TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600))]),
                 const SizedBox(height: 3),
                 Text(vip ? '有效期至 ${app.vipExpire}' : '海量剧集免费看 · 免广告', style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
               ])),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)),
-                child: Text(vip ? '立即续费' : '立即开通', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13)),
+                child: Text(vip ? '立即续费' : '立即开通', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13)),
               ),
             ]),
           ),
         ),
         const SizedBox(height: 18),
-        const Padding(padding: EdgeInsets.only(left: 2, bottom: 10), child: Text('我的服务', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+        const Padding(padding: EdgeInsets.only(left: 2, bottom: 10), child: Text('我的服务', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
         Container(
           decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
           child: Column(children: [

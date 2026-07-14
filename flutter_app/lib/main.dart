@@ -124,7 +124,7 @@ class _BottomBar extends StatelessWidget {
               child: const Icon(Icons.favorite, color: C.like, size: 30),
             ),
           ),
-          Text(t.$2, style: const TextStyle(fontSize: 11, color: C.ink3, fontWeight: FontWeight.w600)),
+          Text(t.$2, style: const TextStyle(fontSize: 11, color: C.ink3, fontWeight: FontWeight.w400)),
         ]),
       );
     }
@@ -133,7 +133,7 @@ class _BottomBar extends StatelessWidget {
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(t.$3, size: 23, color: active ? C.brand : C.ink3),
         const SizedBox(height: 3),
-        Text(t.$2, style: TextStyle(fontSize: 11, color: active ? C.brand : C.ink3, fontWeight: FontWeight.w600)),
+        Text(t.$2, style: TextStyle(fontSize: 11, color: active ? C.brand : C.ink3, fontWeight: FontWeight.w400)),
       ]),
     );
   }

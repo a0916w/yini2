@@ -48,7 +48,7 @@ class _DetailPageState extends State<DetailPage> {
                     ClipRRect(borderRadius: BorderRadius.circular(14), child: SizedBox(width: 132, height: 176, child: Cover(d))),
                     const SizedBox(width: 16),
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(d.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800), maxLines: 3, overflow: TextOverflow.ellipsis),
+                      Text(d.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600), maxLines: 3, overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 12),
                       Row(children: [const Icon(Icons.play_arrow, size: 15, color: C.ink2), const SizedBox(width: 2), Text(d.plays, style: const TextStyle(color: C.ink2, fontSize: 14))]),
                       const SizedBox(height: 8),
@@ -59,10 +59,10 @@ class _DetailPageState extends State<DetailPage> {
                       const SizedBox(height: 8),
                       d.free
                           ? Row(children: [
-                              Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1), decoration: BoxDecoration(color: const Color(0xFF3B76D6), borderRadius: BorderRadius.circular(4)), child: const Text('FREE', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800))),
+                              Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1), decoration: BoxDecoration(color: const Color(0xFF3B76D6), borderRadius: BorderRadius.circular(4)), child: const Text('FREE', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w600))),
                               const SizedBox(width: 6), const Text('全集免费', style: TextStyle(color: C.ink2, fontSize: 13)),
                             ])
-                          : const Row(children: [Icon(Icons.lock_outline, size: 13, color: C.brand), SizedBox(width: 5), Text('VIP 专享', style: TextStyle(color: C.brand, fontSize: 13, fontWeight: FontWeight.w600))]),
+                          : const Row(children: [Icon(Icons.lock_outline, size: 13, color: C.brand), SizedBox(width: 5), Text('VIP 专享', style: TextStyle(color: C.brand, fontSize: 13, fontWeight: FontWeight.w400))]),
                     ])),
                   ]),
                   // 简介(按钮之上)
@@ -94,9 +94,9 @@ class _DetailPageState extends State<DetailPage> {
                       child: Row(children: [
                         const Icon(Icons.play_circle_fill, color: C.brand, size: 20),
                         const SizedBox(width: 8),
-                        Text('正片 · $_mins 分钟', style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Text('正片 · $_mins 分钟', style: const TextStyle(fontWeight: FontWeight.w400)),
                         const Spacer(),
-                        const Text('播放 ›', style: TextStyle(color: C.brand, fontWeight: FontWeight.w600)),
+                        const Text('播放 ›', style: TextStyle(color: C.brand, fontWeight: FontWeight.w400)),
                       ]),
                     ),
                   ),
@@ -139,7 +139,7 @@ class _DetailPageState extends State<DetailPage> {
               height: 30, padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: C.brand.withValues(alpha: .4))),
               alignment: Alignment.center,
-              child: const Text('我的', style: TextStyle(color: C.brand, fontWeight: FontWeight.w700, fontSize: 13)),
+              child: const Text('我的', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 13)),
             ),
           ),
         ]),
@@ -148,7 +148,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget _sectionTitle(String s) => Row(children: [
         Container(width: 4, height: 15, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(3))),
         const SizedBox(width: 7),
-        Text(s, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        Text(s, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
       ]);
 
   Widget _btn(IconData icon, String label, {bool filled = false, bool active = false, VoidCallback? onTap}) {
@@ -166,7 +166,7 @@ class _DetailPageState extends State<DetailPage> {
         alignment: Alignment.center,
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(icon, size: 16, color: fg), const SizedBox(width: 5),
-          Text(label, style: TextStyle(color: fg, fontWeight: FontWeight.w700, fontSize: 14)),
+          Text(label, style: TextStyle(color: fg, fontWeight: FontWeight.w500, fontSize: 14)),
         ]),
       ),
     );

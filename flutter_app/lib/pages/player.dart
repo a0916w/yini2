@@ -120,11 +120,11 @@ class _PlayerPageState extends State<PlayerPage> {
           child: Row(children: [
             IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20)),
             const Spacer(),
-            const Text('推荐', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+            const Text('推荐', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
             const Spacer(),
             GestureDetector(
               onTap: () => setState(() => _danmaku = !_danmaku),
-              child: Text('弹幕${_danmaku ? '开' : '关'}', style: TextStyle(color: _danmaku ? Colors.white : Colors.white54, fontSize: 13, fontWeight: FontWeight.w600, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)])),
+              child: Text('弹幕${_danmaku ? '开' : '关'}', style: TextStyle(color: _danmaku ? Colors.white : Colors.white54, fontSize: 13, fontWeight: FontWeight.w400, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)])),
             ),
           ]),
         ),
@@ -196,7 +196,7 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
       builder: (c) => StatefulBuilder(builder: (c, setSheet) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
         child: SizedBox(height: MediaQuery.of(c).size.height * .6, child: Column(children: [
-          Padding(padding: const EdgeInsets.all(16), child: Row(children: [Text('讨论 ${_comments.length}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))])),
+          Padding(padding: const EdgeInsets.all(16), child: Row(children: [Text('讨论 ${_comments.length}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))])),
           Expanded(child: _comments.isEmpty
               ? const Center(child: Text('还没有评论，快来抢沙发吧', style: TextStyle(color: C.ink3)))
               : ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: _comments.map((m) => ListTile(contentPadding: EdgeInsets.zero, leading: const CircleAvatar(backgroundColor: C.surface2, child: Text('我')), title: const Text('我'), subtitle: Text(m['t']!))).toList())),
@@ -214,11 +214,11 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
     showModalBottomSheet(context: context, backgroundColor: C.surface,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(18))),
       builder: (c) => SafeArea(child: Padding(padding: const EdgeInsets.all(16), child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [const Text('选集', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))]),
+        Row(children: [const Text('选集', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))]),
         const SizedBox(height: 8),
         Wrap(spacing: 10, runSpacing: 10, children: [
           for (var e = 1; e <= widget.drama.eps; e++)
-            Container(width: 46, height: 44, alignment: Alignment.center, decoration: BoxDecoration(color: e == 1 ? C.brand.withValues(alpha: .12) : C.surface2, borderRadius: BorderRadius.circular(10), border: e == 1 ? Border.all(color: C.brand.withValues(alpha: .4)) : null), child: Text('$e', style: TextStyle(fontWeight: FontWeight.w700, color: e == 1 ? C.brand : C.ink))),
+            Container(width: 46, height: 44, alignment: Alignment.center, decoration: BoxDecoration(color: e == 1 ? C.brand.withValues(alpha: .12) : C.surface2, borderRadius: BorderRadius.circular(10), border: e == 1 ? Border.all(color: C.brand.withValues(alpha: .4)) : null), child: Text('$e', style: TextStyle(fontWeight: FontWeight.w500, color: e == 1 ? C.brand : C.ink))),
         ]),
         const SizedBox(height: 12),
       ]))),
@@ -265,7 +265,7 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
 
         // 右栏
         Positioned(right: 10, bottom: 120, child: Column(children: [
-          Container(width: 48, height: 48, decoration: BoxDecoration(gradient: C.brandGrad, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)), alignment: Alignment.center, child: Text(d.title.isEmpty ? '橙' : d.title.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18))),
+          Container(width: 48, height: 48, decoration: BoxDecoration(gradient: C.brandGrad, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)), alignment: Alignment.center, child: Text(d.title.isEmpty ? '橙' : d.title.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18))),
           const SizedBox(height: 20),
           _rail(Icons.favorite, '${(d.id % 90) + 1 + (_liked ? 1 : 0)}', color: _liked ? C.like : Colors.white, onTap: () => setState(() => _liked = !_liked)),
           _rail(Icons.mode_comment, '${_comments.length}', onTap: _openComments),
@@ -277,11 +277,11 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
 
         // 左下:作者 + 标题 + 选集 + 音乐
         Positioned(left: 14, right: 84, bottom: 44, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('@${d.genre.isEmpty ? "橙子" : d.genre}剧场', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+          Text('@${d.genre.isEmpty ? "橙子" : d.genre}剧场', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
           const SizedBox(height: 8),
           Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 14, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
           const SizedBox(height: 8),
-          GestureDetector(onTap: _openEpisodes, child: Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3), decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(7)), child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.list, size: 13, color: Colors.white), SizedBox(width: 4), Text('选集', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600))]))),
+          GestureDetector(onTap: _openEpisodes, child: Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3), decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(7)), child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.list, size: 13, color: Colors.white), SizedBox(width: 4), Text('选集', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400))]))),
           const SizedBox(height: 10),
           Row(children: [const Icon(Icons.music_note, size: 14, color: Colors.white), const SizedBox(width: 6), Expanded(child: Text('原声 · ${d.title}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black54)])))]),
         ])),
@@ -304,7 +304,7 @@ class _SlideState extends State<_Slide> with SingleTickerProviderStateMixin {
         child: GestureDetector(onTap: onTap, child: Column(children: [
           Icon(icon, color: color, size: 32, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)]),
           const SizedBox(height: 4),
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+          Text(label, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
         ])),
       );
 }

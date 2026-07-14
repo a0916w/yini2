@@ -112,13 +112,13 @@ class _VipPageState extends State<VipPage> {
           child: Row(children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               const Text('合计', style: TextStyle(color: C.ink3, fontSize: 12)),
-              Text('${cur?.symbol ?? '¥'}${cur?.price ?? '--'}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w900, fontSize: 24)),
+              Text('${cur?.symbol ?? '¥'}${cur?.price ?? '--'}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
             ]),
             const Spacer(),
             ElevatedButton(
               onPressed: _busy || cur == null ? null : _buy,
               style: ElevatedButton.styleFrom(backgroundColor: C.brand, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
-              child: Text(_busy ? '处理中…' : '立即开通', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              child: Text(_busy ? '处理中…' : '立即开通', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
             ),
           ]),
         ),
@@ -129,7 +129,7 @@ class _VipPageState extends State<VipPage> {
           decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF2B2118), Color(0xFF1F1812)]), borderRadius: BorderRadius.circular(16)),
           child: Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(app.authed ? app.displayName : '未登录', style: const TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w800, fontSize: 17)),
+              Text(app.authed ? app.displayName : '未登录', style: const TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600, fontSize: 17)),
               const SizedBox(height: 4),
               Text(app.isVip ? '会员有效期至 ${app.vipExpire}' : '尚未开通会员', style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
             ])),
@@ -138,15 +138,15 @@ class _VipPageState extends State<VipPage> {
         ),
         const SizedBox(height: 20),
         // 会员权益
-        const Text('会员权益', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        const Text('会员权益', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 14),
         Row(children: _rights.map((r) => Expanded(child: Column(children: [
           Container(width: 46, height: 46, decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), shape: BoxShape.circle), alignment: Alignment.center, child: Icon(r.$1, color: C.brand, size: 21)),
           const SizedBox(height: 7),
-          Text(r.$2, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(r.$2, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
         ]))).toList()),
         const SizedBox(height: 22),
-        const Text('选择套餐', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        const Text('选择套餐', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         Row(children: _plans.map((p) {
           final active = _plan == p.key;
@@ -162,12 +162,12 @@ class _VipPageState extends State<VipPage> {
                   border: Border.all(color: active ? C.brand : C.line, width: 1.5),
                 ),
                 child: Column(children: [
-                  if (p.hot) Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)), child: Text(p.tag.isEmpty ? '热销' : p.tag, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700))),
-                  Text(p.name, style: const TextStyle(fontWeight: FontWeight.w700)),
+                  if (p.hot) Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)), child: Text(p.tag.isEmpty ? '热销' : p.tag, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500))),
+                  Text(p.name, style: const TextStyle(fontWeight: FontWeight.w500)),
                   const SizedBox(height: 8),
                   Text.rich(TextSpan(children: [
-                    TextSpan(text: '${p.price}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w900, fontSize: 24)),
-                    TextSpan(text: p.currency == 'sgd' ? ' SGD' : ' 元', style: const TextStyle(color: C.brand, fontSize: 12, fontWeight: FontWeight.w700)),
+                    TextSpan(text: '${p.price}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
+                    TextSpan(text: p.currency == 'sgd' ? ' SGD' : ' 元', style: const TextStyle(color: C.brand, fontSize: 12, fontWeight: FontWeight.w500)),
                   ])),
                   if (p.origin > p.price) Text('${p.symbol}${p.origin}', style: const TextStyle(color: C.ink3, fontSize: 11, decoration: TextDecoration.lineThrough)),
                 ]),
@@ -177,7 +177,7 @@ class _VipPageState extends State<VipPage> {
         }).toList()),
         if (cur?.sub.isNotEmpty ?? false) Padding(padding: const EdgeInsets.only(top: 10), child: Text(cur!.sub, style: const TextStyle(color: C.ink3, fontSize: 12))),
         const SizedBox(height: 22),
-        const Text('支付方式', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        const Text('支付方式', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 10),
         if (_channels.isEmpty)
           const Text('当前套餐暂无可用支付方式', style: TextStyle(color: C.ink3, fontSize: 13))
@@ -187,7 +187,7 @@ class _VipPageState extends State<VipPage> {
             return ListTile(
               onTap: () => setState(() => _ch = c),
               contentPadding: EdgeInsets.zero,
-              leading: Container(width: 36, height: 36, decoration: BoxDecoration(color: C.brand, borderRadius: BorderRadius.circular(10)), alignment: Alignment.center, child: Text(c.name.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700))),
+              leading: Container(width: 36, height: 36, decoration: BoxDecoration(color: C.brand, borderRadius: BorderRadius.circular(10)), alignment: Alignment.center, child: Text(c.name.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500))),
               title: Text(c.name),
               trailing: Icon(on ? Icons.check_circle : Icons.radio_button_unchecked, color: on ? C.brand : C.ink3, size: 20),
             );

@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
         ),
-        actions: [TextButton(onPressed: _run, child: const Text('搜索', style: TextStyle(color: C.brand, fontWeight: FontWeight.w700)))],
+        actions: [TextButton(onPressed: _run, child: const Text('搜索', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500)))],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: C.brand))
@@ -76,16 +76,16 @@ class _SearchPageState extends State<SearchPage> {
   Widget _hotList() => ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         children: [
-          const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Text('热搜榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Text('热搜榜', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
           for (var i = 0; i < _hot.length; i++)
             InkWell(
               onTap: () { _ctrl.text = _hot[i]; _run(); },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 11),
                 child: Row(children: [
-                  SizedBox(width: 28, child: Text('${i + 1}', textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w900, color: i < 3 ? C.brand : C.ink3))),
+                  SizedBox(width: 28, child: Text('${i + 1}', textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600, color: i < 3 ? C.brand : C.ink3))),
                   const SizedBox(width: 8),
-                  Text(_hot[i], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  Text(_hot[i], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
                 ]),
               ),
             ),

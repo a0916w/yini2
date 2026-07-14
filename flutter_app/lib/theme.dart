@@ -36,7 +36,7 @@ ThemeData buildTheme() {
     appBarTheme: const AppBarTheme(
       backgroundColor: C.surface, foregroundColor: C.ink, elevation: 0,
       surfaceTintColor: Colors.transparent,
-      titleTextStyle: TextStyle(color: C.ink, fontSize: 16, fontWeight: FontWeight.w700),
+      titleTextStyle: TextStyle(color: C.ink, fontSize: 16, fontWeight: FontWeight.w500),
     ),
   );
 }

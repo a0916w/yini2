@@ -51,7 +51,7 @@ class Cover extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700, // 收敛字重
+                  fontWeight: FontWeight.w500, // 收敛字重
                   fontSize: big ? 16 : 12,
                   height: 1.3,
                   shadows: const [Shadow(blurRadius: 8, color: Colors.black45, offset: Offset(0, 1))],
@@ -93,7 +93,7 @@ class DramaCard extends StatelessWidget {
           ]),
         ),
         const SizedBox(height: 6),
-        Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: C.ink)),
+        Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: C.ink)),
         if (d.genre.isNotEmpty) ...[
           const SizedBox(height: 5),
           Align(
@@ -101,7 +101,7 @@ class DramaCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(color: tc.$1, borderRadius: BorderRadius.circular(6)),
-              child: Text(d.genre, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10, color: tc.$2, fontWeight: FontWeight.w500)),
+              child: Text(d.genre, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10, color: tc.$2, fontWeight: FontWeight.w400)),
             ),
           ),
         ],
@@ -122,11 +122,11 @@ class DramaRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           if (rank != null)
-            SizedBox(width: 28, child: Text('$rank', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, fontWeight: FontWeight.w800, color: rank! <= 3 ? C.brand : C.ink3))),
+            SizedBox(width: 28, child: Text('$rank', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600, color: rank! <= 3 ? C.brand : C.ink3))),
           ClipRRect(borderRadius: BorderRadius.circular(10), child: SizedBox(width: 62, height: 82, child: Cover(d))),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+            Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
             const SizedBox(height: 4),
             Text('▶ ${d.plays} · ${d.genre}', style: const TextStyle(color: C.ink3, fontSize: 12)),
           ])),

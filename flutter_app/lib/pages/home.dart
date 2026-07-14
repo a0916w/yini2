@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () => _pickCat(tabs[i]['id'] as int?),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text('${tabs[i]['name']}',
-                        style: TextStyle(fontSize: active ? 17 : 15, fontWeight: active ? FontWeight.w800 : FontWeight.w500, color: active ? C.ink : C.ink3)),
+                        style: TextStyle(fontSize: active ? 17 : 15, fontWeight: active ? FontWeight.w600 : FontWeight.w400, color: active ? C.ink : C.ink3)),
                     const SizedBox(height: 4),
                     Container(width: 18, height: 3, decoration: BoxDecoration(gradient: active ? C.brandGrad : null, borderRadius: BorderRadius.circular(3))),
                   ]),
@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             child: Row(children: [
               Container(width: 4, height: 15, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(3))),
               const SizedBox(width: 7),
-              Text('${tabs.firstWhere((e) => e['id'] == _catId, orElse: () => tabs[0])['name']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              Text('${tabs.firstWhere((e) => e['id'] == _catId, orElse: () => tabs[0])['name']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             ]),
           ),
           Expanded(
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
             width: 34, height: 34,
             decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(10)),
             alignment: Alignment.center,
-            child: const Text('橙', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 17)),
+            child: const Text('橙', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 17)),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
               height: 30, padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: C.brand.withValues(alpha: .4))),
               alignment: Alignment.center,
-              child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.diamond_outlined, size: 13, color: C.brand), SizedBox(width: 3), Text('会员', style: TextStyle(color: C.brand, fontWeight: FontWeight.w700, fontSize: 12))]),
+              child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.diamond_outlined, size: 13, color: C.brand), SizedBox(width: 3), Text('会员', style: TextStyle(color: C.brand, fontWeight: FontWeight.w500, fontSize: 12))]),
             ),
           ),
           // 语言
@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 const Icon(Icons.language, size: 18, color: C.ink2),
                 const SizedBox(width: 2),
-                Text(_langShort(), style: const TextStyle(fontSize: 11, color: C.ink2, fontWeight: FontWeight.w700)),
+                Text(_langShort(), style: const TextStyle(fontSize: 11, color: C.ink2, fontWeight: FontWeight.w500)),
               ]),
             ),
           ),

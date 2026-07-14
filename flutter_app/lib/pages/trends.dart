@@ -65,7 +65,7 @@ class _TrendsPageState extends State<TrendsPage> {
                     border: active ? Border.all(color: C.brand.withValues(alpha: .4)) : null,
                   ),
                   alignment: Alignment.center,
-                  child: Text(_tabs[i], style: TextStyle(color: active ? C.brand : C.ink2, fontWeight: active ? FontWeight.w700 : FontWeight.w500, fontSize: 13)),
+                  child: Text(_tabs[i], style: TextStyle(color: active ? C.brand : C.ink2, fontWeight: active ? FontWeight.w500 : FontWeight.w400, fontSize: 13)),
                 ),
               );
             },
