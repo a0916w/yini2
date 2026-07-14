@@ -26,18 +26,23 @@ class _HomePageState extends State<HomePage> {
   AppState? _app;
   String _lang = Http.lang;
 
+  // 分类数据分桶缓存(按 categoryId,null=全部),切换即时命中
+  final Map<int?, List<Drama>> _catCache = {};
+  final Map<int?, int> _catPage = {}, _catLast = {};
+
   void _onApp() {
     if (_app!.lang != _lang) { _lang = _app!.lang; _reloadAll(); }
   }
 
   void _reloadAll() {
-    Api.categories().then((c) { if (mounted) setState(() => _cats = c.cast<Map>()); }).catchError((_) {});
+    _catCache.clear(); _catPage.clear(); _catLast.clear();
+    Api.categories().then((c) { if (mounted) { setState(() => _cats = c.cast<Map>()); _prefetchCats(); } }).catchError((_) {});
     Api.banners().then((b) { if (mounted) setState(() => _banners = b.cast<Map>()); }).catchError((_) {});
     Api.marquees().then((m) {
       final txt = m.map((e) => '${(e as Map)['content']}').where((s) => s.isNotEmpty).join('　　');
       if (mounted) setState(() => _marquee = txt);
     }).catchError((_) {});
-    setState(() => _catId = null);
+    setState(() { _catId = null; _list.clear(); });
     _load(reset: true);
   }
 
@@ -47,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     _app = context.read<AppState>();
     _app!.addListener(_onApp);
     Api.categories().then((c) {
-      if (mounted) setState(() => _cats = c.cast<Map>());
+      if (mounted) { setState(() => _cats = c.cast<Map>()); _prefetchCats(); }
     }).catchError((_) {});
     Api.banners().then((b) {
       if (mounted) setState(() => _banners = b.cast<Map>());
@@ -59,17 +64,35 @@ class _HomePageState extends State<HomePage> {
     _load(reset: true);
   }
 
+  // 后台预取每个分类首页,点 tab 时已在内存缓存里 → 零等待
+  void _prefetchCats() {
+    for (final c in _cats) {
+      final id = c['id'] as int?;
+      if (id == null || _catCache.containsKey(id)) continue;
+      Api.videos(categoryId: id).then((r) {
+        if (!mounted) return;
+        _catCache[id] = r.$1; _catPage[id] = r.$2; _catLast[id] = r.$3;
+        for (final d in r.$1.take(9)) { Api.prefetchDetail(d.id); }
+      }).catchError((_) {});
+    }
+  }
+
   Future<void> _load({bool reset = false}) async {
     if (_loading) return;
+    final reqCat = _catId;
     setState(() => _loading = true);
     try {
-      final (rows, page, last) = await Api.videos(categoryId: _catId, page: reset ? 1 : _page + 1);
-      setState(() {
-        if (reset) _list.clear();
-        _list.addAll(rows);
-        _page = page;
-        _lastPage = last;
-      });
+      final (rows, page, last) = await Api.videos(categoryId: reqCat, page: reset ? 1 : (_catPage[reqCat] ?? 1) + 1);
+      final full = reset ? <Drama>[] : List<Drama>.of(_catCache[reqCat] ?? _list);
+      full.addAll(rows);
+      _catCache[reqCat] = full; _catPage[reqCat] = page; _catLast[reqCat] = last;
+      if (mounted && _catId == reqCat) {
+        setState(() {
+          _list..clear()..addAll(full);
+          _page = page;
+          _lastPage = last;
+        });
+      }
       // 预取前若干部详情,点进详情/播放秒开
       for (final d in rows.take(9)) {
         Api.prefetchDetail(d.id);
@@ -86,8 +109,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _pickCat(int? id) {
-    setState(() => _catId = id);
-    _load(reset: true);
+    if (_catId == id) return;
+    _catId = id;
+    final cached = _catCache[id];
+    if (cached != null) {
+      // 命中缓存:即时渲染,不转圈
+      setState(() {
+        _list..clear()..addAll(cached);
+        _page = _catPage[id] ?? 1;
+        _lastPage = _catLast[id] ?? 1;
+        _loading = false;
+      });
+    } else {
+      setState(() => _list.clear());
+      _load(reset: true);
+    }
   }
 
   @override

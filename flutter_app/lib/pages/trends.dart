@@ -20,8 +20,9 @@ class _TrendsPageState extends State<TrendsPage> {
   bool _loading = true;
   AppState? _app;
   String _lang = Http.lang;
+  final Map<String, List<Drama>> _cache = {}; // 按子 tab 缓存
 
-  void _onApp() { if (_app!.lang != _lang) { _lang = _app!.lang; _load(); } }
+  void _onApp() { if (_app!.lang != _lang) { _lang = _app!.lang; _cache.clear(); _load(); } }
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _TrendsPageState extends State<TrendsPage> {
     _app = context.read<AppState>();
     _app!.addListener(_onApp);
     _load();
+    _prefetchTabs();
   }
 
   @override
@@ -37,20 +39,40 @@ class _TrendsPageState extends State<TrendsPage> {
     super.dispose();
   }
 
+  // 后台把其余榜单也拉好,切换零等待
+  void _prefetchTabs() {
+    for (final tab in _tabs) {
+      if (_cache.containsKey(tab)) continue;
+      _fetch(tab).then((rows) { if (mounted) _cache[tab] = rows; }).catchError((_) {});
+    }
+  }
+
+  Future<List<Drama>> _fetch(String tab) async {
+    if (tab == '最新') return Api.latest();
+    if (tab == '推荐') return Api.recommended();
+    final (r, _, _) = await Api.videos(perPage: 50);
+    r.sort((a, b) => b.viewCount - a.viewCount);
+    return r;
+  }
+
+  void _pick(String tab) {
+    if (_tab == tab) return;
+    _tab = tab;
+    final cached = _cache[tab];
+    if (cached != null) {
+      setState(() { _list = cached; _loading = false; });
+    } else {
+      _load();
+    }
+  }
+
   Future<void> _load() async {
+    final reqTab = _tab;
     setState(() => _loading = true);
     try {
-      List<Drama> rows;
-      if (_tab == '最新') {
-        rows = await Api.latest();
-      } else if (_tab == '推荐') {
-        rows = await Api.recommended();
-      } else {
-        final (r, _, _) = await Api.videos(perPage: 50);
-        r.sort((a, b) => b.viewCount - a.viewCount);
-        rows = r;
-      }
-      setState(() => _list = rows);
+      final rows = await _fetch(reqTab);
+      _cache[reqTab] = rows;
+      if (mounted && _tab == reqTab) setState(() => _list = rows);
     } catch (_) {} finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -71,7 +93,7 @@ class _TrendsPageState extends State<TrendsPage> {
             itemBuilder: (c, i) {
               final active = _tab == _tabs[i];
               return GestureDetector(
-                onTap: () { setState(() => _tab = _tabs[i]); _load(); },
+                onTap: () => _pick(_tabs[i]),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   decoration: BoxDecoration(

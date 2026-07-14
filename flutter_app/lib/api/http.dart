@@ -15,6 +15,7 @@ class ApiException implements Exception {
 class Http {
   static SharedPreferences? _sp;
   static final Map<String, dynamic> _getCache = {};
+  static final Map<String, Future<dynamic>> _inflight = {};
 
   static Future<void> init() async {
     _sp = await SharedPreferences.getInstance();
@@ -65,9 +66,20 @@ class Http {
     return j;
   }
 
-  static Future<dynamic> get(String path, {Map<String, dynamic>? params, bool cache = true}) async {
+  static Future<dynamic> get(String path, {Map<String, dynamic>? params, bool cache = true}) {
     final key = '$path::${params ?? {}}::$lang';
-    if (cache && _getCache.containsKey(key)) return _getCache[key];
+    if (cache && _getCache.containsKey(key)) return Future.value(_getCache[key]);
+    // 同一请求进行中则复用,避免预热与点击重复打网络
+    if (cache && _inflight.containsKey(key)) return _inflight[key]!;
+    final f = _fetch(path, params, cache, key);
+    if (cache) {
+      _inflight[key] = f;
+      f.whenComplete(() => _inflight.remove(key));
+    }
+    return f;
+  }
+
+  static Future<dynamic> _fetch(String path, Map<String, dynamic>? params, bool cache, String key) async {
     final res = await http
         .get(_uri(path, params), headers: _headers())
         .timeout(const Duration(seconds: 15));
