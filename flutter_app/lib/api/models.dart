@@ -62,6 +62,7 @@ class Drama {
   });
 
   String get plays => fmtPlays(viewCount);
+  int get eps => 1; // 后端为单视频,暂固定 1 集
 
   factory Drama.fromJson(Map v) {
     final cat = v['category'];

@@ -10,29 +10,32 @@ const _grads = [
   [Color(0xFFFF4D6D), Color(0xFF8A1030)], [Color(0xFF9AE66E), Color(0xFF3A6A1A)],
   [Color(0xFF7C9CFF), Color(0xFF2A3A8F)], [Color(0xFFFFB86B), Color(0xFFA05A10)],
 ];
+// 题材标签配色(循环)
+const _tagColors = [
+  (Color(0xFFEFE9FF), Color(0xFF6A4BD8)),
+  (Color(0xFFE3F1FF), Color(0xFF2F6FD0)),
+  (Color(0xFFE2F7E9), Color(0xFF1F8A4D)),
+];
 
-// 占位封面:渐变底 + 剧名(暂不拉真实封面)。用于 3:4 竖版卡片。
+// 占位封面:渐变底 + 剧名(暂不拉真实封面)。3:4 竖版。
 class Cover extends StatelessWidget {
   final Drama drama;
-  final BoxFit fit; // 保留签名兼容,占位图不使用
+  final BoxFit fit;
   const Cover(this.drama, {super.key, this.fit = BoxFit.cover});
 
   @override
   Widget build(BuildContext context) {
     final g = _grads[drama.id % _grads.length];
     return LayoutBuilder(builder: (ctx, box) {
-      final big = box.maxHeight >= 120; // 大卡放大字号
+      final big = box.maxHeight >= 130;
       return DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g),
-        ),
+        decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: g)),
         child: Stack(fit: StackFit.expand, children: [
-          // 顶部高光 + 底部压暗,增强层次
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topRight, end: Alignment.bottomLeft,
-                colors: [Colors.white.withValues(alpha: .18), Colors.transparent, Colors.black.withValues(alpha: .28)],
+                colors: [Colors.white.withValues(alpha: .16), Colors.transparent, Colors.black.withValues(alpha: .30)],
                 stops: const [0, .5, 1],
               ),
             ),
@@ -48,8 +51,8 @@ class Cover extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: big ? 17 : 12,
+                  fontWeight: FontWeight.w700, // 收敛字重
+                  fontSize: big ? 16 : 12,
                   height: 1.3,
                   shadows: const [Shadow(blurRadius: 8, color: Colors.black45, offset: Offset(0, 1))],
                 ),
@@ -67,36 +70,44 @@ class DramaCard extends StatelessWidget {
   const DramaCard(this.d, {super.key});
   @override
   Widget build(BuildContext context) {
+    final tc = _tagColors[d.id % _tagColors.length];
     return GestureDetector(
       onTap: () => context.push('/drama/${d.id}'),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         AspectRatio(
           aspectRatio: 3 / 4,
           child: Stack(fit: StackFit.expand, children: [
-            ClipRRect(borderRadius: BorderRadius.circular(12), child: Cover(d)),
-            Positioned(top: 8, left: 8, child: _pill(d.free ? '免费' : 'VIP', d.free ? C.ok : C.brand)),
-            Positioned(left: 8, bottom: 8, child: _pill('▶ ${d.plays}', Colors.black.withValues(alpha: .55))),
+            ClipRRect(borderRadius: BorderRadius.circular(10), child: Cover(d)),
+            // 左上:已完结(深色半透明)
+            Positioned(top: 6, left: 6, child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(color: Colors.black.withValues(alpha: .5), borderRadius: BorderRadius.circular(7)),
+              child: const Text('已完结', style: TextStyle(color: Colors.white, fontSize: 10)),
+            )),
+            // 左下:▶ 全N集
+            Positioned(left: 6, bottom: 6, child: Row(mainAxisSize: MainAxisSize.min, children: [
+              const Icon(Icons.play_arrow, size: 12, color: Colors.white),
+              const SizedBox(width: 2),
+              Text('全${d.eps}集', style: const TextStyle(color: Colors.white, fontSize: 11, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
+            ])),
           ]),
         ),
-        const SizedBox(height: 8),
-        Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: C.ink)),
+        const SizedBox(height: 6),
+        Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: C.ink)),
         if (d.genre.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(color: C.tag, borderRadius: BorderRadius.circular(7)),
-            child: Text(d.genre, style: const TextStyle(fontSize: 11, color: C.tagInk, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 5),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(color: tc.$1, borderRadius: BorderRadius.circular(6)),
+              child: Text(d.genre, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10, color: tc.$2, fontWeight: FontWeight.w500)),
+            ),
           ),
         ],
       ]),
     );
   }
-
-  static Widget _pill(String s, Color bg) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
-        child: Text(s, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
-      );
 }
 
 class DramaRow extends StatelessWidget {
@@ -111,11 +122,11 @@ class DramaRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           if (rank != null)
-            SizedBox(width: 28, child: Text('$rank', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, fontWeight: FontWeight.w900, color: rank! <= 3 ? C.brand : C.ink3))),
+            SizedBox(width: 28, child: Text('$rank', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, fontWeight: FontWeight.w800, color: rank! <= 3 ? C.brand : C.ink3))),
           ClipRRect(borderRadius: BorderRadius.circular(10), child: SizedBox(width: 62, height: 82, child: Cover(d))),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            Text(d.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
             const SizedBox(height: 4),
             Text('▶ ${d.plays} · ${d.genre}', style: const TextStyle(color: C.ink3, fontSize: 12)),
           ])),
