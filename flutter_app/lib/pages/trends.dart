@@ -80,6 +80,7 @@ class _TrendsPageState extends State<TrendsPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
     return Scaffold(
       appBar: AppBar(title: const Text('榜单'), centerTitle: false),
       body: Column(children: [

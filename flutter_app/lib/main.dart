@@ -86,6 +86,7 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeController>(); // 主题切换时重建外壳/底栏,刷新 C.* 颜色
     return Scaffold(
       body: shell,
       bottomNavigationBar: _BottomBar(

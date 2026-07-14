@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../theme.dart';
 
 class WishesPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _WishesPageState extends State<WishesPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
     return Scaffold(
       appBar: AppBar(title: const Text('魔改愿望榜'), centerTitle: false),
       body: ListView(padding: const EdgeInsets.all(14), children: [

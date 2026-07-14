@@ -128,6 +128,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
     final tabs = [{'id': null, 'name': t('all')}, ..._cats.map((c) => {'id': c['id'], 'name': cleanName(c['name'] as String?)})];
     return Scaffold(
       body: SafeArea(
@@ -150,11 +151,14 @@ class _HomePageState extends State<HomePage> {
           else
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.asset('assets/banner.png', fit: BoxFit.cover),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 220),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Image.asset('assets/banner.png', fit: BoxFit.cover),
+                  ),
                 ),
               ),
             ),

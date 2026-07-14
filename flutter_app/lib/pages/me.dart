@@ -134,13 +134,17 @@ class MePage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Container(
-          decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
-          child: SwitchListTile(
-            value: context.watch<ThemeController>().dark,
-            activeThumbColor: C.brand,
-            onChanged: (v) => context.read<ThemeController>().toggle(v),
-            secondary: Container(width: 34, height: 34, decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(11)), child: Icon(Icons.dark_mode_outlined, size: 17, color: C.ink2)),
-            title: const Text('深色模式', style: TextStyle(fontSize: 15)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
+          clipBehavior: Clip.antiAlias,
+          child: Material(
+            color: C.surface,
+            child: SwitchListTile(
+              value: context.watch<ThemeController>().dark,
+              activeThumbColor: C.brand,
+              onChanged: (v) => context.read<ThemeController>().toggle(v),
+              secondary: Container(width: 34, height: 34, decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(11)), child: Icon(Icons.dark_mode_outlined, size: 17, color: C.ink2)),
+              title: const Text('深色模式', style: TextStyle(fontSize: 15)),
+            ),
           ),
         ),
         const SizedBox(height: 20),

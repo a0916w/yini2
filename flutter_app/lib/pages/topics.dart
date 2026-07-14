@@ -54,6 +54,7 @@ class _TopicsPageState extends State<TopicsPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
     final topics = _topics;
     return Scaffold(
       appBar: AppBar(title: const Text('专题合集'), centerTitle: false),
