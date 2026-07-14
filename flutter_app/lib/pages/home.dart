@@ -45,6 +45,10 @@ class _HomePageState extends State<HomePage> {
         _page = page;
         _lastPage = last;
       });
+      // 预取前若干部详情,点进详情/播放秒开
+      for (final d in rows.take(9)) {
+        Api.prefetchDetail(d.id);
+      }
     } catch (_) {} finally {
       if (mounted) setState(() => _loading = false);
     }

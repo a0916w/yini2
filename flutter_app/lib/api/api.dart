@@ -68,4 +68,24 @@ class Api {
   static Future<List<Drama>> favorites() async =>
       (((await Http.get('/favorites', params: {'per_page': 50}, cache: false) as Map)['data'] as List)).map((e) => Drama.fromJson(e as Map)).toList();
   static Future recordWatch(int id) => Http.post('/watch-history/$id', {});
+
+  // 启动预热:核心列表接口进 GET 缓存,进页面即命中
+  static void prewarm() {
+    void fire(Future f) => f.then((_) {}, onError: (_) {});
+    fire(categories());
+    fire(videos(page: 1));
+    fire(recommended());
+    fire(latest());
+    fire(marquees());
+    fire(Http.get('/site-settings'));
+    fire(plans());
+  }
+
+  // 预取剧集详情(缓存),点进详情/播放秒开;去重
+  static final Set<int> _warmed = {};
+  static void prefetchDetail(int id) {
+    if (_warmed.contains(id)) return;
+    _warmed.add(id);
+    videoDetail(id).then((_) {}, onError: (_) => _warmed.remove(id));
+  }
 }
