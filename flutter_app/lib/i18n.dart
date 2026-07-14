@@ -15,6 +15,7 @@ const _dict = <String, Map<String, String>>{
   'topics': {'zh': '专题', 'en': 'Topics', 'vi': 'Chủ đề', 'th': 'หัวข้อ', 'id': 'Topik'},
   'rank': {'zh': '榜单', 'en': 'Charts', 'vi': 'BXH', 'th': 'ชาร์ต', 'id': 'Tangga'},
   'hotBoard': {'zh': '热度榜', 'en': 'Hot List', 'vi': 'BXH nổi bật', 'th': 'อันดับมาแรง', 'id': 'Daftar Panas'},
+  'rankDesc': {'zh': '依据全站播放热度实时计算', 'en': 'Ranked by real-time popularity', 'vi': 'Xếp theo độ hot thời gian thực', 'th': 'จัดอันดับตามความนิยมแบบเรียลไทม์', 'id': 'Diurutkan berdasarkan popularitas real-time'},
   'live': {'zh': '实时更新', 'en': 'Updated live', 'vi': 'Cập nhật trực tiếp', 'th': 'อัปเดตสด', 'id': 'Diperbarui langsung'},
   'boom': {'zh': '爆', 'en': 'HOT', 'vi': 'HOT', 'th': 'ฮอต', 'id': 'HOT'},
   'hotTag': {'zh': '热', 'en': 'HOT', 'vi': 'HOT', 'th': 'ฮอต', 'id': 'HOT'},
