@@ -110,10 +110,16 @@ class _BottomBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   const _BottomBar({required this.current, required this.onTap});
 
+  // 首页是全屏视频流:底栏固定深色,不随浅色主题变白
+  bool get _forceDark => current == 0;
+  Color get _bg => _forceDark ? const Color(0xFF101216) : C.surface;
+  Color get _border => _forceDark ? const Color(0xFF222836) : C.line;
+  Color get _idle => _forceDark ? const Color(0xFF8A93A8) : C.ink3;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: C.surface, border: Border(top: BorderSide(color: C.line))),
+      decoration: BoxDecoration(color: _bg, border: Border(top: BorderSide(color: _border))),
       child: SafeArea(
         top: false,
         child: SizedBox(
@@ -130,13 +136,13 @@ class _BottomBar extends StatelessWidget {
     if (i == 2) {
       return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Transform.translate(offset: const Offset(0, -2), child: const Icon(Icons.emoji_events, color: C.brand, size: 30)),
-        Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : C.ink3, fontWeight: FontWeight.w500)),
+        Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : _idle, fontWeight: FontWeight.w500)),
       ]));
     }
     return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(t.$2, size: 23, color: active ? C.brand : C.ink3),
+      Icon(t.$2, size: 23, color: active ? C.brand : _idle),
       const SizedBox(height: 3),
-      Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : C.ink3, fontWeight: FontWeight.w500)),
+      Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : _idle, fontWeight: FontWeight.w500)),
     ]));
   }
 }
