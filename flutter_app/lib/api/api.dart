@@ -69,6 +69,8 @@ class Api {
   static Future<List<Drama>> favorites() async =>
       (((await Http.get('/favorites', params: {'per_page': 50}, cache: false) as Map)['data'] as List)).map((e) => Drama.fromJson(e as Map)).toList();
   static Future recordWatch(int id) => Http.post('/watch-history/$id', {});
+  // 兑换码(成功返回 message/天数,失败 422 带 message)
+  static Future<Map> redeem(String code) async => await Http.post('/redeem', {'code': code}) as Map;
 
   // 启动预热:核心列表接口进 GET 缓存,进页面即命中
   static void prewarm() {

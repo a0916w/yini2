@@ -30,7 +30,6 @@ class _TheaterPageState extends State<TheaterPage> {
   final Map<int, String> _errs = {};
   final PageController _pc = PageController();
   int _index = 0;
-  bool _danmaku = true;
   bool _dead = false;
   AppState? _app;
   String _lang = Http.lang;
@@ -166,7 +165,6 @@ class _TheaterPageState extends State<TheaterPage> {
                   drama: _detail[i] ?? _feed[i],
                   controller: _ctrls[i],
                   active: i == _index,
-                  danmaku: _danmaku,
                   error: _errs[i],
                   onRetry: () => _retry(i),
                 ),
@@ -176,18 +174,6 @@ class _TheaterPageState extends State<TheaterPage> {
           top: MediaQuery.of(context).padding.top + 10, left: 16, right: 16,
           child: Stack(alignment: Alignment.center, children: [
             Center(child: Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16))),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () => setState(() => _danmaku = !_danmaku),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: .3), borderRadius: BorderRadius.circular(100)),
-                  child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'),
-                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
-                ),
-              ),
-            ),
           ]),
         ),
       ]),

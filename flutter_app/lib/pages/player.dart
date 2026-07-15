@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../api/api.dart';
 import '../api/models.dart';
@@ -25,7 +26,6 @@ class _PlayerPageState extends State<PlayerPage> {
   final Map<int, String> _errs = {}; // 加载/初始化失败原因(可重试)
   final PageController _pc = PageController();
   int _index = 0;
-  bool _danmaku = true;
 
   @override
   void initState() {
@@ -140,7 +140,6 @@ class _PlayerPageState extends State<PlayerPage> {
                   drama: _detail[i] ?? _feed[i],
                   controller: _ctrls[i],
                   active: i == _index,
-                  danmaku: _danmaku,
                   error: _errs[i],
                   onRetry: () => _retry(i),
                 ),
@@ -161,18 +160,6 @@ class _PlayerPageState extends State<PlayerPage> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () => setState(() => _danmaku = !_danmaku),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: .3), borderRadius: BorderRadius.circular(100)),
-                  child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'),
-                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
-                ),
-              ),
-            ),
           ]),
         ),
       ]),
@@ -184,10 +171,9 @@ class VideoSlide extends StatefulWidget {
   final Drama drama;
   final VideoPlayerController? controller;
   final bool active;
-  final bool danmaku;
   final String? error;
   final VoidCallback? onRetry;
-  const VideoSlide({super.key, required this.drama, required this.controller, required this.active, required this.danmaku, this.error, this.onRetry});
+  const VideoSlide({super.key, required this.drama, required this.controller, required this.active, this.error, this.onRetry});
   @override
   State<VideoSlide> createState() => VideoSlideState();
 }
@@ -197,7 +183,6 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
   bool _faved = false;
   int _burst = 0;
   late final AnimationController _disc;
-  final List<Map<String, String>> _comments = [];
 
   bool get _locked {
     final d = widget.drama;
@@ -236,27 +221,6 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
     if (c == null || !c.value.isInitialized) return;
     c.value.isPlaying ? c.pause() : c.play();
     setState(() {});
-  }
-
-  void _openComments() {
-    final ctrl = TextEditingController();
-    showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: C.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(18))),
-      builder: (c) => StatefulBuilder(builder: (c, setSheet) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom),
-        child: SizedBox(height: MediaQuery.of(c).size.height * .6, child: Column(children: [
-          Padding(padding: const EdgeInsets.all(16), child: Row(children: [Text('${t('discuss')} ${_comments.length}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), const Spacer(), IconButton(onPressed: () => Navigator.pop(c), icon: const Icon(Icons.close))])),
-          Expanded(child: _comments.isEmpty
-              ? Center(child: Text(t('noComment'), style: TextStyle(color: C.ink3)))
-              : ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: _comments.map((m) => ListTile(contentPadding: EdgeInsets.zero, leading: CircleAvatar(backgroundColor: C.surface2, child: Text(t('meLabel'))), title: Text(t('meLabel')), subtitle: Text(m['t']!))).toList())),
-          Padding(padding: const EdgeInsets.all(12), child: Row(children: [
-            Expanded(child: TextField(controller: ctrl, decoration: InputDecoration(hintText: t('sayHint'), filled: true, fillColor: C.surface2, isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(999), borderSide: BorderSide.none)))),
-            const SizedBox(width: 8),
-            FilledButton(style: FilledButton.styleFrom(backgroundColor: C.brand), onPressed: () { if (ctrl.text.trim().isNotEmpty) { setSheet(() => _comments.insert(0, {'t': ctrl.text.trim()})); ctrl.clear(); } }, child: Text(t('send'))),
-          ])),
-        ])),
-      )),
-    );
   }
 
   void _openEpisodes() {
@@ -325,20 +289,6 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
         else if (ready && !c.value.isPlaying)
           const Center(child: Icon(Icons.play_arrow, color: Colors.white70, size: 70)),
 
-        // 弹幕
-        if (widget.danmaku && !_locked && ready && c.value.isPlaying)
-          Positioned(top: 90, left: 20, child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(color: Colors.black.withValues(alpha: .25), borderRadius: BorderRadius.circular(100)),
-            child: Text(t('danmakuDemo'), style: TextStyle(color: Colors.white.withValues(alpha: .9), fontSize: 12)),
-          )),
-        if (widget.danmaku && !_locked && ready && c.value.isPlaying)
-          Positioned(top: 122, left: 120, child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(color: Colors.black.withValues(alpha: .2), borderRadius: BorderRadius.circular(100)),
-            child: Text(t('danmakuDemo2'), style: TextStyle(color: Colors.white.withValues(alpha: .75), fontSize: 12)),
-          )),
-
         // 右栏
         Positioned(right: 10, bottom: 120, child: Column(children: [
           // 创作者头像 46 + 底部主色关注角标(规范)
@@ -356,9 +306,8 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
           ]),
           const SizedBox(height: 20),
           _rail(Icons.favorite, '${(d.id % 90) + 1 + (_liked ? 1 : 0)}', color: _liked ? C.like : Colors.white, onTap: () => setState(() => _liked = !_liked)),
-          _rail(Icons.mode_comment, '${_comments.length}', onTap: _openComments),
           _rail(Icons.star, t('favorite'), color: _faved ? const Color(0xFFFFD233) : Colors.white, onTap: () async { final v = await context.read<AppState>().toggleFavorite(d.id); setState(() => _faved = v); }),
-          _rail(Icons.share, t('share')),
+          _rail(Icons.share, t('share'), onTap: () => SharePlus.instance.share(ShareParams(text: '《${d.title}》 https://yini.tv/video/${d.id}'))),
           // 音乐碟
           RotationTransition(turns: _disc, child: Container(width: 44, height: 44, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xFF333333), Colors.black], stops: [.35, 1])), alignment: Alignment.center, child: const Icon(Icons.music_note, color: Colors.white, size: 16))),
         ])),

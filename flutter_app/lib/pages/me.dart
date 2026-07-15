@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../api/api.dart';
 import '../api/http.dart';
 import '../state.dart';
 import '../theme.dart';
@@ -121,6 +122,13 @@ class MePage extends StatelessWidget {
             ),
             _divider(),
             _service(
+              icon: Icons.confirmation_num_outlined,
+              label: t('redeem'),
+              trailing: Text('›', style: TextStyle(fontSize: 14, color: C.quiet)),
+              onTap: () => _redeemSheet(context, app),
+            ),
+            _divider(),
+            _service(
               icon: Icons.language,
               label: t('language'),
               trailing: Text('${_langName()} ›', style: TextStyle(fontSize: 12, color: C.quiet)),
@@ -213,6 +221,78 @@ class MePage extends StatelessWidget {
       if (l.$1 == Http.lang) return l.$2;
     }
     return '中文';
+  }
+
+  // 兑换码弹窗:输入 → POST /redeem → 刷新 VIP
+  void _redeemSheet(BuildContext context, AppState app) {
+    if (!app.authed) { context.push('/login'); return; }
+    final ctrl = TextEditingController();
+    var busy = false;
+    String? err;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: C.surface,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+      builder: (c) => StatefulBuilder(builder: (c, setSheet) => Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(c).viewInsets.bottom + 24),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(t('redeem'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: C.ink)),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(16)),
+            child: TextField(
+              controller: ctrl,
+              autofocus: true,
+              textCapitalization: TextCapitalization.characters,
+              style: TextStyle(fontSize: 15, color: C.ink, letterSpacing: 1),
+              decoration: InputDecoration(
+                hintText: t('redeemHint'),
+                hintStyle: TextStyle(fontSize: 13.5, color: C.quiet, letterSpacing: 0),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+            ),
+          ),
+          if (err != null)
+            Padding(padding: const EdgeInsets.only(top: 10), child: Text(err!, style: const TextStyle(color: C.like, fontSize: 12.5))),
+          const SizedBox(height: 18),
+          GestureDetector(
+            onTap: busy ? null : () async {
+              final code = ctrl.text.trim();
+              if (code.isEmpty) return;
+              setSheet(() { busy = true; err = null; });
+              try {
+                final r = await Api.redeem(code);
+                await app.refreshMe();
+                if (c.mounted) {
+                  Navigator.pop(c);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${r['message'] ?? t('redeemOk')}')));
+                }
+              } catch (e) {
+                setSheet(() => err = '$e');
+              } finally {
+                setSheet(() => busy = false);
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: C.brandGrad,
+                borderRadius: BorderRadius.circular(100),
+                boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .32), blurRadius: 16, offset: const Offset(0, 6))],
+              ),
+              child: Text(busy ? t('processing') : t('confirm'),
+                  style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+            ),
+          ),
+        ]),
+      )),
+    );
   }
 
   void _pickLang(BuildContext context) {

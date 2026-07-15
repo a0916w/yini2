@@ -130,29 +130,7 @@ class _HomePageState extends State<HomePage> {
                                       color: C.brand)),
                             ])),
                             const Spacer(),
-                            GestureDetector(
-                              onTap: () => context.push('/vip'),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                    color: C.surface,
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: C.brand.withValues(alpha: .12),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 3))
-                                    ]),
-                                child: Text(t('checkin'),
-                                    style: const TextStyle(
-                                        color: C.brand,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700)),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            GestureDetector(
+                                                        GestureDetector(
                               onTap: () => context.push('/search'),
                               child: Container(
                                 width: 32,
