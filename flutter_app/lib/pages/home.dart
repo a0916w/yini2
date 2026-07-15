@@ -17,27 +17,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map> _cats = [];
-  int? _catId; // null = 全部
-  List<Drama> _latest = [], _hot = [], _catList = [];
+  List<Drama> _latest = [], _hot = [];
   AppState? _app;
   String _lang = Http.lang;
-  final Map<int, List<Drama>> _catCache = {};
 
   void _onApp() {
-    if (_app!.lang != _lang) { _lang = _app!.lang; _catCache.clear(); _catId = null; _fetchAll(); }
+    if (_app!.lang != _lang) { _lang = _app!.lang; _fetchAll(); }
   }
 
   void _fetchAll() {
-    Api.categories().then((c) {
-      if (mounted) setState(() => _cats = c.cast<Map>());
-      // 预取各分类,切换零等待
-      for (final cat in c.cast<Map>()) {
-        final id = cat['id'] as int?;
-        if (id == null || _catCache.containsKey(id)) continue;
-        Api.videos(categoryId: id).then((r) { if (mounted) _catCache[id] = r.$1; }).catchError((_) {});
-      }
-    }).catchError((_) {});
     Api.latest().then((r) { if (mounted) setState(() => _latest = r); }).catchError((_) {});
     Api.videos(perPage: 50).then((r) {
       final rows = r.$1..sort((a, b) => b.viewCount - a.viewCount);
@@ -60,21 +48,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _pickCat(int? id) {
-    if (_catId == id) return;
-    setState(() {
-      _catId = id;
-      _catList = id == null ? [] : (_catCache[id] ?? []);
-    });
-    if (id != null && _catCache[id] == null) {
-      Api.videos(categoryId: id).then((r) {
-        if (!mounted) return;
-        _catCache[id] = r.$1;
-        if (_catId == id) setState(() => _catList = r.$1);
-      }).catchError((_) {});
-    }
-  }
-
   static String _rating(int id) => (8.8 + (id % 11) / 10).toStringAsFixed(1);
 
   @override
@@ -84,7 +57,6 @@ class _HomePageState extends State<HomePage> {
     final hero = _hot.isNotEmpty ? _hot.first : null;
     final freshList = _latest.take(8).toList();
     final watching = _hot.skip(1).take(6).toList();
-    final tabs = [{'id': null, 'name': t('all')}, ..._cats.map((c) => {'id': c['id'], 'name': cleanName(c['name'] as String?)})];
 
     return Scaffold(
       body: Container(
@@ -124,82 +96,36 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ]),
                   ),
-                  // 分类胶囊横滑
+                  // 今日主打 Hero(200 高,r24)
+                  if (hero != null) _heroCard(hero),
+                  // 新剧首发:标题行 + 横滑
+                  _sectionHeader(t('newSection'), chip: t('dailyNew')),
                   SizedBox(
-                    height: 46,
+                    height: 150,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-                      itemCount: tabs.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
-                      itemBuilder: (c, i) {
-                        final active = _catId == tabs[i]['id'];
-                        return GestureDetector(
-                          onTap: () => _pickCat(tabs[i]['id'] as int?),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: active ? C.brand : (dark ? C.surface2 : Colors.white.withValues(alpha: .85)),
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Text('${tabs[i]['name']}', style: TextStyle(
-                                fontSize: 12, fontWeight: active ? FontWeight.w700 : FontWeight.w600,
-                                color: active ? Colors.white : C.ink2)),
-                          ),
-                        );
-                      },
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: freshList.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (c, i) => _newCard(freshList[i]),
                     ),
                   ),
-                  if (_catId != null)
-                    // 分类结果:两列网格(规范网格卡样式)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-                      child: _catList.isEmpty
-                          ? const Padding(padding: EdgeInsets.only(top: 60), child: Center(child: CircularProgressIndicator(color: C.brand)))
-                          : Column(children: [
-                              for (var r = 0; r < _catList.length; r += 2)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: Row(children: [
-                                    Expanded(child: _gridCard(_catList[r])),
-                                    const SizedBox(width: 12),
-                                    Expanded(child: r + 1 < _catList.length ? _gridCard(_catList[r + 1]) : const SizedBox()),
-                                  ]),
-                                ),
-                            ]),
-                    )
-                  else ...[
-                    // 今日主打 Hero(200 高,r24)
-                    if (hero != null) _heroCard(hero),
-                    // 新剧首发:标题行 + 横滑
-                    _sectionHeader(t('newSection'), chip: t('dailyNew')),
-                    SizedBox(
-                      height: 150,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: freshList.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 12),
-                        itemBuilder: (c, i) => _newCard(freshList[i]),
-                      ),
-                    ),
-                    // 大家都在看:两列网格
-                    _sectionHeader(t('everyoneWatching')),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(children: [
-                        for (var r = 0; r < watching.length; r += 2)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Row(children: [
-                              Expanded(child: _gridCard(watching[r])),
-                              const SizedBox(width: 12),
-                              Expanded(child: r + 1 < watching.length ? _gridCard(watching[r + 1]) : const SizedBox()),
-                            ]),
-                          ),
-                      ]),
-                    ),
-                  ],
+                  // 大家都在看:两列网格(3:4 竖版)
+                  _sectionHeader(t('everyoneWatching')),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(children: [
+                      for (var r = 0; r < watching.length; r += 2)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Expanded(child: _gridCard(watching[r])),
+                            const SizedBox(width: 12),
+                            Expanded(child: r + 1 < watching.length ? _gridCard(watching[r + 1]) : const SizedBox()),
+                          ]),
+                        ),
+                    ]),
+                  ),
                 ]),
         ),
       ),
@@ -313,8 +239,8 @@ class _HomePageState extends State<HomePage> {
   // ── 大家都在看网格卡:170 高 r20,右上★评分主色chip,底部剧名+类型·在看 ──
   Widget _gridCard(Drama d) => GestureDetector(
         onTap: () => context.push('/drama/${d.id}'),
-        child: SizedBox(
-          height: 170,
+        child: AspectRatio(
+          aspectRatio: 3 / 4,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Stack(fit: StackFit.expand, children: [
