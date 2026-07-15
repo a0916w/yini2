@@ -18,6 +18,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Drama> _latest = [], _hot = [];
+  int _page = 1, _lastPage = 1;
+  bool _loadingMore = false;
   AppState? _app;
   String _lang = Http.lang;
 
@@ -29,9 +31,21 @@ class _HomePageState extends State<HomePage> {
     Api.latest().then((r) { if (mounted) setState(() => _latest = r); }).catchError((_) {});
     Api.videos(perPage: 50).then((r) {
       final rows = r.$1..sort((a, b) => b.viewCount - a.viewCount);
-      if (mounted) setState(() => _hot = rows);
+      if (mounted) setState(() { _hot = rows; _page = r.$2; _lastPage = r.$3; });
       for (final d in rows.take(9)) { Api.prefetchDetail(d.id); }
     }).catchError((_) {});
+  }
+
+  // 触底加载下一页,可一直往下拉
+  Future<void> _loadMore() async {
+    if (_loadingMore || _page >= _lastPage) return;
+    _loadingMore = true;
+    try {
+      final (rows, page, last) = await Api.videos(perPage: 50, page: _page + 1);
+      if (mounted) setState(() { _hot = [..._hot, ...rows]; _page = page; _lastPage = last; });
+    } catch (_) {} finally {
+      _loadingMore = false;
+    }
   }
 
   @override
@@ -56,7 +70,7 @@ class _HomePageState extends State<HomePage> {
     context.watch<AppState>(); // 语言切换即重建文案
     final hero = _hot.isNotEmpty ? _hot.first : null;
     final freshList = _latest.take(8).toList();
-    final watching = _hot.skip(1).take(6).toList();
+    final watching = _hot.length > 1 ? _hot.sublist(1) : <Drama>[];
 
     return Scaffold(
       body: Container(
@@ -65,7 +79,12 @@ class _HomePageState extends State<HomePage> {
           bottom: false,
           child: (_hot.isEmpty && _latest.isEmpty)
               ? const Center(child: CircularProgressIndicator(color: C.brand))
-              : ListView(padding: const EdgeInsets.only(bottom: 24), children: [
+              : NotificationListener<ScrollNotification>(
+                  onNotification: (n) {
+                    if (n.metrics.pixels > n.metrics.maxScrollExtent - 600) _loadMore();
+                    return false;
+                  },
+                  child: ListView(padding: const EdgeInsets.only(bottom: 24), children: [
                   // 顶栏:YiniTV logo + 签到有礼 + 搜索圆钮
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
@@ -126,7 +145,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                     ]),
                   ),
+                  if (_page < _lastPage)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      child: Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, color: C.brand))),
+                    ),
                 ]),
+                ),
         ),
       ),
     );
