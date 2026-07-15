@@ -106,41 +106,51 @@ class _TopicsPageState extends State<TopicsPage> {
           boxShadow: [BoxShadow(color: g[0].withValues(alpha: .3), blurRadius: 24, offset: const Offset(0, 10))],
         ),
         clipBehavior: Clip.antiAlias,
-        child: Stack(children: [
-          // 右下扇形叠放最多 3 张真实封面(后→前)
-          if (covers.length > 2) _mini(covers[2], right: 78, bottom: -4, angle: -10, w: 54, h: 72),
-          if (covers.length > 1) _mini(covers[1], right: 38, bottom: -6, angle: -2, w: 60, h: 80),
-          if (covers.isNotEmpty) _mini(covers[0], right: -10, bottom: -8, angle: 12, w: 66, h: 88),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 4),
-              Text(sub, style: TextStyle(color: Colors.white.withValues(alpha: .75), fontSize: 11)),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(100)),
-                child: Text(t('goSee'), style: TextStyle(color: g[1], fontSize: 11, fontWeight: FontWeight.w700)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 14, 18),
+          child: Row(children: [
+            // 左:标题 / 部数·热度 / 去看看
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text('${item['name']}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                Text(sub, style: TextStyle(color: Colors.white.withValues(alpha: .75), fontSize: 11)),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(100)),
+                  child: Text(t('goSee'), style: TextStyle(color: g[1], fontSize: 11, fontWeight: FontWeight.w700)),
+                ),
+              ]),
+            ),
+            const SizedBox(width: 10),
+            // 右:扇形叠放(完整露出,不出卡)
+            if (covers.isNotEmpty)
+              SizedBox(
+                width: 150, height: 96,
+                child: Stack(alignment: Alignment.center, children: [
+                  if (covers.length > 2) _mini(covers[2], right: 92, angle: -9, w: 52, h: 70),
+                  if (covers.length > 1) _mini(covers[1], right: 47, angle: -2, w: 56, h: 76),
+                  _mini(covers[0], right: 0, angle: 8, w: 60, h: 82),
+                ]),
               ),
-            ]),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
 
-  // 斜放迷你封面(真实剧照 3:4,白描边+黑影)
-  Widget _mini(Drama d, {required double right, required double bottom, required double angle, required double w, required double h}) =>
+  // 斜放迷你封面(真实剧照 3:4,白描边+黑影,完整可见)
+  Widget _mini(Drama d, {required double right, required double angle, required double w, required double h}) =>
       Positioned(
-        right: right, bottom: bottom,
+        right: right,
         child: Transform.rotate(
           angle: angle * 3.14159 / 180,
           child: Container(
             width: w, height: h,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(11),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.white.withValues(alpha: .55), width: 1.4),
               boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .28), blurRadius: 10, offset: const Offset(0, 4))],
             ),
