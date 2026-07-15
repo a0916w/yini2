@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +26,16 @@ import 'i18n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 卡顿探针:>17ms 的帧打日志(build=UI线程 raster=渲染线程),logcat 可采
+  SchedulerBinding.instance.addTimingsCallback((timings) {
+    for (final f in timings) {
+      final total = f.totalSpan.inMilliseconds;
+      if (total > 17) {
+        // ignore: avoid_print
+        print('JANK total=${total}ms build=${f.buildDuration.inMilliseconds}ms raster=${f.rasterDuration.inMilliseconds}ms');
+      }
+    }
+  });
   // 安卓:申请最高刷新率(ColorOS 等默认把第三方 App 锁 60Hz)
   if (defaultTargetPlatform == TargetPlatform.android) {
     try { await FlutterDisplayMode.setHighRefreshRate(); } catch (_) {}

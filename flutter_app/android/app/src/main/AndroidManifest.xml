@@ -5,6 +5,10 @@
         android:label="YiniTV"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- 老 Mali GPU(如 G52)Vulkan 驱动差:关闭 Impeller 回退 Skia GL,raster 明显更快 -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
