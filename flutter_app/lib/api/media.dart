@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart';
@@ -62,9 +63,8 @@ class Media {
       if (encBase != null && coverBase != null && url.startsWith(coverBase)) {
         final swapped = url.replaceFirst(_strip(coverBase), _strip(encBase));
         final res = await http.get(Uri.parse('$swapped.txt')).timeout(const Duration(seconds: 12));
-        final txt = res.body;
-        final i = txt.indexOf('base64,');
-        if (i >= 0) bytes = base64.decode(txt.substring(i + 7).trim());
+        // base64 解码挪到后台 isolate,滑动列表时不卡 UI
+        bytes = await compute(decodeCoverIsolate, res.body);
       } else {
         final res = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 12));
         if (res.statusCode == 200) bytes = res.bodyBytes;

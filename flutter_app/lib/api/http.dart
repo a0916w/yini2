@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
@@ -51,7 +52,8 @@ class Http {
     return h;
   }
 
-  static dynamic _decode(String body) {
+  // AES 解密挪到后台 isolate,避免大响应解密卡 UI 线程
+  static Future<dynamic> _decode(String body) async {
     if (body.isEmpty) return null;
     dynamic j;
     try {
@@ -61,7 +63,7 @@ class Http {
     }
     if (j is Map && j.containsKey('_e')) {
       try {
-        return Aes.decryptEnvelope(j['_e'] as String);
+        return await compute(decryptEnvelopeIsolate, j['_e'] as String);
       } catch (_) {
         return j;
       }
@@ -134,7 +136,7 @@ class Http {
     final res = await http
         .get(_uri(path, params), headers: _headers())
         .timeout(const Duration(seconds: 15));
-    final body = _decode(res.body);
+    final body = await _decode(res.body);
     if (res.statusCode == 401) await setToken(null);
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw ApiException(_msg(body, res.statusCode), res.statusCode);
@@ -151,7 +153,7 @@ class Http {
     final res = await http
         .post(_uri(path, null), headers: _headers(json: true), body: jsonEncode(data))
         .timeout(const Duration(seconds: 15));
-    final body = _decode(res.body);
+    final body = await _decode(res.body);
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw ApiException(_msg(body, res.statusCode), res.statusCode);
     }

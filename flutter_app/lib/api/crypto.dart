@@ -28,3 +28,13 @@ class Aes {
 
 // HLS 签名用 md5
 String md5Hex(String s) => cr.md5.convert(utf8.encode(s)).toString();
+
+// 供 compute() 后台 isolate 调用的顶层入口(参数/返回值需可跨 isolate)
+dynamic decryptEnvelopeIsolate(String b64) => Aes.decryptEnvelope(b64);
+
+// base64 图片解码(后台 isolate)
+Uint8List? decodeCoverIsolate(String txt) {
+  final i = txt.indexOf('base64,');
+  if (i < 0) return null;
+  try { return base64.decode(txt.substring(i + 7).trim()); } catch (_) { return null; }
+}

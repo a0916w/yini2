@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'api/http.dart';
@@ -23,6 +25,10 @@ import 'i18n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 安卓:申请最高刷新率(ColorOS 等默认把第三方 App 锁 60Hz)
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    try { await FlutterDisplayMode.setHighRefreshRate(); } catch (_) {}
+  }
   await Http.init();
   final theme = ThemeController();
   await theme.load(); // 默认浅色(果橙·活力)
