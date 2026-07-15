@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                         // 新剧首发:标题行 + 横滑
                         _sectionHeader(t('newSection'), chip: t('dailyNew')),
                         SizedBox(
-                          height: 150,
+                          height: 196,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -358,108 +358,63 @@ class _HomePageState extends State<HomePage> {
         ]),
       );
 
-  // ── 新剧首发卡:112×150 r18,「新」角标,封面内底部剧名 + ▶播放数 ──
+  // ── 新剧首发卡:封面干净(仅「新」角标),剧名/播放数在封面下方 ──
   Widget _newCard(Drama d) => GestureDetector(
         onTap: () => context.push('/drama/${d.id}'),
         child: SizedBox(
           width: 112,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: Stack(fit: StackFit.expand, children: [
-              Cover(d, showTitle: false),
-              Padding(
-                padding: const EdgeInsets.all(11),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(d.title,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              height: 1.45)),
-                      const SizedBox(height: 5),
-                      Text('▶ ${d.plays}',
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: .85),
-                              fontSize: 10)),
-                    ]),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            SizedBox(
+              height: 149,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Stack(fit: StackFit.expand, children: [
+                  Cover(d, showTitle: false),
+                  Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(color: C.brand, borderRadius: BorderRadius.circular(100)),
+                        child: Text(t('newBadge'), style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)),
+                      )),
+                ]),
               ),
-              Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                        color: C.brand,
-                        borderRadius: BorderRadius.circular(100)),
-                    child: Text(t('newBadge'),
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700)),
-                  )),
-            ]),
-          ),
+            ),
+            const SizedBox(height: 6),
+            Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: C.ink, fontSize: 12, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 3),
+            Text('▶ ${d.plays}', style: TextStyle(color: C.ink3, fontSize: 10)),
+          ]),
         ),
       );
 
-  // ── 大家都在看网格卡:170 高 r20,右上★评分主色chip,底部剧名+类型·在看 ──
+  // ── 大家都在看网格卡:封面 3:4 干净无遮挡,剧名/评分/在看数在下方 ──
   Widget _gridCard(Drama d) => GestureDetector(
         onTap: () => context.push('/drama/${d.id}'),
-        child: AspectRatio(
-          aspectRatio: 3 / 4,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Stack(fit: StackFit.expand, children: [
-              Cover(d, showTitle: false),
-              Padding(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(d.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              height: 1.4)),
-                      const SizedBox(height: 4),
-                      Text(
-                          '${d.genre.isEmpty ? '' : '${d.genre} · '}${tp('watchingN', {
-                                'n': d.plays
-                              })}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: .8),
-                              fontSize: 11)),
-                    ]),
-              ),
-              Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                    decoration: BoxDecoration(
-                        color: C.brand,
-                        borderRadius: BorderRadius.circular(100)),
-                    child: Text('★ ${_rating(d.id)}',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700)),
-                  )),
-            ]),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          AspectRatio(
+            aspectRatio: 3 / 4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Cover(d, showTitle: false),
+            ),
           ),
-        ),
+          const SizedBox(height: 7),
+          Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: C.ink, fontSize: 14, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 3),
+          Row(children: [
+            const Text('★ ', style: TextStyle(color: C.crown, fontSize: 11, fontWeight: FontWeight.w700)),
+            Text(_rating(d.id), style: const TextStyle(color: C.crown, fontSize: 11, fontWeight: FontWeight.w700)),
+            Expanded(
+              child: Text('  ${d.genre.isEmpty ? '' : '${d.genre} · '}${tp('watchingN', {'n': d.plays})}',
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: C.ink3, fontSize: 11)),
+            ),
+          ]),
+        ]),
       );
+
 }
