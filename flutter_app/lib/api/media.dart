@@ -72,6 +72,8 @@ class Media {
     } catch (_) {
       bytes = null;
     }
+    // 内存缓存上限(约 200 张),防止长会话膨胀
+    if (_coverCache.length > 200) _coverCache.remove(_coverCache.keys.first);
     _coverCache[url] = bytes;
     if (bytes != null) _imgWrite(url, bytes);
     return bytes;

@@ -155,15 +155,48 @@ const _grads = [
   [Color(0xFF8A4A5E), Color(0xFF5E3140)], [Color(0xFF3D4E81), Color(0xFF283356)],
 ];
 
-// 占位封面(规范):哑光色块 + 165deg 白14→黑叠加 + 左下白色剧名
-class Cover extends StatelessWidget {
+// 封面:优先真实剧照(鉴权 CDN base64,内存+磁盘缓存);未就绪时为
+// 规范占位(哑光色块 + 165deg 白14→黑叠加 + 左下白色剧名)
+class Cover extends StatefulWidget {
   final Drama drama;
   final BoxFit fit;
   final bool showTitle;
   const Cover(this.drama, {super.key, this.fit = BoxFit.cover, this.showTitle = true});
 
   @override
+  State<Cover> createState() => _CoverState();
+}
+
+class _CoverState extends State<Cover> {
+  Uint8List? _bytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(Cover old) {
+    super.didUpdateWidget(old);
+    if (old.drama.cover != widget.drama.cover) { _bytes = null; _load(); }
+  }
+
+  void _load() {
+    final url = widget.drama.cover;
+    if (url == null || url.isEmpty) return;
+    Media.resolveCover(url).then((b) {
+      if (mounted && b != null) setState(() => _bytes = b);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_bytes != null) {
+      return Image.memory(_bytes!, fit: widget.fit, width: double.infinity, height: double.infinity, gaplessPlayback: true);
+    }
+    final drama = widget.drama;
+    final showTitle = widget.showTitle;
     final base = coverColor(drama.id);
     return LayoutBuilder(builder: (ctx, box) {
       final h = box.maxHeight;
