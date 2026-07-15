@@ -145,17 +145,33 @@ class _PlayerPageState extends State<PlayerPage> {
                   onRetry: () => _retry(i),
                 ),
               ),
-        // 顶栏(返回 + 推荐 + 弹幕开关)
+        // 顶栏(规范:返回圆钮 34 黑30% + 居中「推荐」+ 弹幕 chip)
         Positioned(
-          top: MediaQuery.of(context).padding.top + 6, left: 6, right: 12,
-          child: Row(children: [
-            IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20)),
-            const Spacer(),
-            Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
-            const Spacer(),
-            GestureDetector(
-              onTap: () => setState(() => _danmaku = !_danmaku),
-              child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'), style: TextStyle(color: _danmaku ? Colors.white : Colors.white54, fontSize: 13, fontWeight: FontWeight.w400, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)])),
+          top: MediaQuery.of(context).padding.top + 6, left: 16, right: 16,
+          child: Stack(alignment: Alignment.center, children: [
+            Center(child: Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16))),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  width: 34, height: 34,
+                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: .3), shape: BoxShape.circle),
+                  child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 15),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () => setState(() => _danmaku = !_danmaku),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: .3), borderRadius: BorderRadius.circular(100)),
+                  child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'),
+                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                ),
+              ),
             ),
           ]),
         ),
@@ -311,11 +327,33 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
 
         // 弹幕
         if (widget.danmaku && !_locked && ready && c.value.isPlaying)
-          Positioned(top: 90, left: 16, child: Text(t('danmakuDemo'), style: const TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black87)]))),
+          Positioned(top: 90, left: 20, child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(color: Colors.black.withValues(alpha: .25), borderRadius: BorderRadius.circular(100)),
+            child: Text(t('danmakuDemo'), style: TextStyle(color: Colors.white.withValues(alpha: .9), fontSize: 12)),
+          )),
+        if (widget.danmaku && !_locked && ready && c.value.isPlaying)
+          Positioned(top: 122, left: 120, child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(color: Colors.black.withValues(alpha: .2), borderRadius: BorderRadius.circular(100)),
+            child: Text(t('danmakuDemo2'), style: TextStyle(color: Colors.white.withValues(alpha: .75), fontSize: 12)),
+          )),
 
         // 右栏
         Positioned(right: 10, bottom: 120, child: Column(children: [
-          Container(width: 48, height: 48, decoration: BoxDecoration(gradient: C.brandGrad, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)), alignment: Alignment.center, child: Text(d.title.isEmpty ? '橙' : d.title.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18))),
+          // 创作者头像 46 + 底部主色关注角标(规范)
+          Stack(clipBehavior: Clip.none, children: [
+            Container(width: 46, height: 46,
+                decoration: BoxDecoration(color: coverColor(d.id), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)),
+                alignment: Alignment.center,
+                child: Text(d.title.isEmpty ? 'Y' : d.title.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 17))),
+            Positioned(bottom: -7, left: 14, child: Container(
+              width: 18, height: 18,
+              decoration: const BoxDecoration(color: C.brand, shape: BoxShape.circle),
+              alignment: Alignment.center,
+              child: const Text('+', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700, height: 1)),
+            )),
+          ]),
           const SizedBox(height: 20),
           _rail(Icons.favorite, '${(d.id % 90) + 1 + (_liked ? 1 : 0)}', color: _liked ? C.like : Colors.white, onTap: () => setState(() => _liked = !_liked)),
           _rail(Icons.mode_comment, '${_comments.length}', onTap: _openComments),
@@ -336,14 +374,22 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
           Row(children: [const Icon(Icons.music_note, size: 14, color: Colors.white), const SizedBox(width: 6), Expanded(child: Text('${t('origSound')} · ${d.title}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 13, shadows: [Shadow(blurRadius: 3, color: Colors.black54)])))]),
         ])),
 
-        // 进度 + 时间
+        // 上滑提示(规范:10px 白45%,进度条上方)
         if (ready)
-          Positioned(left: 0, right: 0, bottom: 0, child: Row(children: [
-            const SizedBox(width: 10),
-            Text(_fmt(c.value.position), style: const TextStyle(color: Colors.white70, fontSize: 11)),
-            Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10), child: VideoProgressIndicator(c, allowScrubbing: true, colors: const VideoProgressColors(playedColor: Colors.white, bufferedColor: Colors.white24, backgroundColor: Colors.white10)))),
-            Text(_fmt(c.value.duration), style: const TextStyle(color: Colors.white70, fontSize: 11)),
-            const SizedBox(width: 10),
+          Positioned(left: 0, right: 0, bottom: 40, child: Center(
+            child: Text(t('swipeHint'), style: TextStyle(color: Colors.white.withValues(alpha: .45), fontSize: 10)),
+          )),
+        // 进度 + 时间(规范:3px 白25%轨道 + 白已播,时间 10px 白60%)
+        if (ready)
+          Positioned(left: 16, right: 16, bottom: 6, child: Column(mainAxisSize: MainAxisSize.min, children: [
+            SizedBox(height: 14, child: VideoProgressIndicator(c, allowScrubbing: true,
+                padding: const EdgeInsets.symmetric(vertical: 5.5),
+                colors: VideoProgressColors(playedColor: Colors.white, bufferedColor: Colors.white.withValues(alpha: .35), backgroundColor: Colors.white.withValues(alpha: .25)))),
+            const SizedBox(height: 2),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(_fmt(c.value.position), style: TextStyle(color: Colors.white.withValues(alpha: .6), fontSize: 10)),
+              Text(_fmt(c.value.duration), style: TextStyle(color: Colors.white.withValues(alpha: .6), fontSize: 10)),
+            ]),
           ])),
       ]),
     );

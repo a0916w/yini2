@@ -1,3 +1,4 @@
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Http.init();
   final theme = ThemeController();
-  await theme.load(); // 默认深色
+  await theme.load(); // 默认浅色(果橙·活力)
   final state = AppState();
   await state.boot();
   // 启动即预热:核心数据 + 站点配置(封面/HLS 签名要用),后台进行不阻塞首帧
@@ -83,11 +84,11 @@ class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.shell});
 
   static List<(String, IconData)> get _tabs => [
-    (t('home'), Icons.home_filled),
-    (t('cinema'), Icons.local_movies_outlined),
-    (t('rank'), Icons.emoji_events),
-    (t('topics'), Icons.grid_view_rounded),
-    (t('me'), Icons.person),
+    (t('home'), Icons.home_outlined),
+    (t('cinema'), Icons.smart_display_outlined),
+    (t('rank'), Icons.emoji_events_outlined),
+    (t('topics'), Icons.grid_view_outlined),
+    (t('me'), Icons.person_outline),
   ];
 
   @override
@@ -110,21 +111,26 @@ class _BottomBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   const _BottomBar({required this.current, required this.onTap});
 
-  // 首页是全屏视频流:底栏固定深色,不随浅色主题变白
-  bool get _forceDark => current == 0;
-  Color get _bg => _forceDark ? const Color(0xFF101216) : C.surface;
-  Color get _border => _forceDark ? const Color(0xFF222836) : C.line;
-  Color get _idle => _forceDark ? const Color(0xFF8A93A8) : C.ink3;
+  // 首页 feed 为深色态,其余浅色态(规范:blur + 半透明)
+  bool get _feedDark => current == 0;
+  Color get _bg => _feedDark ? const Color(0xE10C0C0E) : C.surface.withValues(alpha: .94);
+  Color get _border => _feedDark ? Colors.white.withValues(alpha: .08) : C.line;
+  Color get _idle => _feedDark ? Colors.white.withValues(alpha: .55) : C.quiet;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: _bg, border: Border(top: BorderSide(color: _border))),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 58,
-          child: Row(children: [for (var i = 0; i < MainShell._tabs.length; i++) Expanded(child: _item(i))]),
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: BoxDecoration(color: _bg, border: Border(top: BorderSide(color: _border))),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 56,
+              child: Row(children: [for (var i = 0; i < MainShell._tabs.length; i++) Expanded(child: _item(i))]),
+            ),
+          ),
         ),
       ),
     );
@@ -133,10 +139,11 @@ class _BottomBar extends StatelessWidget {
   Widget _item(int i) {
     final t = MainShell._tabs[i];
     final active = i == current;
+    final c = active ? C.brand : _idle;
     return InkWell(onTap: () => onTap(i), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(t.$2, size: 23, color: active ? C.brand : _idle),
+      Icon(t.$2, size: 22, color: c),
       const SizedBox(height: 3),
-      Text(t.$1, style: TextStyle(fontSize: 11, color: active ? C.brand : _idle, fontWeight: FontWeight.w500)),
+      Text(t.$1, style: TextStyle(fontSize: 10, color: c, fontWeight: FontWeight.w700)),
     ]));
   }
 }

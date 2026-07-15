@@ -171,15 +171,22 @@ class _TheaterPageState extends State<TheaterPage> {
                   onRetry: () => _retry(i),
                 ),
               ),
-        // 顶栏(标题 + 弹幕开关,无返回键)
+        // 顶栏(规范:居中「推荐」+ 右侧弹幕 chip)
         Positioned(
           top: MediaQuery.of(context).padding.top + 10, left: 16, right: 16,
-          child: Row(children: [
-            Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
-            const Spacer(),
-            GestureDetector(
-              onTap: () => setState(() => _danmaku = !_danmaku),
-              child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'), style: TextStyle(color: _danmaku ? Colors.white : Colors.white54, fontSize: 13, shadows: const [Shadow(blurRadius: 4, color: Colors.black54)])),
+          child: Stack(alignment: Alignment.center, children: [
+            Center(child: Text(t('recommend'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16))),
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () => setState(() => _danmaku = !_danmaku),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: .3), borderRadius: BorderRadius.circular(100)),
+                  child: Text(_danmaku ? t('danmakuOn') : t('danmakuOff'),
+                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                ),
+              ),
             ),
           ]),
         ),

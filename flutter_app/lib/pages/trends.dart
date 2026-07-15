@@ -9,6 +9,7 @@ import '../i18n.dart';
 import '../theme.dart';
 import '../widgets.dart';
 
+// 榜单(handoff: rank 屏)——浅橙渐变、前三领奖台(皇冠)、暖底列表卡
 class TrendsPage extends StatefulWidget {
   const TrendsPage({super.key});
   @override
@@ -81,150 +82,156 @@ class _TrendsPageState extends State<TrendsPage> {
     }
   }
 
-  // 名次色:1 红、2 橙、3 琥珀,其余灰
-  static const _rankColors = [Color(0xFFE8362E), Color(0xFFFF6D00), Color(0xFFFFA000)];
-  static const _heat = Color(0xFFE8362E);
+  // 榜单名次色(规范)
+  static const _rank1 = Color(0xFFFF4D1F);
+  static const _rank2 = Color(0xFFB8AFA6);
+  static const _rank3 = Color(0xFFD3A26A);
+  static const _rankRest = Color(0xFFC9B8A6);
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ThemeController>(); // 主题切换即重建,刷新 C.* 颜色
+    final dark = context.watch<ThemeController>().dark;
     context.watch<AppState>(); // 语言切换即重建文案
-    // 热度条比例基准:榜内最大播放量
-    var maxV = 1;
-    for (final d in _list) { if (d.viewCount > maxV) maxV = d.viewCount; }
+    final top3 = _list.take(3).toList();
+    final rest = _list.length > 3 ? _list.sublist(3) : <Drama>[];
     return Scaffold(
-      // 整页同一条橙色渐变:头部与列表圆角外露处颜色连续,无接缝
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft, end: Alignment.bottomRight,
-            colors: [Color(0xFFFF8A2B), Color(0xFFE8480A)],
-          ),
-        ),
+        decoration: pageTopGrad(dark),
         child: SafeArea(
           bottom: false,
-          child: Column(children: [
-            // 橙色渐变大头部
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(22, 18, 22, 22),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                PageTitle(t('rankTitle'), color: Colors.white, whiteHighlight: true),
-                const SizedBox(height: 7),
-                Text(t('rankSub'), style: TextStyle(color: Colors.white.withValues(alpha: .78), fontSize: 12.5)),
-                const SizedBox(height: 18),
-                // 子榜:白字 + 下划线
-                Row(children: [
-                  for (final tab in _tabs) ...[
-                    GestureDetector(
-                      onTap: () => _pick(tab),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                        Text(t(tab), style: TextStyle(
-                          color: _tab == tab ? Colors.white : Colors.white.withValues(alpha: .78),
-                          fontSize: 16.5, fontWeight: _tab == tab ? FontWeight.w700 : FontWeight.w400)),
-                        const SizedBox(height: 7),
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 160),
-                          width: _tab == tab ? 44 : 0, height: 3,
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(2)),
+          child: _loading
+              ? const Center(child: CircularProgressIndicator(color: C.brand))
+              : ListView(padding: const EdgeInsets.fromLTRB(20, 14, 20, 24), children: [
+                  PageTitle(t('rankTitle'), sub: t('rankSub')),
+                  const SizedBox(height: 14),
+                  // 榜单切换胶囊
+                  Row(children: [
+                    for (final tab in _tabs) ...[
+                      GestureDetector(
+                        onTap: () => _pick(tab),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: _tab == tab ? C.brand : (dark ? C.surface2 : Colors.white.withValues(alpha: .85)),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Text(t(tab), style: TextStyle(
+                              fontSize: 12, fontWeight: _tab == tab ? FontWeight.w700 : FontWeight.w600,
+                              color: _tab == tab ? Colors.white : C.ink2)),
                         ),
-                      ]),
-                    ),
-                    const SizedBox(width: 26),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                  ]),
+                  // 前三领奖台
+                  if (top3.length >= 3) ...[
+                    const SizedBox(height: 20),
+                    Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                      Expanded(flex: 100, child: _podium(top3[1], 2, 118, _rank2)),
+                      const SizedBox(width: 10),
+                      Expanded(flex: 115, child: _podium(top3[0], 1, 140, _rank1, crown: true)),
+                      const SizedBox(width: 10),
+                      Expanded(flex: 100, child: _podium(top3[2], 3, 106, _rank3)),
+                    ]),
+                  ],
+                  const SizedBox(height: 16),
+                  // 4名以后:暖底列表卡
+                  for (var i = 0; i < rest.length; i++) ...[
+                    _row(rest[i], i + 4),
+                    if (i < rest.length - 1) const SizedBox(height: 10),
                   ],
                 ]),
-              ]),
-            ),
-            // 白色列表卡(上圆角,圆角外露出父级渐变,无接缝)
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: C.surface,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: _loading
-                    ? const Center(child: CircularProgressIndicator(color: C.brand))
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
-                        itemCount: _list.length,
-                        itemBuilder: (c, i) => _row(_list[i], i + 1, maxV),
-                      ),
-              ),
-            ),
-          ]),
         ),
       ),
     );
   }
 
-  // 榜单行:大名次 + 封面 + 标题/标签/热度条 + 看剧按钮
-  Widget _row(Drama d, int rank, int maxV) {
-    final top3 = rank <= 3;
-    final rankColor = top3 ? _rankColors[rank - 1] : C.ink3;
-    final frac = (d.viewCount / maxV).clamp(.18, 1.0);
-    return InkWell(
+  // 领奖台位:封面(标题内嵌左下)+ 名次数字 + 热度值;第1名带皇冠
+  Widget _podium(Drama d, int rank, double h, Color rankColor, {bool crown = false}) {
+    return GestureDetector(
       onTap: () => context.push('/drama/${d.id}'),
-      borderRadius: BorderRadius.circular(14),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-        child: Row(children: [
-          // 名次(斜体大字)
-          SizedBox(
-            width: 34,
-            child: Text('$rank', textAlign: TextAlign.center,
-                style: TextStyle(fontSize: top3 ? 26 : 22, fontStyle: FontStyle.italic, fontWeight: FontWeight.w800, color: rankColor, height: 1)),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        if (crown) CustomPaint(size: const Size(26, 16), painter: _CrownPainter()),
+        if (crown) const SizedBox(height: 2),
+        Container(
+          height: h,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: crown
+                ? [BoxShadow(color: coverColor(d.id).withValues(alpha: .32), blurRadius: 24, offset: const Offset(0, 10))]
+                : null,
           ),
-          const SizedBox(width: 6),
-          // 封面
-          ClipRRect(borderRadius: BorderRadius.circular(12), child: SizedBox(width: 82, height: 110, child: Cover(d))),
-          const SizedBox(width: 14),
-          // 标题 / 标签 / 热度条
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            if (d.genre.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(8)),
-                child: Text(d.genre, style: TextStyle(color: C.ink2, fontSize: 11)),
-              ),
-            const SizedBox(height: 12),
-            // 热度条 + 热度值
-            Row(children: [
-              Expanded(
-                child: LayoutBuilder(builder: (c, box) => Stack(children: [
-                  Container(height: 6, decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(3))),
-                  Container(
-                    height: 6, width: box.maxWidth * frac,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [Color(0xFFFF8A2B), Color(0xFFE8362E)]),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                ])),
-              ),
-              const SizedBox(width: 8),
-              Text(d.plays, style: const TextStyle(color: _heat, fontSize: 12.5, fontWeight: FontWeight.w600)),
-            ]),
-          ])),
-          const SizedBox(width: 12),
-          // 看剧按钮
-          GestureDetector(
-            onTap: () => context.push('/watch/${d.id}'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 9),
-              decoration: BoxDecoration(
-                gradient: C.brandGrad,
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .35), blurRadius: 10, offset: const Offset(0, 4))],
-              ),
-              child: Text(t('watchBtn'), style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-            ),
-          ),
+          clipBehavior: Clip.antiAlias,
+          child: Cover(d),
+        ),
+        const SizedBox(height: 6),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text('$rank', style: TextStyle(fontSize: crown ? 19 : 16, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic, color: rankColor)),
+          const SizedBox(width: 5),
+          Text(d.plays, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: C.brand)),
         ]),
-      ),
+      ]),
     );
   }
+
+  // 4名以后行:暖底卡 r16(名次、缩略、剧名+类型·热度、看剧胶囊)
+  Widget _row(Drama d, int rank) {
+    return Container(
+      decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(children: [
+        SizedBox(width: 22, child: Text('$rank', textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic, color: _rankRest))),
+        const SizedBox(width: 12),
+        GestureDetector(
+          onTap: () => context.push('/drama/${d.id}'),
+          child: ClipRRect(borderRadius: BorderRadius.circular(9), child: SizedBox(width: 44, height: 58, child: Cover(d))),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => context.push('/drama/${d.id}'),
+            behavior: HitTestBehavior.opaque,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(d.title, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: C.ink)),
+              const SizedBox(height: 4),
+              Text('${d.genre.isEmpty ? '' : '${d.genre} · '}${tp('heatN', {'n': d.plays})}',
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: C.ink3)),
+            ]),
+          ),
+        ),
+        GestureDetector(
+          onTap: () => context.push('/watch/${d.id}'),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(color: C.brand, borderRadius: BorderRadius.circular(100)),
+            child: Text(t('watchBtn'), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+// 皇冠(规范 SVG:M2 14L1 4l7 4 5-7 5 7 7-4-1 10H2z,#FFB020)
+class _CrownPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final sx = size.width / 26, sy = size.height / 16;
+    final p = Path()
+      ..moveTo(2 * sx, 14 * sy)
+      ..lineTo(1 * sx, 4 * sy)
+      ..lineTo(8 * sx, 8 * sy)
+      ..lineTo(13 * sx, 1 * sy)
+      ..lineTo(18 * sx, 8 * sy)
+      ..lineTo(25 * sx, 4 * sy)
+      ..lineTo(24 * sx, 14 * sy)
+      ..close();
+    canvas.drawPath(p, Paint()..color = C.crown);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
 }

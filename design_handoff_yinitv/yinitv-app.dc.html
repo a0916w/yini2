@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+    <style>
+    body { margin:0; background:#EDEEF0; font-family:-apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; -webkit-font-smoothing:antialiased; }
+    * { box-sizing:border-box; }
+    ::-webkit-scrollbar { display:none; }
+    a { color:#FF6A2C; text-decoration:none; }
+    a:hover { color:#E55A1F; }
+  </style>
+</helmet>
+
+<section style="min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:48px;">
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%; position:relative; background:#FFFFFF;">
+        <div style="position:absolute; inset:0; overflow:auto; padding:64px 0 120px; scrollbar-width:none;">
+
+          <!-- C 剧场 -->
+          <sc-if value="{{ tabC.home }}" hint-placeholder-val="{{ true }}">
+            <div style="background:linear-gradient(#FFE3CC, #FFF6EE 46%, rgba(255,255,255,0) 380px);">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 20px 0;">
+                <div style="font-size:24px; font-weight:800; letter-spacing:-0.5px; color:#1A1A1E;">Yini<span style="color:#FF6000;">TV</span></div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div style="background:#fff; color:#FF6000; font-size:11px; font-weight:700; padding:6px 12px; border-radius:100px; box-shadow:0 3px 10px rgba(255,96,0,0.12);">签到有礼</div>
+                  <div style="width:32px; height:32px; border-radius:16px; background:#fff; box-shadow:0 3px 10px rgba(255,96,0,0.12); display:flex; align-items:center; justify-content:center;">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#1A1A1E" stroke-width="1.6"></circle><path d="M11 11L15 15" stroke="#1A1A1E" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:8px; overflow-x:auto; padding:14px 20px 0; scrollbar-width:none;">
+                <span style="flex-shrink:0; font-size:12px; font-weight:700; color:#fff; background:#FF6000; padding:7px 15px; border-radius:100px;">全部</span>
+                <span style="flex-shrink:0; font-size:12px; font-weight:600; color:#7A6B5C; background:rgba(255,255,255,0.85); padding:7px 15px; border-radius:100px;">逆袭</span>
+                <span style="flex-shrink:0; font-size:12px; font-weight:600; color:#7A6B5C; background:rgba(255,255,255,0.85); padding:7px 15px; border-radius:100px;">甜宠</span>
+                <span style="flex-shrink:0; font-size:12px; font-weight:600; color:#7A6B5C; background:rgba(255,255,255,0.85); padding:7px 15px; border-radius:100px;">悬疑</span>
+                <span style="flex-shrink:0; font-size:12px; font-weight:600; color:#7A6B5C; background:rgba(255,255,255,0.85); padding:7px 15px; border-radius:100px;">古风</span>
+              </div>
+
+              <div onClick="{{ openC.hero }}" style="cursor:pointer; margin:14px 20px 0; height:200px; border-radius:24px; padding:18px 20px; position:relative; display:flex; flex-direction:column; justify-content:space-between; background:linear-gradient(155deg, rgba(255,255,255,0.16), rgba(0,0,0,0.24)), #33635C; box-shadow:0 12px 28px rgba(51,99,92,0.28);">
+                <div style="align-self:flex-start; font-size:11px; font-weight:700; color:#FF6000; background:#fff; padding:4px 11px; border-radius:100px;">今日主打</div>
+                <div>
+                  <div style="font-size:24px; font-weight:800; color:#fff; letter-spacing:0.5px;">冯思曼的困惑</div>
+                  <div style="margin:6px 0 12px; font-size:12px; color:rgba(255,255,255,0.85);"><span style="color:#FFD27A; font-weight:700;">★ 9.0</span> · 2.0万播放 · 全80集</div>
+                  <div style="display:inline-flex; align-items:center; gap:6px; background:#FF6000; color:#fff; font-size:13px; font-weight:700; padding:10px 20px; border-radius:100px; box-shadow:0 6px 14px rgba(255,96,0,0.4);">
+                    <svg width="10" height="11" viewBox="0 0 10 11"><path d="M9.2 4.7c0.7 0.4 0.7 1.3 0 1.7L1.8 10.6C1.1 11 0.3 10.5 0.3 9.7V1.4C0.3 0.6 1.1 0.1 1.8 0.5L9.2 4.7Z" fill="#fff"></path></svg>
+                    立即看
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:baseline; justify-content:space-between; padding:26px 20px 12px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:19px; font-weight:800; color:#1A1A1E;">新剧首发</span>
+                  <span style="font-size:10px; font-weight:700; color:#FF6000; background:#FFE9D9; padding:3px 8px; border-radius:100px;">每日上新</span>
+                </div>
+                <span style="font-size:12px; color:#B8AFA6;">全部 ›</span>
+              </div>
+              <div style="display:flex; gap:12px; overflow-x:auto; padding:0 20px 4px; scrollbar-width:none;">
+                <div onClick="{{ openC.n1 }}" style="cursor:pointer; flex-shrink:0; width:112px;">
+                  <div style="width:112px; height:150px; border-radius:18px; position:relative; padding:26px 11px 11px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.34)), #4A5A8A;">
+                    <div style="position:absolute; top:8px; left:8px; background:#FF6000; color:#fff; font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px;">新</div>
+                    <div style="font-size:12px; font-weight:700; color:#fff; line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">男人惨遭绿帽被派到村庄当实习医生</div>
+                    <div style="margin-top:5px; font-size:10px; color:rgba(255,255,255,0.85);">▶ 3366</div>
+                  </div>
+                </div>
+                <div onClick="{{ openC.n2 }}" style="cursor:pointer; flex-shrink:0; width:112px;">
+                  <div style="width:112px; height:150px; border-radius:18px; position:relative; padding:26px 11px 11px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.34)), #5E7050;">
+                    <div style="position:absolute; top:8px; left:8px; background:#FF6000; color:#fff; font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px;">新</div>
+                    <div style="font-size:12px; font-weight:700; color:#fff; line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">醒来绑定震惊值系统颜值爆表</div>
+                    <div style="margin-top:5px; font-size:10px; color:rgba(255,255,255,0.85);">▶ 3312</div>
+                  </div>
+                </div>
+                <div onClick="{{ openC.n3 }}" style="cursor:pointer; flex-shrink:0; width:112px;">
+                  <div style="width:112px; height:150px; border-radius:18px; position:relative; padding:26px 11px 11px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.34)), #2E6B72;">
+                    <div style="position:absolute; top:8px; left:8px; background:#FF6000; color:#fff; font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px;">新</div>
+                    <div style="font-size:12px; font-weight:700; color:#fff; line-height:1.45;">金莲，求你再喂我一次</div>
+                    <div style="margin-top:5px; font-size:10px; color:rgba(255,255,255,0.85);">▶ 5062</div>
+                  </div>
+                </div>
+                <div onClick="{{ openC.r2 }}" style="cursor:pointer; flex-shrink:0; width:112px;">
+                  <div style="width:112px; height:150px; border-radius:18px; position:relative; padding:26px 11px 11px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.34)), #3D4E81;">
+                    <div style="position:absolute; top:8px; left:8px; background:#FF6000; color:#fff; font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px;">新</div>
+                    <div style="font-size:12px; font-weight:700; color:#fff; line-height:1.45;">特别的礼物</div>
+                    <div style="margin-top:5px; font-size:10px; color:rgba(255,255,255,0.85);">▶ 1.6万</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:baseline; justify-content:space-between; padding:26px 20px 12px;">
+                <span style="font-size:19px; font-weight:800; color:#1A1A1E;">大家都在看</span>
+                <span style="font-size:12px; color:#B8AFA6;">全部 ›</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 20px;">
+                <div onClick="{{ openC.w1 }}" style="cursor:pointer; height:170px; border-radius:20px; position:relative; padding:14px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.36)), #8A4A5E;">
+                  <div style="position:absolute; top:10px; right:10px; background:#FF6000; color:#fff; font-size:11px; font-weight:700; padding:3px 9px; border-radius:100px;">★ 9.6</div>
+                  <div style="font-size:15px; font-weight:800; color:#fff;">黑夜幽欲</div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(255,255,255,0.8);">悬疑 · 1.2万在看</div>
+                </div>
+                <div onClick="{{ openC.w2 }}" style="cursor:pointer; height:170px; border-radius:20px; position:relative; padding:14px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.36)), #A05540;">
+                  <div style="position:absolute; top:10px; right:10px; background:#FF6000; color:#fff; font-size:11px; font-weight:700; padding:3px 9px; border-radius:100px;">★ 9.6</div>
+                  <div style="font-size:15px; font-weight:800; color:#fff; line-height:1.4;">我的富豪美女房东逆袭职场风云</div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(255,255,255,0.8);">逆袭 · 8600在看</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- C 榜单 -->
+          <sc-if value="{{ tabC.rank }}" hint-placeholder-val="{{ false }}">
+            <div style="background:linear-gradient(#FFE3CC, rgba(255,255,255,0) 320px); padding:14px 20px 0;">
+              <div style="font-size:24px; font-weight:800; color:#1A1A1E;">热播总榜</div>
+              <div style="margin-top:4px; font-size:12px; color:#A08D7A;">每小时更新 · 全网实时播放热度</div>
+              <div style="display:flex; gap:8px; margin-top:14px;">
+                <span style="font-size:12px; font-weight:700; color:#fff; background:#FF6000; padding:7px 15px; border-radius:100px;">飙升榜</span>
+                <span style="font-size:12px; font-weight:600; color:#7A6B5C; background:rgba(255,255,255,0.85); padding:7px 15px; border-radius:100px;">热播榜</span>
+                <span style="font-size:12px; font-weight:600; color:#7A6B5C; background:rgba(255,255,255,0.85); padding:7px 15px; border-radius:100px;">新剧榜</span>
+              </div>
+
+              <!-- podium -->
+              <div style="margin-top:20px; display:flex; align-items:flex-end; gap:10px;">
+                <div onClick="{{ openC.r2 }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                  <div style="width:100%; height:118px; border-radius:16px; padding:9px; display:flex; align-items:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.3)), #3D4E81;"><div style="font-size:11px; font-weight:700; color:#fff; line-height:1.4;">特别的礼物</div></div>
+                  <div style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px; font-weight:900; font-style:italic; color:#B8AFA6;">2</span><span style="font-size:11px; font-weight:700; color:#FF6000;">1.6万</span></div>
+                </div>
+                <div onClick="{{ openC.r1 }}" style="cursor:pointer; flex:1.15; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                  <svg width="26" height="16" viewBox="0 0 26 16"><path d="M2 14L1 4l7 4 5-7 5 7 7-4-1 10H2z" fill="#FFB020"></path></svg>
+                  <div style="width:100%; height:140px; border-radius:16px; padding:10px; display:flex; align-items:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.3)), #6B4E36; box-shadow:0 10px 24px rgba(107,78,54,0.32);"><div style="font-size:12px; font-weight:700; color:#fff; line-height:1.4;">我的模特生涯 · 第3集</div></div>
+                  <div style="display:flex; align-items:center; gap:5px;"><span style="font-size:19px; font-weight:900; font-style:italic; color:#FF4D1F;">1</span><span style="font-size:11px; font-weight:700; color:#FF6000;">3486</span></div>
+                </div>
+                <div onClick="{{ openC.r3 }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                  <div style="width:100%; height:106px; border-radius:16px; padding:9px; display:flex; align-items:flex-end; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.3)), #8A6B3A;"><div style="font-size:11px; font-weight:700; color:#fff; line-height:1.4;">欲火已燃</div></div>
+                  <div style="display:flex; align-items:center; gap:5px;"><span style="font-size:16px; font-weight:900; font-style:italic; color:#D3A26A;">3</span><span style="font-size:11px; font-weight:700; color:#FF6000;">1.7万</span></div>
+                </div>
+              </div>
+
+              <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+                <div style="background:#FFF6EE; border-radius:16px; padding:12px 14px; display:flex; align-items:center; gap:12px;">
+                  <div style="width:22px; text-align:center; font-size:16px; font-weight:900; font-style:italic; color:#C9B8A6;">4</div>
+                  <div style="width:44px; height:58px; border-radius:9px; flex-shrink:0; padding:5px; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.2)), #3F7053;"><div style="font-size:8px; font-weight:700; color:#fff; line-height:1.4;">夫人的秘密·下</div></div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:14px; font-weight:700; color:#1A1A1E;">夫人的秘密 · 下</div>
+                    <div style="margin-top:4px; font-size:11px; color:#A08D7A;">背叛 · 热度 6254</div>
+                  </div>
+                  <div onClick="{{ openC.r4 }}" style="cursor:pointer; flex-shrink:0; background:#FF6000; color:#fff; font-size:12px; font-weight:700; padding:8px 14px; border-radius:100px;">看剧</div>
+                </div>
+                <div style="background:#FFF6EE; border-radius:16px; padding:12px 14px; display:flex; align-items:center; gap:12px;">
+                  <div style="width:22px; text-align:center; font-size:16px; font-weight:900; font-style:italic; color:#C9B8A6;">5</div>
+                  <div style="width:44px; height:58px; border-radius:9px; flex-shrink:0; padding:5px; background:linear-gradient(165deg, rgba(255,255,255,0.14), rgba(0,0,0,0.2)), #6B4E9E;"><div style="font-size:8px; font-weight:700; color:#fff; line-height:1.4;">心照不宣</div></div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:14px; font-weight:700; color:#1A1A1E;">心照不宣</div>
+                    <div style="margin-top:4px; font-size:11px; color:#A08D7A;">悬疑 · 热度 5120</div>
+                  </div>
+                  <div onClick="{{ openC.r5 }}" style="cursor:pointer; flex-shrink:0; background:#FF6000; color:#fff; font-size:12px; font-weight:700; padding:8px 14px; border-radius:100px;">看剧</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- C 专题 -->
+          <sc-if value="{{ tabC.topic }}" hint-placeholder-val="{{ false }}">
+            <div style="background:linear-gradient(#FFE3CC, rgba(255,255,255,0) 280px); padding:14px 20px 0;">
+              <div style="font-size:24px; font-weight:800; color:#1A1A1E;">全部专题</div>
+              <div style="margin-top:4px; font-size:12px; color:#A08D7A;">编辑精选片单 · 每周四更新</div>
+
+              <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
+                <div onClick="{{ openC.w2 }}" style="cursor:pointer; border-radius:22px; padding:18px 20px; position:relative; overflow:hidden; background:linear-gradient(120deg, #B3543F, #8A3B28); box-shadow:0 10px 24px rgba(179,84,63,0.3);">
+                  <div style="position:absolute; right:-10px; bottom:-8px; width:64px; height:86px; border-radius:11px; transform:rotate(12deg); padding:9px; background:rgba(255,255,255,0.14); backdrop-filter:blur(2px);"><div style="font-size:9px; font-weight:700; color:#fff; line-height:1.4;">盲人按摩师三天攻…</div></div>
+                  <div style="font-size:20px; font-weight:800; color:#fff;">霸总</div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(255,255,255,0.75);">1 部剧 · 4633 热度</div>
+                  <div style="margin-top:12px; display:inline-block; font-size:11px; font-weight:700; color:#8A3B28; background:#fff; padding:7px 14px; border-radius:100px;">去看看 ›</div>
+                </div>
+                <div onClick="{{ openC.n3 }}" style="cursor:pointer; border-radius:22px; padding:18px 20px; position:relative; overflow:hidden; background:linear-gradient(120deg, #3D5A8C, #2C4166); box-shadow:0 10px 24px rgba(61,90,140,0.3);">
+                  <div style="position:absolute; right:-10px; bottom:-8px; width:64px; height:86px; border-radius:11px; transform:rotate(12deg); padding:9px; background:rgba(255,255,255,0.14);"><div style="font-size:9px; font-weight:700; color:#fff; line-height:1.4;">狗哥的乡村爱情故事</div></div>
+                  <div style="font-size:20px; font-weight:800; color:#fff;">浪漫</div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(255,255,255,0.75);">1 部剧 · 8776 热度</div>
+                  <div style="margin-top:12px; display:inline-block; font-size:11px; font-weight:700; color:#2C4166; background:#fff; padding:7px 14px; border-radius:100px;">去看看 ›</div>
+                </div>
+                <div onClick="{{ openC.w1 }}" style="cursor:pointer; border-radius:22px; padding:18px 20px; position:relative; overflow:hidden; background:linear-gradient(120deg, #8A4A5E, #663445); box-shadow:0 10px 24px rgba(138,74,94,0.3);">
+                  <div style="position:absolute; right:34px; bottom:-4px; width:56px; height:76px; border-radius:10px; transform:rotate(-8deg); background:rgba(255,255,255,0.1);"></div>
+                  <div style="position:absolute; right:-10px; bottom:-8px; width:64px; height:86px; border-radius:11px; transform:rotate(12deg); padding:9px; background:rgba(255,255,255,0.14);"><div style="font-size:9px; font-weight:700; color:#fff; line-height:1.4;">销售的秘密</div></div>
+                  <div style="font-size:20px; font-weight:800; color:#fff;">秘书</div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(255,255,255,0.75);">8 部剧 · 3.6万 热度</div>
+                  <div style="margin-top:12px; display:inline-block; font-size:11px; font-weight:700; color:#663445; background:#fff; padding:7px 14px; border-radius:100px;">去看看 ›</div>
+                </div>
+                <div onClick="{{ openC.r4 }}" style="cursor:pointer; border-radius:22px; padding:18px 20px; position:relative; overflow:hidden; background:linear-gradient(120deg, #5B4E9E, #423876); box-shadow:0 10px 24px rgba(91,78,158,0.3);">
+                  <div style="position:absolute; right:-10px; bottom:-8px; width:64px; height:86px; border-radius:11px; transform:rotate(12deg); padding:9px; background:rgba(255,255,255,0.14);"><div style="font-size:9px; font-weight:700; color:#fff; line-height:1.4;">家门之外</div></div>
+                  <div style="font-size:20px; font-weight:800; color:#fff;">豪门</div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(255,255,255,0.75);">1 部剧 · 1.5万 热度</div>
+                  <div style="margin-top:12px; display:inline-block; font-size:11px; font-weight:700; color:#423876; background:#fff; padding:7px 14px; border-radius:100px;">去看看 ›</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- C 我的 -->
+          <sc-if value="{{ tabC.me }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="background:linear-gradient(150deg, #FF8A3C, #FF6000); padding:20px 20px 56px; border-radius:0 0 30px 30px;">
+                <div style="font-size:22px; font-weight:800; color:#fff;">个人中心</div>
+                <div style="margin-top:16px; display:flex; align-items:center; gap:14px;">
+                  <div style="width:56px; height:56px; border-radius:28px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800; color:#FF6000;">Y</div>
+                  <div style="flex:1;">
+                    <div style="font-size:17px; font-weight:800; color:#fff;">未登录</div>
+                    <div style="margin-top:3px; font-size:12px; color:rgba(255,255,255,0.8);">点击登录 / 注册</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.22); color:#fff; font-size:12px; font-weight:700; padding:8px 16px; border-radius:100px;">登录</div>
+                </div>
+              </div>
+
+              <div style="margin:-32px 20px 0; background:#fff; border-radius:18px; padding:14px; display:flex; box-shadow:0 8px 24px rgba(255,96,0,0.12);">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;">
+                  <svg width="20" height="20" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#FF6000" stroke-width="1.5"></circle><path d="M9 5.5V9l2.5 1.5" stroke="#FF6000" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                  <span style="font-size:12px; font-weight:600; color:#1A1A1E;">观看记录</span>
+                </div>
+                <div style="width:1px; background:#F4EDE5;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;">
+                  <svg width="20" height="20" viewBox="0 0 18 18" fill="none"><path d="M9 15.5C9 15.5 2 11.5 2 6.8C2 4.4 3.9 2.5 6.2 2.5C7.4 2.5 8.4 3 9 3.9C9.6 3 10.6 2.5 11.8 2.5C14.1 2.5 16 4.4 16 6.8C16 11.5 9 15.5 9 15.5Z" stroke="#FF6000" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+                  <span style="font-size:12px; font-weight:600; color:#1A1A1E;">我的收藏 0</span>
+                </div>
+              </div>
+
+              <div style="margin:14px 20px 0; background:#2B2018; border-radius:18px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:7px;">
+                    <svg width="16" height="14" viewBox="0 0 16 14"><path d="M3 1h10l3 4-8 8L0 5l3-4z" fill="#F5CE86"></path></svg>
+                    <span style="font-size:14px; font-weight:800; color:#F5CE86;">开通会员</span>
+                  </div>
+                  <div style="margin-top:4px; font-size:11px; color:rgba(245,206,134,0.6);">海量剧集免费看 · 免广告</div>
+                </div>
+                <div style="background:#F5CE86; color:#3A2A18; font-size:12px; font-weight:800; padding:8px 16px; border-radius:100px;">立即开通</div>
+              </div>
+
+              <div style="margin:22px 20px 0; font-size:15px; font-weight:800; color:#1A1A1E;">我的服务</div>
+              <div style="margin:10px 20px 0; background:#FFF6EE; border-radius:18px; overflow:hidden;">
+                <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid rgba(255,96,0,0.08);">
+                  <svg width="15" height="13" viewBox="0 0 16 14"><path d="M3 1h10l3 4-8 8L0 5l3-4z" fill="#FF6000"></path></svg>
+                  <span style="flex:1; font-size:14px; font-weight:600; color:#1A1A1E;">会员中心</span>
+                  <span style="font-size:12px; color:#B8AFA6;">未开通 ›</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid rgba(255,96,0,0.08);">
+                  <svg width="15" height="15" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#FF6000" stroke-width="1.5"></circle><path d="M2 9h14M9 2c-4 4.5-4 9.5 0 14M9 2c4 4.5 4 9.5 0 14" stroke="#FF6000" stroke-width="1.2"></path></svg>
+                  <span style="flex:1; font-size:14px; font-weight:600; color:#1A1A1E;">语言</span>
+                  <span style="font-size:12px; color:#B8AFA6;">中文 ›</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; padding:14px 16px;">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5 9.5A6 6 0 016.5 2.5 6 6 0 1013.5 9.5Z" stroke="#FF6000" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+                  <span style="flex:1; font-size:14px; font-weight:600; color:#1A1A1E;">深色模式</span>
+                  <div style="width:44px; height:26px; border-radius:13px; background:#EBDFD2; padding:3px;"><div style="width:20px; height:20px; border-radius:10px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.15);"></div></div>
+                </div>
+              </div>
+
+              <div style="margin:20px 20px 0; background:linear-gradient(135deg, #FF8A3C, #FF6000); color:#fff; text-align:center; font-size:15px; font-weight:700; padding:14px; border-radius:100px; box-shadow:0 8px 20px rgba(255,96,0,0.32);">登录</div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- C 首页 · 沉浸式竖滑播放 -->
+        <sc-if value="{{ tabC.feed }}" hint-placeholder-val="{{ true }}">
+          <div onWheel="{{ feedWheel }}" onTouchStart="{{ feedTouchStart }}" onTouchEnd="{{ feedTouchEnd }}" style="position:absolute; inset:0; z-index:10; background:#0B0B0D; overflow:hidden;">
+            <div style="height:100%; transform:{{ feedShift }}; transition:transform 0.5s cubic-bezier(0.22,1,0.36,1);">
+              <sc-for list="{{ feedList }}" as="item" hint-placeholder-count="1">
+                <div style="height:100%; position:relative; overflow:hidden;">
+                  <div style="position:absolute; inset:0; background:linear-gradient(175deg, rgba(255,255,255,0.1), rgba(0,0,0,0.45) 75%), {{ item.c }};"></div>
+                  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:32px; background:rgba(0,0,0,0.3); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center;">
+                    <svg width="22" height="26" viewBox="0 0 22 26"><path d="M20.5 11.3c1.3 0.8 1.3 2.6 0 3.4L3 24.7C1.7 25.5 0 24.5 0 23V3C0 1.5 1.7 0.5 3 1.3L20.5 11.3Z" fill="rgba(255,255,255,0.9)"></path></svg>
+                  </div>
+                  <div style="position:absolute; right:14px; bottom:200px; display:flex; flex-direction:column; align-items:center; gap:20px; z-index:5;">
+                    <div style="position:relative;">
+                      <div style="width:46px; height:46px; border-radius:23px; border:2px solid #fff; background:{{ item.c }}; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#fff;">{{ item.av }}</div>
+                      <div style="position:absolute; bottom:-7px; left:50%; transform:translateX(-50%); width:18px; height:18px; border-radius:9px; background:#FF6000; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;">+</div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                      <svg width="30" height="28" viewBox="0 0 30 28"><path d="M15 25.5C15 25.5 2.5 18.5 2.5 10.5C2.5 6.4 5.7 3 9.7 3C11.9 3 13.8 4 15 5.6C16.2 4 18.1 3 20.3 3C24.3 3 27.5 6.4 27.5 10.5C27.5 18.5 15 25.5 15 25.5Z" fill="#fff"></path></svg>
+                      <span style="font-size:11px; font-weight:600; color:#fff;">{{ item.likes }}</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                      <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3C7.4 3 2 7.5 2 13.2C2 16.4 3.7 19.2 6.3 21c-0.2 1.5-0.8 3-2 4.2 2.3 0 4.3-0.9 5.8-2 1.2 0.4 2.6 0.6 3.9 0.6 6.6 0 12-4.5 12-10.2S20.6 3 14 3Z" fill="#fff"></path></svg>
+                      <span style="font-size:11px; font-weight:600; color:#fff;">{{ item.cm }}</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                      <svg width="28" height="27" viewBox="0 0 28 27"><path d="M14 1l3.8 8 8.7 1-6.4 6 1.7 8.7L14 20.4 6.2 24.7 7.9 16 1.5 10l8.7-1L14 1z" fill="#fff"></path></svg>
+                      <span style="font-size:11px; font-weight:600; color:#fff;">收藏</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                      <svg width="28" height="26" viewBox="0 0 28 26"><path d="M16 8V2l11 10-11 10v-6.2C9 15.8 4.5 18 1.5 22 2.5 14 7 9.5 16 8Z" fill="#fff"></path></svg>
+                      <span style="font-size:11px; font-weight:600; color:#fff;">分享</span>
+                    </div>
+                  </div>
+                  <div style="position:absolute; left:16px; right:80px; bottom:132px; z-index:5;">
+                    <div style="font-size:15px; font-weight:800; color:#fff;">{{ item.st }}</div>
+                    <div style="margin-top:6px; font-size:15px; color:rgba(255,255,255,0.95);">{{ item.t }}</div>
+                    <div style="margin-top:10px; display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.16); backdrop-filter:blur(6px); padding:6px 12px; border-radius:8px;">
+                      <svg width="12" height="12" viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="2" rx="1" fill="#fff"></rect><rect x="1" y="6" width="12" height="2" rx="1" fill="#fff"></rect><rect x="1" y="10" width="8" height="2" rx="1" fill="#fff"></rect></svg>
+                      <span style="font-size:12px; font-weight:600; color:#fff;">选集 · 全{{ item.ep }}集</span>
+                    </div>
+                    <div style="margin-top:10px; font-size:12px; color:rgba(255,255,255,0.7); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">♪ 原声 · {{ item.t }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="position:absolute; top:0; left:0; right:0; padding:64px 16px 0; display:flex; align-items:center; justify-content:space-between; z-index:5;">
+              <span style="font-size:16px; font-weight:700; color:#fff;">推荐</span>
+              <span style="font-size:11px; font-weight:600; color:#fff; background:rgba(0,0,0,0.3); backdrop-filter:blur(6px); padding:6px 12px; border-radius:100px;">弹幕 开</span>
+            </div>
+
+            <sc-if value="{{ danmakuOn }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; top:130px; left:20px; font-size:12px; color:rgba(255,255,255,0.9); background:rgba(0,0,0,0.25); backdrop-filter:blur(4px); padding:5px 12px; border-radius:100px; z-index:5;">这段太上头了</div>
+              <div style="position:absolute; top:162px; left:120px; font-size:12px; color:rgba(255,255,255,0.75); background:rgba(0,0,0,0.2); backdrop-filter:blur(4px); padding:5px 12px; border-radius:100px; z-index:5;">前方高能</div>
+            </sc-if>
+
+            <div style="position:absolute; left:16px; right:16px; bottom:96px; z-index:5;">
+              <div style="height:3px; border-radius:2px; background:rgba(255,255,255,0.25);"><div style="width:32%; height:3px; border-radius:2px; background:#fff; position:relative;"><div style="position:absolute; right:-5px; top:-3.5px; width:10px; height:10px; border-radius:5px; background:#fff;"></div></div></div>
+              <div style="margin-top:8px; display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.6);"><span>3:09</span><span>9:47</span></div>
+            </div>
+
+            <div style="position:absolute; left:50%; transform:translateX(-50%); bottom:132px; font-size:10px; color:rgba(255,255,255,0.45); z-index:5;">上滑看下一部</div>
+          </div>
+        </sc-if>
+
+        <!-- C tab bar -->
+        <div style="position:absolute; left:0; right:0; bottom:0; z-index:20; background:{{ barBg }}; backdrop-filter:blur(16px); border-top:1px solid {{ barBorder }}; display:flex; align-items:center; padding:8px 10px 28px;">
+          <div onClick="{{ goC.feed }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 01-1 1h-4.5v-5.5h-5V21H5a1 1 0 01-1-1v-9.5z" stroke="{{ navC.feed }}" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+            <span style="font-size:10px; font-weight:700; color:{{ navC.feed }};">首页</span>
+          </div>
+          <div onClick="{{ goC.home }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0; border-radius:14px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="{{ navC.home }}" stroke-width="1.8"></rect><path d="M3 9h18M8 4v5M16 4v5" stroke="{{ navC.home }}" stroke-width="1.8"></path><path d="M10.5 13.2l4 2.3-4 2.3v-4.6z" fill="{{ navC.home }}"></path></svg>
+            <span style="font-size:10px; font-weight:700; color:{{ navC.home }};">剧场</span>
+          </div>
+          <div onClick="{{ goC.rank }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7 4h10v5a5 5 0 01-10 0V4z" stroke="{{ navC.rank }}" stroke-width="1.8" stroke-linejoin="round"></path><path d="M7 6H4v1a3 3 0 003 3M17 6h3v1a3 3 0 01-3 3M12 14v3M8.5 20h7M12 17v3" stroke="{{ navC.rank }}" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            <span style="font-size:10px; font-weight:700; color:{{ navC.rank }};">榜单</span>
+          </div>
+          <div onClick="{{ goC.topic }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="2" stroke="{{ navC.topic }}" stroke-width="1.8"></rect><rect x="13" y="4" width="7" height="7" rx="2" stroke="{{ navC.topic }}" stroke-width="1.8"></rect><rect x="4" y="13" width="7" height="7" rx="2" stroke="{{ navC.topic }}" stroke-width="1.8"></rect><rect x="13" y="13" width="7" height="7" rx="3.5" stroke="{{ navC.topic }}" stroke-width="1.8"></rect></svg>
+            <span style="font-size:10px; font-weight:700; color:{{ navC.topic }};">专题</span>
+          </div>
+          <div onClick="{{ goC.me }}" style="cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="{{ navC.me }}" stroke-width="1.8"></circle><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5" stroke="{{ navC.me }}" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            <span style="font-size:10px; font-weight:700; color:{{ navC.me }};">我的</span>
+          </div>
+        </div>
+
+        <!-- C player -->
+        <sc-if value="{{ playerCOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; inset:0; z-index:40; background:#0B0B0D; overflow:hidden;">
+            <div style="position:absolute; inset:0; background:linear-gradient(175deg, rgba(255,255,255,0.1), rgba(0,0,0,0.45) 75%), {{ playerC.c }};"></div>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:32px; background:rgba(0,0,0,0.3); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center;">
+              <svg width="22" height="26" viewBox="0 0 22 26"><path d="M20.5 11.3c1.3 0.8 1.3 2.6 0 3.4L3 24.7C1.7 25.5 0 24.5 0 23V3C0 1.5 1.7 0.5 3 1.3L20.5 11.3Z" fill="rgba(255,255,255,0.9)"></path></svg>
+            </div>
+            <div style="position:absolute; top:0; left:0; right:0; padding:64px 16px 0; display:flex; align-items:center; justify-content:space-between; z-index:5;">
+              <div onClick="{{ closeC }}" style="cursor:pointer; width:34px; height:34px; border-radius:17px; background:rgba(0,0,0,0.3); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center;">
+                <svg width="9" height="16" viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <span style="font-size:16px; font-weight:700; color:#fff;">推荐</span>
+              <span style="font-size:11px; font-weight:600; color:#fff; background:rgba(0,0,0,0.3); backdrop-filter:blur(6px); padding:6px 12px; border-radius:100px;">弹幕 开</span>
+            </div>
+            <sc-if value="{{ danmakuOn }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; top:130px; left:20px; font-size:12px; color:rgba(255,255,255,0.9); background:rgba(0,0,0,0.25); backdrop-filter:blur(4px); padding:5px 12px; border-radius:100px;">这段太上头了</div>
+              <div style="position:absolute; top:162px; left:120px; font-size:12px; color:rgba(255,255,255,0.75); background:rgba(0,0,0,0.2); backdrop-filter:blur(4px); padding:5px 12px; border-radius:100px;">前方高能</div>
+            </sc-if>
+            <div style="position:absolute; right:14px; bottom:170px; display:flex; flex-direction:column; align-items:center; gap:20px; z-index:5;">
+              <div style="position:relative;">
+                <div style="width:46px; height:46px; border-radius:23px; border:2px solid #fff; background:{{ playerC.c }}; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#fff;">{{ playerC.av }}</div>
+                <div style="position:absolute; bottom:-7px; left:50%; transform:translateX(-50%); width:18px; height:18px; border-radius:9px; background:#FF6000; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;">+</div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                <svg width="30" height="28" viewBox="0 0 30 28"><path d="M15 25.5C15 25.5 2.5 18.5 2.5 10.5C2.5 6.4 5.7 3 9.7 3C11.9 3 13.8 4 15 5.6C16.2 4 18.1 3 20.3 3C24.3 3 27.5 6.4 27.5 10.5C27.5 18.5 15 25.5 15 25.5Z" fill="#fff"></path></svg>
+                <span style="font-size:11px; font-weight:600; color:#fff;">{{ playerC.likes }}</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3C7.4 3 2 7.5 2 13.2C2 16.4 3.7 19.2 6.3 21c-0.2 1.5-0.8 3-2 4.2 2.3 0 4.3-0.9 5.8-2 1.2 0.4 2.6 0.6 3.9 0.6 6.6 0 12-4.5 12-10.2S20.6 3 14 3Z" fill="#fff"></path></svg>
+                <span style="font-size:11px; font-weight:600; color:#fff;">{{ playerC.cm }}</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                <svg width="28" height="27" viewBox="0 0 28 27"><path d="M14 1l3.8 8 8.7 1-6.4 6 1.7 8.7L14 20.4 6.2 24.7 7.9 16 1.5 10l8.7-1L14 1z" fill="#fff"></path></svg>
+                <span style="font-size:11px; font-weight:600; color:#fff;">收藏</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
+                <svg width="28" height="26" viewBox="0 0 28 26"><path d="M16 8V2l11 10-11 10v-6.2C9 15.8 4.5 18 1.5 22 2.5 14 7 9.5 16 8Z" fill="#fff"></path></svg>
+                <span style="font-size:11px; font-weight:600; color:#fff;">分享</span>
+              </div>
+            </div>
+            <div style="position:absolute; left:16px; right:80px; bottom:96px; z-index:5;">
+              <div style="font-size:15px; font-weight:800; color:#fff;">{{ playerC.st }}</div>
+              <div style="margin-top:6px; font-size:15px; color:rgba(255,255,255,0.95);">{{ playerC.t }}</div>
+              <div style="margin-top:10px; display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.16); backdrop-filter:blur(6px); padding:6px 12px; border-radius:8px;">
+                <svg width="12" height="12" viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="2" rx="1" fill="#fff"></rect><rect x="1" y="6" width="12" height="2" rx="1" fill="#fff"></rect><rect x="1" y="10" width="8" height="2" rx="1" fill="#fff"></rect></svg>
+                <span style="font-size:12px; font-weight:600; color:#fff;">选集 · 全{{ playerC.ep }}集</span>
+              </div>
+              <div style="margin-top:10px; font-size:12px; color:rgba(255,255,255,0.7); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">♪ 原声 · {{ playerC.t }}</div>
+            </div>
+            <div style="position:absolute; left:16px; right:16px; bottom:56px; z-index:5;">
+              <div style="height:3px; border-radius:2px; background:rgba(255,255,255,0.25);"><div style="width:32%; height:3px; border-radius:2px; background:#fff; position:relative;"><div style="position:absolute; right:-5px; top:-3.5px; width:10px; height:10px; border-radius:5px; background:#fff;"></div></div></div>
+              <div style="margin-top:8px; display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.6);"><span>3:09</span><span>9:47</span></div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </x-import>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;startTab&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;feed&quot;, &quot;home&quot;, &quot;rank&quot;, &quot;topic&quot;, &quot;me&quot;], &quot;default&quot;: &quot;feed&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;原型&quot; },
+  &quot;danmakuOn&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;播放页&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    tabA: this.props.startTab ?? 'home',
+    tabB: this.props.startTab ?? 'home',
+    playerA: null,
+    playerB: null,
+    tabC: this.props.startTab ?? 'feed',
+    feedIdx: 0,
+    tabD: this.props.startTab ?? 'home',
+    tabE: this.props.startTab ?? 'home',
+    playerC: null,
+    playerD: null,
+    playerE: null,
+  };
+
+  renderVals() {
+    const D = {
+      hero: { t: '冯思曼的困惑', c: '#33635C', st: '@都市剧场', av: '都', likes: '2.0万', cm: 328, ep: 80 },
+      n1:   { t: '男人惨遭绿帽被派到村庄当实习医生', c: '#4A5A8A', st: '@乡野剧场', av: '乡', likes: 3366, cm: 42, ep: 62 },
+      n2:   { t: '醒来绑定震惊值系统颜值爆表', c: '#5E7050', st: '@脑洞剧场', av: '脑', likes: 3312, cm: 57, ep: 74 },
+      n3:   { t: '金莲，求你再喂我一次', c: '#2E6B72', st: '@古风剧场', av: '古', likes: 5062, cm: 96, ep: 58 },
+      w1:   { t: '黑夜幽欲', c: '#8A4A5E', st: '@悬疑剧场', av: '悬', likes: '1.2万', cm: 210, ep: 66 },
+      w2:   { t: '我的富豪美女房东逆袭职场风云', c: '#A05540', st: '@职场剧场', av: '职', likes: 8600, cm: 154, ep: 90 },
+      r1:   { t: '我的模特生涯 · 第3集', c: '#6B4E36', st: '@逆袭剧场', av: '逆', likes: 3486, cm: 65, ep: 48 },
+      r2:   { t: '特别的礼物', c: '#3D4E81', st: '@情感剧场', av: '情', likes: '1.6万', cm: 402, ep: 72 },
+      r3:   { t: '欲火已燃', c: '#8A6B3A', st: '@情感剧场', av: '情', likes: '1.7万', cm: 388, ep: 80 },
+      r4:   { t: '夫人的秘密 · 下', c: '#3F7053', st: '@豪门剧场', av: '豪', likes: 6254, cm: 120, ep: 55 },
+      r5:   { t: '心照不宣', c: '#6B4E9E', st: '@悬疑剧场', av: '悬', likes: 5120, cm: 88, ep: 60 },
+    };
+
+    const tabs = ['feed', 'home', 'rank', 'topic', 'me'];
+    const feedList = [D.hero, D.w1, D.n3, D.w2, D.r2, D.r3];
+    const clampFeed = (i) => Math.max(0, Math.min(feedList.length - 1, i));
+    const feedGo = (d) => {
+      if (this._feedLock) return;
+      const next = clampFeed(this.state.feedIdx + d);
+      if (next === this.state.feedIdx) return;
+      this._feedLock = true;
+      setTimeout(() => { this._feedLock = false; }, 550);
+      this.setState({ feedIdx: next });
+    };
+    const mkGo = (key) => Object.fromEntries(tabs.map(t => [t, () => this.setState({ [key]: t })]));
+    const mkOpen = (key) => Object.fromEntries(Object.entries(D).map(([id, d]) => [id, () => this.setState({ [key]: d })]));
+    const mkTab = (cur) => Object.fromEntries(tabs.map(t => [t, cur === t]));
+    const mkNav = (cur, accent, idle) => Object.fromEntries(tabs.map(t => [t, cur === t ? accent : idle]));
+
+    return {
+      goA: mkGo('tabA'), goB: mkGo('tabB'), goC: mkGo('tabC'), goD: mkGo('tabD'), goE: mkGo('tabE'),
+      openA: mkOpen('playerA'), openB: mkOpen('playerB'), openC: mkOpen('playerC'), openD: mkOpen('playerD'), openE: mkOpen('playerE'),
+      closeA: () => this.setState({ playerA: null }),
+      closeB: () => this.setState({ playerB: null }),
+      closeC: () => this.setState({ playerC: null }),
+      closeD: () => this.setState({ playerD: null }),
+      closeE: () => this.setState({ playerE: null }),
+      tabA: mkTab(this.state.tabA), tabB: mkTab(this.state.tabB), tabC: mkTab(this.state.tabC), tabD: mkTab(this.state.tabD), tabE: mkTab(this.state.tabE),
+      navA: mkNav(this.state.tabA, '#FF6A2C', '#9BA0A8'),
+      navB: mkNav(this.state.tabB, '#FF8140', '#C4B5A8'),
+      navC: mkNav(this.state.tabC, '#FF6000', this.state.tabC === 'feed' ? 'rgba(255,255,255,0.55)' : '#B8AFA6'),
+      barBg: this.state.tabC === 'feed' ? 'rgba(12,12,14,0.88)' : 'rgba(255,255,255,0.94)',
+      barBorder: this.state.tabC === 'feed' ? 'rgba(255,255,255,0.08)' : '#F6EDE4',
+      feedList,
+      feedShift: 'translateY(-' + (this.state.feedIdx * 100) + '%)',
+      feedWheel: (e) => { if (Math.abs(e.deltaY) > 8) feedGo(e.deltaY > 0 ? 1 : -1); },
+      feedTouchStart: (e) => { this._touchY = e.touches[0].clientY; },
+      feedTouchEnd: (e) => {
+        const dy = e.changedTouches[0].clientY - (this._touchY ?? 0);
+        if (dy < -40) feedGo(1); else if (dy > 40) feedGo(-1);
+      },
+      navD: mkNav(this.state.tabD, '#FF7A33', '#8E8E93'),
+      navE: mkNav(this.state.tabE, '#111111', '#B4B4B8'),
+      playerA: this.state.playerA || {}, playerAOpen: !!this.state.playerA,
+      playerB: this.state.playerB || {}, playerBOpen: !!this.state.playerB,
+      playerC: this.state.playerC || {}, playerCOpen: !!this.state.playerC,
+      playerD: this.state.playerD || {}, playerDOpen: !!this.state.playerD,
+      playerE: this.state.playerE || {}, playerEOpen: !!this.state.playerE,
+      danmakuOn: this.props.danmakuOn ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

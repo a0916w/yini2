@@ -7,29 +7,21 @@ import 'api/models.dart';
 import 'i18n.dart';
 import 'theme.dart';
 
-// 页面大标题:粗字 + 底部品牌渐变荧光带(马克笔效果)
+// 页面大标题(规范:24px/800)+ 可选副标题(12px 暖灰)
 class PageTitle extends StatelessWidget {
   final String text;
+  final String? sub;
   final Color? color; // 文字色,默认随主题
-  final bool whiteHighlight; // 彩色头部上用白色荧光带
-  const PageTitle(this.text, {super.key, this.color, this.whiteHighlight = false});
+  const PageTitle(this.text, {super.key, this.sub, this.color});
 
   @override
   Widget build(BuildContext context) {
-    final hl = whiteHighlight
-        ? [Colors.white.withValues(alpha: .34), Colors.white.withValues(alpha: .08)]
-        : [C.brand.withValues(alpha: .5), C.brand2.withValues(alpha: .12)];
-    return Stack(clipBehavior: Clip.none, children: [
-      Positioned(
-        left: -3, right: -9, bottom: 1, height: 9,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: hl),
-            borderRadius: BorderRadius.circular(5),
-          ),
-        ),
-      ),
-      Text(text, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: .5, height: 1.15, color: color ?? C.ink)),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+      Text(text, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, height: 1.15, color: color ?? C.ink)),
+      if (sub != null) ...[
+        const SizedBox(height: 4),
+        Text(sub!, style: TextStyle(fontSize: 12, color: C.ink3)),
+      ],
     ]);
   }
 }
@@ -149,81 +141,60 @@ class _BannerImageState extends State<_BannerImage> {
   }
 }
 
-const _grads = [
-  [Color(0xFFFF8A2B), Color(0xFFE8480A)],
-  [Color(0xFF5B8BFF), Color(0xFF2A3F8F)],
-  [Color(0xFF38C172), Color(0xFF0F5C3A)],
-  [Color(0xFFB06BFF), Color(0xFF5A2A9A)],
-  [Color(0xFFFF6A3D), Color(0xFF8A2010)],
-  [Color(0xFF4DD0E1), Color(0xFF0E5560)],
-  [Color(0xFFFF4D6D), Color(0xFF8A1030)],
-  [Color(0xFF9AE66E), Color(0xFF3A6A1A)],
-  [Color(0xFF7C9CFF), Color(0xFF2A3A8F)],
-  [Color(0xFFFFB86B), Color(0xFFA05A10)],
+// 封面色板(规范:哑光深色,白字可读)
+const coverPalette = [
+  Color(0xFF33635C), Color(0xFF4A5A8A), Color(0xFF5E7050), Color(0xFF2E6B72),
+  Color(0xFF3D4E81), Color(0xFF8A4A5E), Color(0xFFA05540), Color(0xFF6B4E36),
+  Color(0xFF8A6B3A), Color(0xFF3F7053), Color(0xFF6B4E9E),
 ];
-// 题材标签配色(循环)
-const _tagColors = [
-  (Color(0xFFEFE9FF), Color(0xFF6A4BD8)),
-  (Color(0xFFE3F1FF), Color(0xFF2F6FD0)),
-  (Color(0xFFE2F7E9), Color(0xFF1F8A4D)),
+Color coverColor(int id) => coverPalette[id % coverPalette.length];
+
+// banner 渐变兜底(沿用封面板)
+const _grads = [
+  [Color(0xFF33635C), Color(0xFF224440)], [Color(0xFF4A5A8A), Color(0xFF313D61)],
+  [Color(0xFF8A4A5E), Color(0xFF5E3140)], [Color(0xFF3D4E81), Color(0xFF283356)],
 ];
 
-// 占位封面:渐变底 + 剧名(暂不拉真实封面)。3:4 竖版。
+// 占位封面(规范):哑光色块 + 165deg 白14→黑叠加 + 左下白色剧名
 class Cover extends StatelessWidget {
   final Drama drama;
   final BoxFit fit;
-  const Cover(this.drama, {super.key, this.fit = BoxFit.cover});
+  final bool showTitle;
+  const Cover(this.drama, {super.key, this.fit = BoxFit.cover, this.showTitle = true});
 
   @override
   Widget build(BuildContext context) {
-    final g = _grads[drama.id % _grads.length];
+    final base = coverColor(drama.id);
     return LayoutBuilder(builder: (ctx, box) {
-      final big = box.maxHeight >= 130;
+      final h = box.maxHeight;
+      final fs = h < 70 ? 8.0 : (h < 130 ? 11.0 : 12.0);
+      final pad = h < 70 ? 5.0 : (h < 130 ? 9.0 : 12.0);
       return DecoratedBox(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: g)),
+        decoration: BoxDecoration(color: base),
         child: Stack(fit: StackFit.expand, children: [
+          // 统一叠加 linear-gradient(165deg, 白0.14 → 黑0.2~0.36)
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.white.withValues(alpha: .16),
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: .30)
-                ],
-                stops: const [0, .5, 1],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.white.withValues(alpha: .14), Colors.black.withValues(alpha: h >= 130 ? .34 : .24)],
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(big ? 12 : 8),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                drama.title,
-                textAlign: TextAlign.center,
-                maxLines: big ? 4 : 3,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500, // 收敛字重
-                  fontSize: big ? 16 : 12,
-                  height: 1.3,
-                  shadows: const [
-                    Shadow(
-                        blurRadius: 8,
-                        color: Colors.black45,
-                        offset: Offset(0, 1))
-                  ],
+          if (showTitle)
+            Padding(
+              padding: EdgeInsets.all(pad),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  drama.title,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: fs, height: 1.45),
                 ),
               ),
             ),
-          ),
         ]),
       );
     });
@@ -235,42 +206,26 @@ class DramaCard extends StatelessWidget {
   const DramaCard(this.d, {super.key});
   @override
   Widget build(BuildContext context) {
-    final tc = _tagColors[d.id % _tagColors.length];
     return GestureDetector(
       onTap: () => context.push('/drama/${d.id}'),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         AspectRatio(
           aspectRatio: 3 / 4,
           child: Stack(fit: StackFit.expand, children: [
-            ClipRRect(borderRadius: BorderRadius.circular(10), child: Cover(d)),
-            // 左上:已完结(深色半透明)
+            ClipRRect(borderRadius: BorderRadius.circular(16), child: Cover(d)),
+            // 左上:「新」主色角标(规范)
             Positioned(
-                top: 6,
-                left: 6,
+                top: 8,
+                left: 8,
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: .5),
-                      borderRadius: BorderRadius.circular(7)),
-                  child: Text(t('done'),
-                      style: const TextStyle(color: Colors.white, fontSize: 10)),
+                      color: C.brand,
+                      borderRadius: BorderRadius.circular(100)),
+                  child: Text(t('newBadge'),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)),
                 )),
-            // 左下:▶ 全N集
-            Positioned(
-                left: 6,
-                bottom: 6,
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.play_arrow, size: 12, color: Colors.white),
-                  const SizedBox(width: 2),
-                  Text(tp('epsAll', {'n': d.eps}),
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          shadows: [
-                            Shadow(blurRadius: 4, color: Colors.black54)
-                          ])),
-                ])),
           ]),
         ),
         const SizedBox(height: 6),
@@ -278,22 +233,13 @@ class DramaCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.w400, color: C.ink)),
+                fontSize: 13, fontWeight: FontWeight.w700, color: C.ink)),
         if (d.genre.isNotEmpty) ...[
-          const SizedBox(height: 5),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                  color: tc.$1, borderRadius: BorderRadius.circular(6)),
-              child: Text(d.genre,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      fontSize: 10, color: tc.$2, fontWeight: FontWeight.w400)),
-            ),
-          ),
+          const SizedBox(height: 4),
+          Text('${d.genre} · ${d.plays}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 11, color: C.ink3)),
         ],
       ]),
     );
