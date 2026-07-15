@@ -279,44 +279,59 @@ class DramaCard extends StatelessWidget {
   }
 }
 
+// 列表行(果橙:暖底卡 r16 + 3:4 缩略 + 看剧胶囊)
 class DramaRow extends StatelessWidget {
   final Drama d;
   final int? rank;
   const DramaRow(this.d, {super.key, this.rank});
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: () => context.push('/drama/${d.id}'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          if (rank != null)
+      child: Container(
+        decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(children: [
+          if (rank != null) ...[
             SizedBox(
-                width: 28,
+                width: 22,
                 child: Text('$rank',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w600,
-                        color: rank! <= 3 ? C.brand : C.ink3))),
+                        fontWeight: FontWeight.w900,
+                        color: rank! <= 3 ? C.brand : const Color(0xFFC9B8A6)))),
+            const SizedBox(width: 12),
+          ],
           ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(width: 62, height: 82, child: Cover(d))),
+              borderRadius: BorderRadius.circular(9),
+              child: SizedBox(width: 44, height: 58, child: Cover(d, showTitle: false))),
           const SizedBox(width: 12),
           Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 Text(d.title,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w400, fontSize: 14)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 14, color: C.ink)),
                 const SizedBox(height: 4),
-                Text('▶ ${d.plays} · ${d.genre}',
-                    style: TextStyle(color: C.ink3, fontSize: 12)),
+                Text('${d.genre.isEmpty ? '' : '${d.genre} · '}▶ ${d.plays}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: C.ink3, fontSize: 11)),
               ])),
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: () => context.push('/watch/${d.id}'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(color: C.brand, borderRadius: BorderRadius.circular(100)),
+              child: Text(t('watchBtn'), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+            ),
+          ),
         ]),
       ),
     );

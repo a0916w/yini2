@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../api/api.dart';
 import '../api/models.dart';
 import '../i18n.dart';
@@ -44,25 +46,52 @@ class _TopicListPageState extends State<TopicListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = context.watch<ThemeController>().dark;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.name)),
-      body: _list.isEmpty && _loading
-          ? const Center(child: CircularProgressIndicator(color: C.brand))
-          : GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: .57),
-              itemCount: _list.length + 1,
-              itemBuilder: (c, i) {
-                if (i == _list.length) {
-                  if (_page < _lastPage) {
-                    return Center(child: TextButton(onPressed: _loading ? null : () => _load(), child: Text(_loading ? t('loading') : t('loadMore'))));
-                  }
-                  return const SizedBox();
-                }
-                return DramaCard(_list[i]);
-              },
+      body: Container(
+        decoration: pageTopGrad(dark),
+        child: SafeArea(
+          child: Column(children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 6),
+              child: Row(children: [
+                GestureDetector(
+                  onTap: () => context.pop(),
+                  child: Container(
+                    width: 34, height: 34,
+                    decoration: BoxDecoration(color: C.surface, shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .12), blurRadius: 10, offset: const Offset(0, 3))]),
+                    child: Icon(Icons.arrow_back_ios_new, size: 15, color: C.ink),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(widget.name, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: C.ink)),
+                const Spacer(),
+                const SizedBox(),
+              ]),
             ),
+            Expanded(
+              child: _list.isEmpty && _loading
+                  ? const Center(child: CircularProgressIndicator(color: C.brand))
+                  : GridView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 14, childAspectRatio: .60),
+                      itemCount: _list.length + 1,
+                      itemBuilder: (c, i) {
+                        if (i == _list.length) {
+                          if (_page < _lastPage) {
+                            return Center(child: TextButton(onPressed: _loading ? null : () => _load(), child: Text(_loading ? t('loading') : t('loadMore'))));
+                          }
+                          return const SizedBox();
+                        }
+                        return DramaCard(_list[i]);
+                      },
+                    ),
+            ),
+          ]),
+        ),
+      ),
     );
   }
 }

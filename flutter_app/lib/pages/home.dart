@@ -354,7 +354,10 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           const Spacer(),
-          Text(t('allLink'), style: TextStyle(fontSize: 12, color: C.quiet)),
+          GestureDetector(
+            onTap: () => context.go('/trends'),
+            child: Text(t('allLink'), style: TextStyle(fontSize: 12, color: C.quiet)),
+          ),
         ]),
       );
 

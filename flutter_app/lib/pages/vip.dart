@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../api/api.dart';
@@ -105,49 +106,77 @@ class _VipPageState extends State<VipPage> {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final cur = _plans.where((p) => p.key == _plan).firstOrNull;
+    final dark = context.watch<ThemeController>().dark;
     return Scaffold(
-      appBar: AppBar(title: Text(t('vipCenter'))),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              Text(t('total'), style: TextStyle(color: C.ink3, fontSize: 12)),
-              Text('${cur?.symbol ?? '¥'}${cur?.price ?? '--'}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w600, fontSize: 24)),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(color: C.surface, border: Border(top: BorderSide(color: C.line))),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+            child: Row(children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text(t('total'), style: TextStyle(color: C.ink3, fontSize: 12)),
+                Text('${cur?.symbol ?? '¥'}${cur?.price ?? '--'}', style: const TextStyle(color: C.brand, fontWeight: FontWeight.w800, fontSize: 24)),
+              ]),
+              const Spacer(),
+              GestureDetector(
+                onTap: _busy || cur == null ? null : _buy,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 38, vertical: 13),
+                  decoration: BoxDecoration(
+                    gradient: C.brandGrad, borderRadius: BorderRadius.circular(100),
+                    boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .4), blurRadius: 14, offset: const Offset(0, 6))],
+                  ),
+                  child: Text(_busy ? t('processing') : t('joinNow'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15)),
+                ),
+              ),
             ]),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _busy || cur == null ? null : _buy,
-              style: ElevatedButton.styleFrom(backgroundColor: C.brand, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
-              child: Text(_busy ? t('processing') : t('joinNow'), style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
-            ),
-          ]),
+          ),
         ),
       ),
-      body: ListView(padding: const EdgeInsets.all(14), children: [
+      body: Container(
+        decoration: pageTopGrad(dark),
+        child: SafeArea(
+          bottom: false,
+          child: ListView(padding: const EdgeInsets.fromLTRB(20, 10, 20, 20), children: [
+        // 顶栏:返回圆钮 + 标题
+        Row(children: [
+          GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              width: 34, height: 34,
+              decoration: BoxDecoration(color: C.surface, shape: BoxShape.circle,
+                  boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .12), blurRadius: 10, offset: const Offset(0, 3))]),
+              child: Icon(Icons.arrow_back_ios_new, size: 15, color: C.ink),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(t('vipCenter'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: C.ink)),
+        ]),
+        const SizedBox(height: 14),
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF2B2118), Color(0xFF1F1812)]), borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(color: C.vipBg, borderRadius: BorderRadius.circular(18)),
           child: Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(app.authed ? app.displayName : t('notLoggedIn'), style: const TextStyle(color: Color(0xFFF7D9B8), fontWeight: FontWeight.w600, fontSize: 17)),
+              Text(app.authed ? app.displayName : t('notLoggedIn'), style: const TextStyle(color: C.vipGold, fontWeight: FontWeight.w800, fontSize: 17)),
               const SizedBox(height: 4),
-              Text(app.isVip ? tp('vipUntil2', {'d': app.vipExpire ?? ''}) : t('noVipYet'), style: const TextStyle(color: Color(0xFFC9A87E), fontSize: 12)),
+              Text(app.isVip ? tp('vipUntil2', {'d': app.vipExpire ?? ''}) : t('noVipYet'), style: TextStyle(color: C.vipGold.withValues(alpha: .6), fontSize: 12)),
             ])),
-            const Icon(Icons.diamond_outlined, color: Color(0xFFF7D9B8), size: 28),
+            const Icon(Icons.diamond, color: C.vipGold, size: 28),
           ]),
         ),
         const SizedBox(height: 20),
         // 会员权益
-        Text(t('vipRights'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(t('vipRights'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: C.ink)),
         const SizedBox(height: 14),
         Row(children: _rights.map((r) => Expanded(child: Column(children: [
-          Container(width: 46, height: 46, decoration: BoxDecoration(color: C.brand.withValues(alpha: .10), shape: BoxShape.circle), alignment: Alignment.center, child: Icon(r.$1, color: C.brand, size: 21)),
+          Container(width: 46, height: 46, decoration: BoxDecoration(color: C.tag, shape: BoxShape.circle), alignment: Alignment.center, child: Icon(r.$1, color: C.brand, size: 21)),
           const SizedBox(height: 7),
           Text(r.$2, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
         ]))).toList()),
         const SizedBox(height: 22),
-        Text(t('choosePlan'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(t('choosePlan'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: C.ink)),
         const SizedBox(height: 12),
         Row(children: _plans.map((p) {
           final active = _plan == p.key;
@@ -158,9 +187,9 @@ class _VipPageState extends State<VipPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 6),
                 decoration: BoxDecoration(
-                  color: active ? const Color(0xFFFFF7F0) : C.surface,
+                  color: active ? C.tag : C.surface2,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: active ? C.brand : C.line, width: 1.5),
+                  border: Border.all(color: active ? C.brand : Colors.transparent, width: 1.5),
                 ),
                 child: Column(children: [
                   if (p.hot) Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(999)), child: Text(p.tag.isEmpty ? t('hot') : p.tag, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500))),
@@ -178,24 +207,37 @@ class _VipPageState extends State<VipPage> {
         }).toList()),
         if (cur?.sub.isNotEmpty ?? false) Padding(padding: const EdgeInsets.only(top: 10), child: Text(cur!.sub, style: TextStyle(color: C.ink3, fontSize: 12))),
         const SizedBox(height: 22),
-        Text(t('payMethod'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(t('payMethod'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: C.ink)),
         const SizedBox(height: 10),
         if (_channels.isEmpty)
           Text(t('noPay'), style: TextStyle(color: C.ink3, fontSize: 13))
         else
           ..._channels.map((c) {
             final on = _ch?.payTypeId == c.payTypeId && _ch?.gatewayId == c.gatewayId;
-            return ListTile(
+            return GestureDetector(
               onTap: () => setState(() => _ch = c),
-              contentPadding: EdgeInsets.zero,
-              leading: Container(width: 36, height: 36, decoration: BoxDecoration(color: C.brand, borderRadius: BorderRadius.circular(10)), alignment: Alignment.center, child: Text(c.name.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500))),
-              title: Text(c.name),
-              trailing: Icon(on ? Icons.check_circle : Icons.radio_button_unchecked, color: on ? C.brand : C.ink3, size: 20),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                decoration: BoxDecoration(
+                  color: on ? C.tag : C.surface2,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: on ? C.brand : Colors.transparent, width: 1.4),
+                ),
+                child: Row(children: [
+                  Container(width: 34, height: 34, decoration: BoxDecoration(gradient: C.brandGrad, borderRadius: BorderRadius.circular(10)), alignment: Alignment.center, child: Text(c.name.characters.first, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700))),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(c.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: C.ink))),
+                  Icon(on ? Icons.check_circle : Icons.radio_button_unchecked, color: on ? C.brand : C.quiet, size: 20),
+                ]),
+              ),
             );
           }),
         const SizedBox(height: 12),
         Center(child: Text(t('vipAgree'), style: TextStyle(color: C.ink3, fontSize: 11))),
-      ]),
+          ]),
+        ),
+      ),
     );
   }
 }
