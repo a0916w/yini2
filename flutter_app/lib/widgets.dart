@@ -193,7 +193,13 @@ class _CoverState extends State<Cover> {
   @override
   Widget build(BuildContext context) {
     if (_bytes != null) {
-      return Image.memory(_bytes!, fit: widget.fit, width: double.infinity, height: double.infinity, gaplessPlayback: true);
+      // 低端机优化:按实际布局宽度限尺寸解码,避免全分辨率解码+大纹理上传
+      final dpr = MediaQuery.of(context).devicePixelRatio;
+      return LayoutBuilder(builder: (ctx, box) {
+        final w = box.maxWidth.isFinite ? (box.maxWidth * dpr).ceil().clamp(120, 1080) : 720;
+        return Image.memory(_bytes!, fit: widget.fit, width: double.infinity, height: double.infinity,
+            gaplessPlayback: true, cacheWidth: w);
+      });
     }
     final drama = widget.drama;
     final showTitle = widget.showTitle;

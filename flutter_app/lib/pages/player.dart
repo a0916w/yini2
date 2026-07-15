@@ -193,23 +193,10 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
   void initState() {
     super.initState();
     _disc = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat();
-    widget.controller?.addListener(_tick);
   }
-
-  @override
-  void didUpdateWidget(VideoSlide oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller) {
-      oldWidget.controller?.removeListener(_tick);
-      widget.controller?.addListener(_tick);
-    }
-  }
-
-  void _tick() { if (mounted) setState(() {}); }
 
   @override
   void dispose() {
-    widget.controller?.removeListener(_tick);
     _disc.dispose();
     super.dispose();
   }
@@ -220,7 +207,6 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
     final c = widget.controller;
     if (c == null || !c.value.isInitialized) return;
     c.value.isPlaying ? c.pause() : c.play();
-    setState(() {});
   }
 
   void _openEpisodes() {
@@ -286,8 +272,13 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
             const SizedBox(height: 14),
             FilledButton(style: FilledButton.styleFrom(backgroundColor: C.brand), onPressed: () => context.push('/vip'), child: Text(t('vipWatch'))),
           ]))
-        else if (ready && !c.value.isPlaying)
-          const Center(child: Icon(Icons.play_arrow, color: Colors.white70, size: 70)),
+        else if (ready)
+          ValueListenableBuilder<VideoPlayerValue>(
+            valueListenable: c,
+            builder: (ctx, v, _) => v.isPlaying
+                ? const SizedBox.shrink()
+                : const Center(child: Icon(Icons.play_arrow, color: Colors.white70, size: 70)),
+          ),
 
         // 右栏
         Positioned(right: 10, bottom: 120, child: Column(children: [
@@ -335,10 +326,13 @@ class VideoSlideState extends State<VideoSlide> with SingleTickerProviderStateMi
                 padding: const EdgeInsets.symmetric(vertical: 5.5),
                 colors: VideoProgressColors(playedColor: Colors.white, bufferedColor: Colors.white.withValues(alpha: .35), backgroundColor: Colors.white.withValues(alpha: .25)))),
             const SizedBox(height: 2),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(_fmt(c.value.position), style: TextStyle(color: Colors.white.withValues(alpha: .6), fontSize: 10)),
-              Text(_fmt(c.value.duration), style: TextStyle(color: Colors.white.withValues(alpha: .6), fontSize: 10)),
-            ]),
+            ValueListenableBuilder<VideoPlayerValue>(
+              valueListenable: c,
+              builder: (ctx, v, _) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(_fmt(v.position), style: TextStyle(color: Colors.white.withValues(alpha: .6), fontSize: 10)),
+                Text(_fmt(v.duration), style: TextStyle(color: Colors.white.withValues(alpha: .6), fontSize: 10)),
+              ]),
+            ),
           ])),
       ]),
     );

@@ -21,6 +21,7 @@ class WatchHistory {
           id: (m['id'] as num).toInt(),
           title: '${m['title'] ?? ''}',
           genre: '${m['genre'] ?? ''}',
+          cover: m['cover'] as String?,
           viewCount: (m['views'] as num?)?.toInt() ?? 0,
         ));
       } catch (_) {}
@@ -34,7 +35,7 @@ class WatchHistory {
     raw.removeWhere((s) {
       try { return (jsonDecode(s) as Map)['id'] == d.id; } catch (_) { return true; }
     });
-    raw.insert(0, jsonEncode({'id': d.id, 'title': d.title, 'genre': d.genre, 'views': d.viewCount}));
+    raw.insert(0, jsonEncode({'id': d.id, 'title': d.title, 'genre': d.genre, 'cover': d.cover, 'views': d.viewCount}));
     while (raw.length > _max) {
       raw.removeLast();
     }

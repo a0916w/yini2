@@ -1,4 +1,3 @@
-import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -119,18 +118,14 @@ class _BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          decoration: BoxDecoration(color: _bg, border: Border(top: BorderSide(color: _border))),
-          child: SafeArea(
-            top: false,
-            child: SizedBox(
-              height: 56,
-              child: Row(children: [for (var i = 0; i < MainShell._tabs.length; i++) Expanded(child: _item(i))]),
-            ),
-          ),
+    // 低端机优化:不用 BackdropFilter(blur 在入门 GPU 上开销大),半透明底近似
+    return Container(
+      decoration: BoxDecoration(color: _bg, border: Border(top: BorderSide(color: _border))),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 56,
+          child: Row(children: [for (var i = 0; i < MainShell._tabs.length; i++) Expanded(child: _item(i))]),
         ),
       ),
     );
