@@ -36,10 +36,13 @@ class _TheaterPageState extends State<TheaterPage> {
 
   bool get _visible => activeTab.value == theaterTabIndex;
 
+  bool _dirty = false;
+
   void _onTab() {
     if (_dead) return;
     if (_visible) {
-      _sync(); // 回到剧场:恢复播放
+      if (_dirty) { _dirty = false; _reload(); return; } // 语言切换后的懒刷新
+      _sync(); // 回到本页:恢复播放
     } else {
       for (final c in _ctrls.values) {
         if (c.value.isInitialized) c.pause(); // 切走:全部暂停
@@ -48,7 +51,10 @@ class _TheaterPageState extends State<TheaterPage> {
   }
 
   void _onApp() {
-    if (_app!.lang != _lang) { _lang = _app!.lang; _reload(); }
+    if (_app!.lang != _lang) {
+      _lang = _app!.lang;
+      if (_visible) { _reload(); } else { _dirty = true; }
+    }
   }
 
   @override

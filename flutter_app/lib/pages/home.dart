@@ -6,6 +6,7 @@ import '../api/http.dart';
 import '../api/models.dart';
 import '../state.dart';
 import '../theme.dart';
+import 'theater.dart' show activeTab;
 import '../widgets.dart';
 import '../i18n.dart';
 
@@ -23,11 +24,18 @@ class _HomePageState extends State<HomePage> {
   AppState? _app;
   String _lang = Http.lang;
 
+  bool _dirty = false;
+
   void _onApp() {
     if (_app!.lang != _lang) {
       _lang = _app!.lang;
-      _fetchAll();
+      // 懒刷新:可见才立即刷,否则切回本页时再刷(避免切语言时全 tab 齐刷卡顿)
+      if (activeTab.value == 1) { _fetchAll(); } else { _dirty = true; }
     }
+  }
+
+  void _onTabSwitch() {
+    if (_dirty && activeTab.value == 1) { _dirty = false; _fetchAll(); }
   }
 
   void _fetchAll() {
@@ -73,12 +81,14 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _app = context.read<AppState>();
     _app!.addListener(_onApp);
+    activeTab.addListener(_onTabSwitch);
     _fetchAll();
   }
 
   @override
   void dispose() {
     _app?.removeListener(_onApp);
+    activeTab.removeListener(_onTabSwitch);
     super.dispose();
   }
 

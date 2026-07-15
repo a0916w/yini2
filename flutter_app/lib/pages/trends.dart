@@ -7,6 +7,7 @@ import '../api/models.dart';
 import '../state.dart';
 import '../i18n.dart';
 import '../theme.dart';
+import 'theater.dart' show activeTab;
 import '../widgets.dart';
 
 // 榜单(handoff: rank 屏)——浅橙渐变、前三领奖台(皇冠)、暖底列表卡
@@ -26,13 +27,23 @@ class _TrendsPageState extends State<TrendsPage> {
   String _lang = Http.lang;
   final Map<String, List<Drama>> _cache = {}; // 按子 tab 缓存
 
-  void _onApp() { if (_app!.lang != _lang) { _lang = _app!.lang; _cache.clear(); _load(); } }
+  bool _dirty = false;
+  void _onApp() {
+    if (_app!.lang != _lang) {
+      _lang = _app!.lang; _cache.clear();
+      if (activeTab.value == 2) { _load(); _prefetchTabs(); } else { _dirty = true; }
+    }
+  }
+  void _onTabSwitch() {
+    if (_dirty && activeTab.value == 2) { _dirty = false; _load(); _prefetchTabs(); }
+  }
 
   @override
   void initState() {
     super.initState();
     _app = context.read<AppState>();
     _app!.addListener(_onApp);
+    activeTab.addListener(_onTabSwitch);
     _load();
     _prefetchTabs();
   }
@@ -40,6 +51,7 @@ class _TrendsPageState extends State<TrendsPage> {
   @override
   void dispose() {
     _app?.removeListener(_onApp);
+    activeTab.removeListener(_onTabSwitch);
     super.dispose();
   }
 

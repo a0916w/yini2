@@ -7,6 +7,7 @@ import '../api/models.dart';
 import '../state.dart';
 import '../i18n.dart';
 import '../theme.dart';
+import 'theater.dart' show activeTab;
 import '../widgets.dart';
 
 // 专题(handoff: topic 屏)——全宽渐变专题卡 + 右下斜放迷你封面
@@ -21,19 +22,30 @@ class _TopicsPageState extends State<TopicsPage> {
   AppState? _app;
   String _lang = Http.lang;
 
-  void _onApp() { if (_app!.lang != _lang) { _lang = _app!.lang; setState(() => _topics = null); _load(); } }
+  bool _dirty = false;
+  void _onApp() {
+    if (_app!.lang != _lang) {
+      _lang = _app!.lang;
+      if (activeTab.value == 3) { setState(() => _topics = null); _load(); } else { _dirty = true; }
+    }
+  }
+  void _onTabSwitch() {
+    if (_dirty && activeTab.value == 3) { _dirty = false; setState(() => _topics = null); _load(); }
+  }
 
   @override
   void initState() {
     super.initState();
     _app = context.read<AppState>();
     _app!.addListener(_onApp);
+    activeTab.addListener(_onTabSwitch);
     _load();
   }
 
   @override
   void dispose() {
     _app?.removeListener(_onApp);
+    activeTab.removeListener(_onTabSwitch);
     super.dispose();
   }
 

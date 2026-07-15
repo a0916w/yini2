@@ -132,7 +132,7 @@ class MePage extends StatelessWidget {
               icon: Icons.language,
               label: t('language'),
               trailing: Text('${_langName()} ›', style: TextStyle(fontSize: 12, color: C.quiet)),
-              onTap: () => _pickLang(context),
+              onTap: () => context.push('/language'),
             ),
             _divider(),
             _service(
@@ -295,16 +295,4 @@ class MePage extends StatelessWidget {
     );
   }
 
-  void _pickLang(BuildContext context) {
-    showModalBottomSheet(context: context, backgroundColor: C.surface, builder: (c) => SafeArea(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        for (final l in languages)
-          ListTile(
-            title: Text(l.$2),
-            trailing: Http.lang == l.$1 ? const Icon(Icons.check, color: C.brand) : null,
-            onTap: () { context.read<AppState>().setLanguage(l.$1); Navigator.pop(c); },
-          ),
-      ]),
-    ));
-  }
 }

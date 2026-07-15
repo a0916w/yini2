@@ -22,6 +22,7 @@ import 'pages/me.dart';
 import 'pages/favorites.dart';
 import 'pages/history.dart';
 import 'pages/topic_list.dart';
+import 'pages/language.dart';
 import 'i18n.dart';
 
 Future<void> main() async {
@@ -77,6 +78,7 @@ final _router = GoRouter(
     GoRoute(path: '/login', builder: (c, s) => const LoginPage()),
     GoRoute(path: '/favorites', builder: (c, s) => const FavoritesPage()),
     GoRoute(path: '/history', builder: (c, s) => const HistoryPage()),
+    GoRoute(path: '/language', builder: (c, s) => const LanguagePage()),
     GoRoute(path: '/topic/:id', builder: (c, s) => TopicListPage(int.parse(s.pathParameters['id']!), s.uri.queryParameters['name'] ?? '')),
   ],
 );
