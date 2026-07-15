@@ -127,11 +127,11 @@ class _TrendsPageState extends State<TrendsPage> {
                   if (top3.length >= 3) ...[
                     const SizedBox(height: 20),
                     Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                      Expanded(flex: 100, child: _podium(top3[1], 2, 118, _rank2)),
+                      Expanded(flex: 100, child: _podium(top3[1], 2, _rank2)),
                       const SizedBox(width: 10),
-                      Expanded(flex: 115, child: _podium(top3[0], 1, 140, _rank1, crown: true)),
+                      Expanded(flex: 120, child: _podium(top3[0], 1, _rank1, crown: true)),
                       const SizedBox(width: 10),
-                      Expanded(flex: 100, child: _podium(top3[2], 3, 106, _rank3)),
+                      Expanded(flex: 100, child: _podium(top3[2], 3, _rank3)),
                     ]),
                   ],
                   const SizedBox(height: 16),
@@ -146,24 +146,25 @@ class _TrendsPageState extends State<TrendsPage> {
     );
   }
 
-  // 领奖台位:封面(标题内嵌左下)+ 名次数字 + 热度值;第1名带皇冠
-  Widget _podium(Drama d, int rank, double h, Color rankColor, {bool crown = false}) {
+  // 领奖台位:3:4 封面 + 名次数字 + 热度值;第1名列更宽更大,带皇冠
+  Widget _podium(Drama d, int rank, Color rankColor, {bool crown = false}) {
     return GestureDetector(
       onTap: () => context.push('/drama/${d.id}'),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         if (crown) CustomPaint(size: const Size(26, 16), painter: _CrownPainter()),
         if (crown) const SizedBox(height: 2),
-        Container(
-          height: h,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: crown
-                ? [BoxShadow(color: coverColor(d.id).withValues(alpha: .32), blurRadius: 24, offset: const Offset(0, 10))]
-                : null,
+        AspectRatio(
+          aspectRatio: 3 / 4,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: crown
+                  ? [BoxShadow(color: coverColor(d.id).withValues(alpha: .32), blurRadius: 24, offset: const Offset(0, 10))]
+                  : null,
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Cover(d, showTitle: false),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Cover(d),
         ),
         const SizedBox(height: 6),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [

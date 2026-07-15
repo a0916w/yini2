@@ -107,31 +107,10 @@ class _TopicsPageState extends State<TopicsPage> {
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(children: [
-          // 第二张(在后,-8deg,白10%)
-          if (covers.length > 1)
-            Positioned(
-              right: 34, bottom: -4,
-              child: Transform.rotate(
-                angle: -8 * 3.14159 / 180,
-                child: Container(width: 56, height: 76,
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .1), borderRadius: BorderRadius.circular(10))),
-              ),
-            ),
-          // 第一张(在前,12deg,白14%,内嵌剧名)
-          if (covers.isNotEmpty)
-            Positioned(
-              right: -10, bottom: -8,
-              child: Transform.rotate(
-                angle: 12 * 3.14159 / 180,
-                child: Container(
-                  width: 64, height: 86,
-                  padding: const EdgeInsets.all(9),
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .14), borderRadius: BorderRadius.circular(11)),
-                  child: Text(covers.first.title, maxLines: 4, overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700, height: 1.4)),
-                ),
-              ),
-            ),
+          // 右下扇形叠放最多 3 张真实封面(后→前)
+          if (covers.length > 2) _mini(covers[2], right: 78, bottom: -4, angle: -10, w: 54, h: 72),
+          if (covers.length > 1) _mini(covers[1], right: 38, bottom: -6, angle: -2, w: 60, h: 80),
+          if (covers.isNotEmpty) _mini(covers[0], right: -10, bottom: -8, angle: 12, w: 66, h: 88),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -151,4 +130,23 @@ class _TopicsPageState extends State<TopicsPage> {
       ),
     );
   }
+
+  // 斜放迷你封面(真实剧照 3:4,白描边+黑影)
+  Widget _mini(Drama d, {required double right, required double bottom, required double angle, required double w, required double h}) =>
+      Positioned(
+        right: right, bottom: bottom,
+        child: Transform.rotate(
+          angle: angle * 3.14159 / 180,
+          child: Container(
+            width: w, height: h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(color: Colors.white.withValues(alpha: .55), width: 1.4),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .28), blurRadius: 10, offset: const Offset(0, 4))],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Cover(d, showTitle: false),
+          ),
+        ),
+      );
 }
