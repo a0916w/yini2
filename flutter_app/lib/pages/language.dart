@@ -33,12 +33,22 @@ class LanguagePage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 6),
               child: Row(children: [
                 GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Container(
-                    width: 34, height: 34,
-                    decoration: BoxDecoration(color: C.surface, shape: BoxShape.circle,
-                        boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .12), blurRadius: 10, offset: const Offset(0, 3))]),
-                    child: Icon(Icons.arrow_back_ios_new, size: 15, color: C.ink),
+                  behavior: HitTestBehavior.opaque, // 扩大命中:含透明外扩区
+                  onTap: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/me'); // 兜底:栈异常时直接回「我的」
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(6), // 外扩 6px 点击区
+                    child: Container(
+                      width: 34, height: 34,
+                      decoration: BoxDecoration(color: C.surface, shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: C.brand.withValues(alpha: .12), blurRadius: 10, offset: const Offset(0, 3))]),
+                      child: Icon(Icons.arrow_back_ios_new, size: 15, color: C.ink),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
